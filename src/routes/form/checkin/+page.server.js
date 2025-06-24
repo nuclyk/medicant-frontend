@@ -1,4 +1,5 @@
 import { API } from "$lib/api";
+import { error, fail } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch, parent }) {
@@ -32,7 +33,7 @@ export const actions = {
       place: "None",
     };
 
-    const response = await fetch(API + "users", {
+    const res = await fetch(API + "users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,6 +41,12 @@ export const actions = {
       body: JSON.stringify(data),
     });
 
-    return response.json();
+    const body = await res.json();
+
+    if (body.error === "email exists") {
+      return fail(400, { email: data.email, exists: true });
+    }
+
+    return res.json();
   },
 };

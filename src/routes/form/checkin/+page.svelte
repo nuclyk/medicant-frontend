@@ -3,7 +3,9 @@
     import { countries } from "$lib/countries.js";
     import { enhance } from "$app/forms";
     import dayjs from "dayjs";
-    let { data } = $props();
+    import { error } from "@sveltejs/kit";
+
+    let { data, form } = $props();
     let showForm = $state(true);
     let selectedRetreatId = $state(0);
 
@@ -30,6 +32,10 @@
     }
 </script>
 
+{#if form?.exists}
+    <p>Email already exists</p>
+{/if}
+
 <div class="row row-cols-1 g-3 mt-2">
     <div class="col">
         <h3>Check-in</h3>
@@ -40,7 +46,9 @@
                 method="POST"
                 transition:fade
                 use:enhance={(e) => {
-                    showForm = false;
+                    if (!form.exists) {
+                        showForm = false;
+                    }
                 }}
             >
                 <div class="row">
