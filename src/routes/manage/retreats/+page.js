@@ -1,4 +1,4 @@
-import * as api from "$lib/api.js";
+import { API } from "$lib/api";
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ locals, parent, fetch }) {
@@ -10,7 +10,7 @@ export async function load({ locals, parent, fetch }) {
     error(403, "Not an admin");
   }
 
-  const response = await fetch("http://localhost:8080/api/retreats", {
+  const response = await fetch(API + "retreats", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

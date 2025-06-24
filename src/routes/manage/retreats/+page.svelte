@@ -1,8 +1,8 @@
 <script>
-    import * as api from "$lib/api.js";
     import dayjs from "dayjs";
     import AddIcon from "../AddIcon.svelte";
     import DeleteIcon from "../DeleteIcon.svelte";
+    import { API } from "$lib/api";
 
     let { data } = $props();
     let retreats = $state(
@@ -10,14 +10,25 @@
     );
 
     async function handleDelete(id) {
-        const response = await api.del("retreats/" + id);
+        const response = await fetch(API + "retreats/" + id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
         let index = retreats.findIndex((retreat) => retreat.id === id);
         retreats.splice(index, 1);
     }
 
     async function handleChange(id, event) {
-        const response = await api.put("retreats/" + id, {
-            [event.target.name]: event.target.value,
+        const response = await fetch(API + "retreats/" + id, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                [event.target.name]: event.target.value,
+            }),
         });
     }
 </script>

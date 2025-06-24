@@ -1,4 +1,4 @@
-import { API_URL } from "$env/static/private";
+import { API } from "$lib/api";
 import dayjs from "dayjs";
 
 /** @satisfies {import('./$types').Actions} */
@@ -7,7 +7,7 @@ export const actions = {
     const data = await request.formData();
     const email = data.get("email");
 
-    const response = await fetch(API_URL + "/users/" + email, {
+    const response = await fetch(API + "users/" + email, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

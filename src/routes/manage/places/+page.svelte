@@ -2,19 +2,31 @@
     import * as api from "$lib/api.js";
     import AddIcon from "../AddIcon.svelte";
     import DeleteIcon from "../DeleteIcon.svelte";
+    import { API } from "$lib/api";
 
     let { data } = $props();
     let places = $state(data.places.filter((place) => place.name != "None"));
 
     async function handleDelete(name) {
-        const response = await api.del("places/" + name);
+        const response = await fetch(API + "places/" + name, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
         let index = places.findIndex((place) => place.name === name);
         places.splice(index, 1);
     }
 
     async function handleChange(name, event) {
-        const response = await api.put("places/" + name, {
-            [event.target.name]: event.target.value,
+        const response = await fetch(API + "places/" + name, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                [event.target.name]: event.target.value,
+            }),
         });
     }
 </script>

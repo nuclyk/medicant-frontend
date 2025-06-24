@@ -1,3 +1,5 @@
+import { API } from "$lib/api";
+
 import { redirect } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageLoad} */
@@ -10,7 +12,7 @@ export async function load({ locals, parent, fetch }) {
     error(403, "Not an admin");
   }
 
-  const response = await fetch("http://localhost:8080/api/places", {
+  const response = await fetch(API + "places", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -1,9 +1,9 @@
-import { API } from "$env/static/private";
+import { API } from "$lib/api";
 
-/** @type {import('./$types').PageLoad} */
+/** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch, parent }) {
   let par = await parent();
-  const response = await fetch("http://localhost:8080/api/retreats");
+  const response = await fetch(API + "retreats");
   const data = await response.json();
 
   return {
@@ -32,7 +32,7 @@ export const actions = {
       place: "None",
     };
 
-    const response = await fetch(API + "/users", {
+    const response = await fetch(API + "users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

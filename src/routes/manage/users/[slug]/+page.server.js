@@ -1,4 +1,5 @@
-import { API } from "$env/static/private";
+import { redirect } from "@sveltejs/kit";
+import { API } from "$lib/api";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ cookies, parent, fetch, params }) {
@@ -10,16 +11,13 @@ export async function load({ cookies, parent, fetch, params }) {
     error(403, "Not an admin");
   }
 
-  const user_res = await fetch(
-    "http://localhost:8080/api/users/" + params.slug,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookies.get("token"),
-      },
+  const user_res = await fetch(API + "users/" + params.slug, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + cookies.get("token"),
     },
-  );
+  });
 
   const user = await user_res.json();
 
@@ -45,9 +43,7 @@ export const actions = {
       place: data.get("place"),
     };
 
-    console.log(updateUser);
-
-    const body = await fetch(API + "/users/" + params.slug, {
+    const body = await fetch(API + "users/" + params.slug, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

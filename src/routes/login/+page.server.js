@@ -1,6 +1,6 @@
 import { redirect, fail } from "@sveltejs/kit";
 import dayjs from "dayjs";
-import * as api from "$lib/api.js";
+import { API } from "$lib/api";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
@@ -22,11 +22,15 @@ export const actions = {
       password: data.get("password"),
     };
 
-    const body = await api.post("login", user);
+    const res = await fetch(API + "login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
 
-    if (body.errors) {
-      return fail(401, body);
-    }
+    const body = await res.json();
 
     cookies.set("token", body.token, { path: "/" });
     throw redirect(302, "/");

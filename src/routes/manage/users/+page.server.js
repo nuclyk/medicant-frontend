@@ -1,4 +1,4 @@
-import * as api from "$lib/api.js";
+import { API } from "$lib/api";
 
 import { redirect, fail, error } from "@sveltejs/kit";
 
@@ -10,7 +10,7 @@ export async function load({ fetch, cookies, locals, params, route, url }) {
     error(403, "Not an admin");
   }
 
-  const users = await fetch("http://localhost:8080/api/users", {
+  const users = await fetch(API + "users", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

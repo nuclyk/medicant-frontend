@@ -1,6 +1,7 @@
 <script>
     import { countries } from "$lib/countries.js";
     let { data } = $props();
+    $inspect(data);
     let user = $state(data.user);
     let roles = $state(data.roles);
     let retreats = $state(data.retreats);
