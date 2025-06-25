@@ -1,4 +1,5 @@
 import { redirect } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 import { API } from "$lib/api";
 
 /** @type {import('./$types').PageServerLoad} */

@@ -5,6 +5,7 @@ export function handle({ event, resolve }) {
     try {
       return JSON.parse(atob(token.split(".")[1]));
     } catch (e) {
+      console.log(e);
       return null;
     }
   };
@@ -14,7 +15,7 @@ export function handle({ event, resolve }) {
   return resolve(event);
 }
 
-export function handleError({ event, error }) {
+export function handleError({ error }) {
   console.error(error.stack);
 
   return {

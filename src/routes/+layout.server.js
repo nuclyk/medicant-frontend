@@ -1,7 +1,7 @@
 import { API } from "$lib/api";
 
 /** @type {import('./$types').LayoutServerLoad} */
-export async function load({ locals, fetch, cookies }) {
+export async function load({ locals, fetch }) {
   const retreats = await fetch(API + "retreats", {
     method: "GET",
     headers: {

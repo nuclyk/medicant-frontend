@@ -2,7 +2,7 @@ import { API } from "$lib/api";
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {
-  generate: async ({ request, fetch, cookies }) => {
+  generate: async ({ fetch, cookies }) => {
     const response = await fetch(API + "qrcode", {
       method: "POST",
       headers: {

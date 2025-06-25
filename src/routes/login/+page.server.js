@@ -1,7 +1,5 @@
-import { redirect, fail } from "@sveltejs/kit";
-import dayjs from "dayjs";
 import { API } from "$lib/api";
-import { error, fail } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {

@@ -1,4 +1,5 @@
 import { API } from "$lib/api";
+import { fail } from "@sveltejs/kit";
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {

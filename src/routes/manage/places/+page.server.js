@@ -1,5 +1,5 @@
-import * as api from "$lib/api.js";
 import { API } from "$lib/api.js";
+import { fail } from "@sveltejs/kit";
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {

@@ -1,6 +1,7 @@
 <script>
     import { fade } from "svelte/transition";
     import { enhance } from "$app/forms";
+    import FloatingInputField from "../../FloatingInputField.svelte";
     let showForm = $state(true);
 </script>
 
@@ -19,17 +20,13 @@
                     showForm = false;
                 }}
             >
-                <div class="form-floating">
-                    <input
-                        class="form-control"
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        required
-                    />
-                    <label for="email">Email</label>
-                </div>
+                <FloatingInputField
+                    id="email"
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    label="Email"
+                />
                 <button type="submit" class="btn btn-primary btn-lg mt-2"
                     >Check-out</button
                 >

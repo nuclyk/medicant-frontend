@@ -1,9 +1,8 @@
 import { API } from "$lib/api";
-import { error, fail } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch, parent }) {
-  let par = await parent();
+export async function load({ fetch }) {
   const response = await fetch(API + "retreats");
   const data = await response.json();
 
@@ -47,6 +46,6 @@ export const actions = {
       return fail(400, { email: data.email, exists: true });
     }
 
-    return res.json();
+    return body;
   },
 };

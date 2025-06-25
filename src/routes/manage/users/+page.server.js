@@ -1,9 +1,9 @@
 import { API } from "$lib/api";
 
-import { redirect, fail, error } from "@sveltejs/kit";
+import { redirect, error } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch, cookies, locals, params, route, url }) {
+export async function load({ fetch, cookies, locals }) {
   if (!locals.user) redirect(307, "/login");
 
   if (locals.user.role != "admin") {
