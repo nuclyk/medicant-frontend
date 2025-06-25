@@ -1,15 +1,9 @@
 <script>
-  let { id, name, options, property, label, handler } = $props();
+  let { id, name, options, property, label, value } = $props();
 </script>
 
 <div class="form-floating mb-3">
-  <select
-    class="form-select"
-    {id}
-    {name}
-    aria-label={"Select " + name}
-    onchange={handler}
-  >
+  <select class="form-select" {id} {name} aria-label={"Select " + name} {value}>
     <option selected></option>
     {#each options as option, index (index)}
       {#if property}

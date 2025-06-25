@@ -17,18 +17,18 @@ export const actions = {
     const formData = await request.formData();
 
     const data = {
-      first_name: formData.get("firstName"),
-      last_name: formData.get("lastName"),
+      first_name: formData.get("first_name"),
+      last_name: formData.get("last_name"),
       email: formData.get("email"),
       phone: formData.get("phone"),
       gender: formData.get("gender"),
       nationality: formData.get("nationality"),
+      diet: formData.get("diet"),
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
       check_in_date: new Date().toLocaleString(),
-      leave_date: formData.get("leaveDate"),
+      leave_date: formData.get("leave_date"),
       is_checked_in: true,
-      diet: "",
       place: "None",
     };
 
@@ -42,8 +42,8 @@ export const actions = {
 
     const body = await res.json();
 
-    if (body.error === "email exists") {
-      return fail(400, { email: data.email, exists: true });
+    if (body.error) {
+      return fail(400, { error: body.error, formData: data });
     }
 
     return body;
