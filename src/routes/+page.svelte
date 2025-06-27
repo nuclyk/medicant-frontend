@@ -1,26 +1,27 @@
 <script>
-    import dayjs from "dayjs";
-    import { onMount } from "svelte";
     import InfoIcon from "./InfoIcon.svelte";
+    import dayjs from "dayjs";
+
+    import { onMount } from "svelte";
     import { API } from "$lib/api";
 
-    /** @type {import('./$types').PageProps} */
     let { data } = $props();
-    $inspect(data);
 
     let users = $state(
-        data.users.filter(
+        data?.users?.filter(
             (user) => user.role != "admin" && user.check_out_date === "",
         ),
     );
 
     let places = $derived(data.places);
-    let roles = $derived(data.roles.filter((role) => role.name != "admin"));
+    let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
 
     onMount(() => {
         const tooltipTriggerList = document.querySelectorAll(
             '[data-bs-toggle="tooltip"]',
         );
+
+        // eslint-disable-next-line no-unused-vars
         const tooltipList = [...tooltipTriggerList].map(
             (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl),
         );
@@ -59,7 +60,10 @@
         try {
             const response = await fetch(API + "users/" + id, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + data.token,
+                },
                 body: JSON.stringify({
                     check_out_date: dayjs().format("YYYY-MM-DD HH:mm:ss"),
                     leave_date: dayjs().format("YYYY-MM-DD"),
@@ -80,7 +84,10 @@
         try {
             const response = await fetch(API + "users/" + id, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + data.token,
+                },
                 body: JSON.stringify({
                     [event.target.name]: event.target.value,
                 }),
@@ -183,7 +190,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each users as user, index}
+                    {#each users as user, index (user.id)}
                         <tr>
                             <th scope="row">{index + 1}</th>
                             <td>
@@ -241,7 +248,7 @@
                                             data-bs-html="true"
                                             data-bs-placement="top"
                                             data-bs-title="<p>Check if the participant is still in the retreat.
-                                        As per leave date, they should be checked out already.</p><p>Change the leave date 
+                                        As per leave date, they should be checked out already.</p><p>Change the leave date
                                         or check them out.</p>"
                                         >
                                             <InfoIcon></InfoIcon>
@@ -259,7 +266,7 @@
                                     }}
                                     value={user.place}
                                 >
-                                    {#each places as place}
+                                    {#each places as place (place.name)}
                                         <option value={place.name}>
                                             {place.name}
                                         </option>
@@ -290,7 +297,7 @@
                                     <option value={user.role} selected
                                         >{user.role}</option
                                     >
-                                    {#each roles as role}
+                                    {#each roles as role (role.name)}
                                         <option value={role.name}>
                                             {role.name}
                                         </option>

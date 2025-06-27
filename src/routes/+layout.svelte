@@ -1,7 +1,6 @@
 <script>
     import Nav from "./Nav.svelte";
     let { children, data } = $props();
-    $inspect(data);
 </script>
 
 <div class="container-fluid">

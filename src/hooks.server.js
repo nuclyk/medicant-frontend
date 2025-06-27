@@ -5,11 +5,23 @@ export function handle({ event, resolve }) {
     try {
       return JSON.parse(atob(token.split(".")[1]));
     } catch (e) {
+      console.log(e);
       return null;
     }
   };
 
-  event.locals.user = parseJwt(token);
+  if (token) {
+    event.locals.user = parseJwt(token);
+  }
 
   return resolve(event);
+}
+
+export function handleError({ error }) {
+  console.error(error.stack);
+
+  return {
+    message: "Internal server error",
+    code: "500",
+  };
 }

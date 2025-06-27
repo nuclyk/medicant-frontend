@@ -1,10 +1,12 @@
 <script>
-    import dayjs from "dayjs";
     import AddIcon from "../AddIcon.svelte";
     import DeleteIcon from "../DeleteIcon.svelte";
+
     import { API } from "$lib/api";
+    import { error } from "@sveltejs/kit";
 
     let { data } = $props();
+
     let retreats = $state(
         data.retreats.filter((retreat) => retreat.type != "flexible"),
     );
@@ -14,8 +16,15 @@
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: "Bearer " + data.token,
             },
         });
+
+        if (!response.ok) {
+            error("Failed to delete retreat:", response.statusText);
+            return;
+        }
+
         let index = retreats.findIndex((retreat) => retreat.id === id);
         retreats.splice(index, 1);
     }
@@ -25,11 +34,17 @@
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: "Bearer " + data.token,
             },
             body: JSON.stringify({
                 [event.target.name]: event.target.value,
             }),
         });
+
+        if (!response.ok) {
+            error("Failed to update retreat:", response.statusText);
+            return;
+        }
     }
 </script>
 
@@ -77,7 +92,7 @@
                 </tr>
             </thead>
             <tbody>
-                {#each retreats as retreat, index}
+                {#each retreats as retreat (retreat.id)}
                     <tr>
                         <td>
                             <input

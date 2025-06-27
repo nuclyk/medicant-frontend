@@ -1,5 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import { API } from "$lib/api";
+import { error } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ cookies, parent, fetch, params }) {
@@ -7,8 +8,8 @@ export async function load({ cookies, parent, fetch, params }) {
 
   if (!p.user) redirect(307, "/login");
 
-  if (p.user.role != "admin") {
-    error(403, "Not an admin");
+  if (p.user.role != "admin" && p.user.role != "volunteer") {
+    error(403, "Not authorized");
   }
 
   const user_res = await fetch(API + "users/" + params.slug, {
@@ -25,7 +26,7 @@ export async function load({ cookies, parent, fetch, params }) {
 }
 
 export const actions = {
-  default: async ({ request, fetch, params }) => {
+  default: async ({ request, fetch, params, cookies }) => {
     const data = await request.formData();
 
     const updateUser = {
@@ -47,6 +48,7 @@ export const actions = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + cookies.get("token"),
       },
       body: JSON.stringify(updateUser),
     });

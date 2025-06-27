@@ -19,6 +19,10 @@ export const actions = {
       }),
     });
 
+    if (!response.ok) {
+      return { error: "Failed to check out" };
+    }
+
     return { success: true };
   },
 };

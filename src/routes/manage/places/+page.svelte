@@ -1,8 +1,9 @@
 <script>
-    import * as api from "$lib/api.js";
     import AddIcon from "../AddIcon.svelte";
     import DeleteIcon from "../DeleteIcon.svelte";
+
     import { API } from "$lib/api";
+    import { error } from "@sveltejs/kit";
 
     let { data } = $props();
     let places = $state(data.places.filter((place) => place.name != "None"));
@@ -12,8 +13,15 @@
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: "Bearer " + data.token,
             },
         });
+
+        if (!response.ok) {
+            error("Failed to delete place:", response.statusText);
+            return;
+        }
+
         let index = places.findIndex((place) => place.name === name);
         places.splice(index, 1);
     }
@@ -23,11 +31,20 @@
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: "Bearer " + data.token,
             },
             body: JSON.stringify({
                 [event.target.name]: event.target.value,
             }),
         });
+
+        if (!response.ok) {
+            error("Failed to update place:", response.statusText);
+            return;
+        }
+
+        let index = places.findIndex((place) => place.name === name);
+        places[index] = await response.json();
     }
 </script>
 
@@ -72,7 +89,7 @@
                 </tr>
             </thead>
             <tbody>
-                {#each places as place, index}
+                {#each places as place (place.name)}
                     <tr>
                         <td>
                             <input

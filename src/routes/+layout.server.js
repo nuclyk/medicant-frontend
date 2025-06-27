@@ -13,6 +13,7 @@ export async function load({ locals, fetch, cookies }) {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer " + cookies.get("token"),
     },
   });
 
@@ -27,6 +28,7 @@ export async function load({ locals, fetch, cookies }) {
       id: locals.user.sub,
       role: locals.user.role,
     },
+    token: cookies.get("token"),
     retreats: await retreats.json(),
     roles: await roles.json(),
     places: await places.json(),
