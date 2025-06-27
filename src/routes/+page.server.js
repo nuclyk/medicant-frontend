@@ -6,8 +6,8 @@ import { API } from "$lib/api";
 export async function load({ locals, cookies, fetch }) {
   if (!locals.user) redirect(307, "/login");
 
-  if (locals.user.role != "admin") {
-    error(403, "Not an admin");
+  if (locals.user.role != "admin" && locals.user.role != "volunteer") {
+    error(403, "Not authorized");
   }
 
   const users = await fetch(API + "users", {

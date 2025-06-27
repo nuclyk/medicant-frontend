@@ -7,8 +7,8 @@ export async function load({ parent, fetch }) {
 
   if (!p.user) redirect(307, "/login");
 
-  if (p.user.role != "admin") {
-    error(403, "Not an admin");
+  if (p.user.role != "admin" && p.user.role != "volunteer") {
+    error(403, "Not authorized");
   }
 
   const response = await fetch(API + "retreats", {

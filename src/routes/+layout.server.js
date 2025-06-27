@@ -1,7 +1,7 @@
 import { API } from "$lib/api";
 
 /** @type {import('./$types').LayoutServerLoad} */
-export async function load({ locals, fetch }) {
+export async function load({ locals, fetch, cookies }) {
   const retreats = await fetch(API + "retreats", {
     method: "GET",
     headers: {
@@ -13,6 +13,7 @@ export async function load({ locals, fetch }) {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer " + cookies.get("token"),
     },
   });
 
@@ -27,6 +28,7 @@ export async function load({ locals, fetch }) {
       id: locals.user.sub,
       role: locals.user.role,
     },
+    token: cookies.get("token"),
     retreats: await retreats.json(),
     roles: await roles.json(),
     places: await places.json(),

@@ -10,7 +10,9 @@ export function handle({ event, resolve }) {
     }
   };
 
-  event.locals.user = parseJwt(token);
+  if (token) {
+    event.locals.user = parseJwt(token);
+  }
 
   return resolve(event);
 }
