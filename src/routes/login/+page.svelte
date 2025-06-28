@@ -2,7 +2,7 @@
     import { enhance } from "$app/forms";
 </script>
 
-<div class="container vh-100 w-25 align-content-center">
+<div class="container-sm vh-100 align-content-center">
     <div
         class="row row-cols-1 text-center border border-light-subtle rounded-4 g-3 p-3"
     >
