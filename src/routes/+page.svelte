@@ -13,7 +13,7 @@
         ),
     );
 
-    let places = $derived(data.places);
+    let places = $derived(data?.places);
     let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
 
     onMount(() => {
@@ -67,7 +67,6 @@
                 body: JSON.stringify({
                     check_out_date: dayjs().format("YYYY-MM-DD HH:mm:ss"),
                     leave_date: dayjs().format("YYYY-MM-DD"),
-                    is_checked_in: false,
                 }),
             });
 
@@ -78,6 +77,8 @@
             console.error("Error when updating the user: ", error);
             throw error;
         }
+
+        location.reload();
     }
 
     async function handleUserUpdate(id, event) {
@@ -218,7 +219,6 @@
                                         class="btn btn-primary btn-sm"
                                         onclick={() => {
                                             handleCheckout(user.id);
-                                            location.reload();
                                         }}
                                         >Checkout
                                     </button>
