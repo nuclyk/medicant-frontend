@@ -3,7 +3,7 @@ import { error, redirect } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
-  if (locals.user) redirect(303, "/");
+  if (locals.user) redirect(303, "/admin");
 }
 
 /** @satisfies {import('./$types').Actions} */
@@ -34,6 +34,6 @@ export const actions = {
     }
 
     cookies.set("token", body.token, { path: "/" });
-    throw redirect(302, "/");
+    throw redirect(302, "/admin");
   },
 };

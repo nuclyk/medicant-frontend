@@ -7,7 +7,7 @@ import { redirect } from "@sveltejs/kit";
 export async function load({ parent, fetch }) {
   const p = await parent();
 
-  if (!p.user) redirect(307, "/login");
+  if (!p.user) redirect(307, "/admin/login");
 
   if (p.user.role != "admin" && p.user.role != "volunteer") {
     error(403, "Not authorized");
