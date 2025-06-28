@@ -4,7 +4,7 @@ import { API } from "$lib/api";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals, cookies, fetch }) {
-  if (!locals.user) redirect(307, "/admin/login");
+  if (!locals.user) redirect(307, "/login");
 
   if (locals.user.role != "admin" && locals.user.role != "volunteer") {
     error(403, "Not authorized");

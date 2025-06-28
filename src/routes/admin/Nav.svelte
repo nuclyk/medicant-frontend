@@ -45,7 +45,7 @@
                             >Login</a
                         >
                     {:else}
-                        <form action="/admin/login?/logout" method="POST">
+                        <form action="/login?/logout" method="POST">
                             <button type="submit" class="btn btn-danger"
                                 >Logout</button
                             >
