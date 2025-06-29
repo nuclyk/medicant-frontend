@@ -15,6 +15,9 @@
 
     let places = $derived(data?.places);
     let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
+    let veg = $derived(
+        users.filter((user) => user.diet === "Vegetarian").length,
+    );
 
     onMount(() => {
         const tooltipTriggerList = document.querySelectorAll(
@@ -148,7 +151,14 @@
             <div class="card">
                 <div class="card-header">Retreats</div>
                 <ul class="list-group list-group-flush text-nowrap">
-                    <li class="list-group-item">Next retreat date:</li>
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                        Vegetarian:
+                        <span class="badge text-bg-primary rounded-pill">
+                            {veg}
+                        </span>
+                    </li>
                     <li
                         class="list-group-item d-flex justify-content-between align-items-center"
                     >

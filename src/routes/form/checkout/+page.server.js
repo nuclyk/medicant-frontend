@@ -7,15 +7,13 @@ export const actions = {
     const data = await request.formData();
     const email = data.get("email");
 
-    const response = await fetch(API + "users/" + email, {
+    const response = await fetch(API + "users", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        check_out_date: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        leave_date: dayjs().format("YYYY-MM-DD"),
-        is_checked_in: false,
+        email: email,
       }),
     });
 
