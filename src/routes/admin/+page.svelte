@@ -1,6 +1,9 @@
 <script>
     import InfoIcon from "./InfoIcon.svelte";
     import dayjs from "dayjs";
+    import utc from "dayjs/plugin/utc";
+
+    dayjs.extend(utc);
 
     import { onMount } from "svelte";
     import { API } from "$lib/api";
@@ -215,7 +218,7 @@
                     <li
                         class="list-group-item d-flex justify-content-between align-items-center"
                     >
-                        Male / Female / Other:
+                        Male / Female:
                         <span class="badge text-bg-primary rounded-pill">
                             {#if users}
                                 {@const male = users.filter(
@@ -224,10 +227,7 @@
                                 {@const female = users.filter(
                                     (user) => user.gender === "Female",
                                 ).length}
-                                {@const other = users.filter(
-                                    (user) => user.gender === "Other",
-                                ).length}
-                                {male} / {female} / {other}
+                                {male} / {female}
                             {/if}
                         </span>
                     </li>
@@ -241,7 +241,7 @@
             <div class="table-responsive text-nowrap">
                 <table
                     class="table table-striped table-hover table-borderless
-                align-middle text-capitalize"
+                align-middle text-capitalize table-sm"
                 >
                     <thead>
                         <tr>
@@ -271,15 +271,15 @@
                                     {findRetreat(user.retreat_id).retreat_code}
                                 </td>
                                 <td>
-                                    {dayjs(user.check_in_date).format(
-                                        "DD MMM HH:mm",
-                                    )}
+                                    {dayjs(user.check_in_date)
+                                        .utc()
+                                        .format("DD MMM HH:mm")}
                                 </td>
                                 <td>
                                     {#if user.check_out_date != ""}
-                                        {dayjs(user.check_out_date).format(
-                                            "DD MMM HH:mm",
-                                        )}
+                                        {dayjs(user.check_out_date)
+                                            .utc()
+                                            .format("DD MMM HH:mm")}
                                     {:else}
                                         <button
                                             type="button"
@@ -297,7 +297,9 @@
                                             class="form-control flex-fill"
                                             type="date"
                                             name="leave_date"
-                                            value={user.leave_date}
+                                            value={dayjs(user.leave_date)
+                                                .utc()
+                                                .format("YYYY-MM-DD")}
                                             onchange={(event) => {
                                                 user.leave_date =
                                                     event.target.value;

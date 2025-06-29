@@ -1,6 +1,8 @@
 <script>
     import { API } from "$lib/api";
     import { error } from "@sveltejs/kit";
+    import dayjs from "dayjs";
+    import utc from "dayjs/plugin/utc";
 
     let { data } = $props();
 
@@ -43,6 +45,8 @@
             return;
         }
     }
+
+    dayjs.extend(utc);
 </script>
 
 <div class="container">
@@ -94,7 +98,7 @@
                     class="form-control"
                     type="date"
                     name="start_date"
-                    value={retreat.start_date}
+                    value={dayjs(retreat.start_date).utc().format("YYYY-MM-DD")}
                     onchange={(event) => {
                         handleChange(retreat.id, event);
                     }}
@@ -106,7 +110,7 @@
                     class="form-control"
                     type="date"
                     name="end_date"
-                    value={retreat.end_date}
+                    value={dayjs(retreat.end_date).utc().format("YYYY-MM-DD")}
                     retreat.end_date="event.target.value"
                     onchange={(event) => {
                         handleChange(retreat.id, event);
