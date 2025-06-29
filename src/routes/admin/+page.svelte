@@ -271,15 +271,15 @@
                                     {findRetreat(user.retreat_id).retreat_code}
                                 </td>
                                 <td>
-                                    {dayjs(user.check_in_date)
-                                        .utc()
-                                        .format("DD MMM HH:mm")}
+                                    {dayjs(user.check_in_date).format(
+                                        "DD MMM HH:mm",
+                                    )}
                                 </td>
                                 <td>
                                     {#if user.check_out_date != ""}
-                                        {dayjs(user.check_out_date)
-                                            .utc()
-                                            .format("DD MMM HH:mm")}
+                                        {dayjs(user.check_out_date).format(
+                                            "DD MMM HH:mm",
+                                        )}
                                     {:else}
                                         <button
                                             type="button"
@@ -297,9 +297,9 @@
                                             class="form-control flex-fill"
                                             type="date"
                                             name="leave_date"
-                                            value={dayjs(user.leave_date)
-                                                .utc()
-                                                .format("YYYY-MM-DD")}
+                                            value={dayjs(
+                                                user.leave_date,
+                                            ).format("YYYY-MM-DD")}
                                             onchange={(event) => {
                                                 user.leave_date =
                                                     event.target.value;

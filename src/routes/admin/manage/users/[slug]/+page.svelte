@@ -183,9 +183,7 @@
                     id="check_in_date"
                     name="check_in_date"
                     placeholder=""
-                    value={dayjs(user.check_in_date)
-                        .utc()
-                        .format("YYYY-MM-DD HH:mm")}
+                    value={dayjs(user.check_in_date).format("YYYY-MM-DD HH:mm")}
                     disabled
                 />
             </div>
@@ -198,9 +196,9 @@
                     id="check_out_date"
                     name="check_out_date"
                     placeholder=""
-                    value={dayjs(user.check_out_date)
-                        .utc()
-                        .format("YYYY-MM-DD HH:mm")}
+                    value={dayjs(user.check_out_date).format(
+                        "YYYY-MM-DD HH:mm",
+                    )}
                     disabled
                 />
             </div>
