@@ -98,7 +98,7 @@
                     class="form-control"
                     type="date"
                     name="start_date"
-                    value={dayjs(retreat.start_date).utc().format("YYYY-MM-DD")}
+                    value={dayjs(retreat.start_date).format("YYYY-MM-DD")}
                     onchange={(event) => {
                         handleChange(retreat.id, event);
                     }}
@@ -110,7 +110,7 @@
                     class="form-control"
                     type="date"
                     name="end_date"
-                    value={dayjs(retreat.end_date).utc().format("YYYY-MM-DD")}
+                    value={dayjs(retreat.end_date).format("YYYY-MM-DD")}
                     retreat.end_date="event.target.value"
                     onchange={(event) => {
                         handleChange(retreat.id, event);
