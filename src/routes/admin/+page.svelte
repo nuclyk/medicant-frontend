@@ -15,9 +15,18 @@
 
     let places = $derived(data?.places);
     let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
+
     let veg = $derived(
         users.filter((user) => user.diet === "Vegetarian").length,
     );
+
+    let totalInPlace = $derived.by((placeName) => {
+        return users.filter((user) => user.place === placeName).length;
+    });
+
+    function countUsersInPlace(placeName) {
+        return users.filter((user) => user.place === placeName).length;
+    }
 
     onMount(() => {
         const tooltipTriggerList = document.querySelectorAll(
@@ -154,9 +163,9 @@
                     <li
                         class="list-group-item d-flex justify-content-between align-items-center"
                     >
-                        Vegetarian:
+                        Next retreat date:
                         <span class="badge text-bg-primary rounded-pill">
-                            {veg}
+                            ?
                         </span>
                     </li>
                     <li
@@ -173,6 +182,53 @@
                         Fixed reatreat:
                         <span class="badge text-bg-primary rounded-pill">
                             {onRetreat("fixed")}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">Stats</div>
+                <ul class="list-group list-group-flush text-nowrap">
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                        Participants / Volunteers:
+                        <span class="badge text-bg-primary rounded-pill">
+                            {#if users}
+                                {@const volunteers = users.filter(
+                                    (user) => user.role === "volunteer",
+                                ).length}
+                                {users.length - volunteers} / {volunteers}
+                            {/if}
+                        </span>
+                    </li>
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                        Vegetarian:
+                        <span class="badge text-bg-primary rounded-pill">
+                            {veg}
+                        </span>
+                    </li>
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                        Male / Female / Other:
+                        <span class="badge text-bg-primary rounded-pill">
+                            {#if users}
+                                {@const male = users.filter(
+                                    (user) => user.gender === "Male",
+                                ).length}
+                                {@const female = users.filter(
+                                    (user) => user.gender === "Female",
+                                ).length}
+                                {@const other = users.filter(
+                                    (user) => user.gender === "Other",
+                                ).length}
+                                {male} / {female} / {other}
+                            {/if}
                         </span>
                     </li>
                 </ul>
@@ -277,12 +333,21 @@
                                         name="place"
                                         onchange={(event) => {
                                             handleUserUpdate(user.id, event);
+                                            user.place = event.target.value;
                                         }}
                                         value={user.place}
                                     >
                                         {#each places as place (place.name)}
+                                            {@const totalInPlace = users.filter(
+                                                (u) => u.place === place.name,
+                                            ).length}
+
                                             <option value={place.name}>
                                                 {place.name}
+
+                                                {#if place.name !== "None"}
+                                                    ({totalInPlace}/{place.capacity})
+                                                {/if}
                                             </option>
                                         {/each}
                                     </select>
