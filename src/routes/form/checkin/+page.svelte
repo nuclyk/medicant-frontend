@@ -127,7 +127,7 @@
                 <SelectInput
                     id="diet"
                     name="diet"
-                    options={["None", "Vegetarian", "Vegan"]}
+                    options={["None", "Vegetarian"]}
                     label="Diet"
                     bind:value={formData.diet}
                 />
