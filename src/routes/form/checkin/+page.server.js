@@ -26,7 +26,7 @@ export const actions = {
       diet: formData.get("diet"),
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
-      check_in_date: new Date().toLocaleString(),
+      check_in_date: new Date(),
       leave_date: formData.get("leave_date"),
       is_checked_in: true,
       place: "None",
