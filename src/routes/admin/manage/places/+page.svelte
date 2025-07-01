@@ -27,6 +27,7 @@
 
             let index = places.findIndex((place) => place.name === name);
             places.splice(index, 1);
+            toast.success("Place added successfuly!");
         } catch (err) {
             toast.error(err.body.message);
         }
@@ -51,6 +52,7 @@
 
             let index = places.findIndex((place) => place.name === name);
             places[index] = await response.json();
+            toast.success("Place added successfuly!");
         } catch (err) {
             toast.error(err.body.message);
         }
@@ -63,7 +65,12 @@
         use:enhance={() => {
             return ({ result }) => {
                 if (result.type !== "success") {
-                    toast.error(result.status + " : Could not add a new place");
+                    toast.error(
+                        result.status + " : Could not add a new place!",
+                    );
+                } else {
+                    places.push(result.data);
+                    toast.success("Place added successfuly!");
                 }
             };
         }}
