@@ -52,7 +52,7 @@
 
             let index = places.findIndex((place) => place.name === name);
             places[index] = await response.json();
-            toast.success("Place added successfuly!");
+            toast.success("Place updated successfuly!");
         } catch (err) {
             toast.error(err.body.message);
         }
