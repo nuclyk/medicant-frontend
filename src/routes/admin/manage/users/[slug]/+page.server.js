@@ -12,7 +12,7 @@ export async function load({ cookies, parent, fetch, params }) {
     error(403, "Not authorized");
   }
 
-  const user_res = await fetch(API + "users/" + params.slug, {
+  const res = await fetch(API + "users/" + params.slug, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -20,8 +20,11 @@ export async function load({ cookies, parent, fetch, params }) {
     },
   });
 
-  const user = await user_res.json();
+  if (res.status !== 302) {
+    error(404, "User not found");
+  }
 
+  const user = await res.json();
   return { user: user };
 }
 
@@ -44,16 +47,19 @@ export const actions = {
       place: data.get("place"),
     };
 
-    const body = await fetch(API + "users/" + params.slug, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookies.get("token"),
-      },
-      body: JSON.stringify(updateUser),
-    });
+    try {
+      const res = await fetch(API + "users/" + params.slug, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + cookies.get("token"),
+        },
+        body: JSON.stringify(updateUser),
+      });
 
-    const result = await body.json();
-    return result;
+      return await res.json();
+    } catch (err) {
+      fail(err.status, err);
+    }
   },
 };

@@ -1,6 +1,10 @@
 <script>
     import { API } from "$lib/api";
     import { error } from "@sveltejs/kit";
+    import { page } from "$app/state";
+    import { isHttpError } from "@sveltejs/kit";
+    import toast from "svelte-5-french-toast";
+    import { enhance } from "$app/forms";
 
     let { data } = $props();
     let places = $state(data.places.filter((place) => place.name != "None"));
@@ -8,47 +12,69 @@
     let placeCapacity = $state();
 
     async function handleDelete(name) {
-        const response = await fetch(API + "places/" + name, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + data.token,
-            },
-        });
+        try {
+            const res = await fetch(API + "places/" + name, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + data.token,
+                },
+            });
 
-        if (!response.ok) {
-            error("Failed to delete place:", response.statusText);
-            return;
+            if (!res.ok) {
+                error(res.status, "Could not delete the place!");
+            }
+
+            let index = places.findIndex((place) => place.name === name);
+            places.splice(index, 1);
+            toast.success("Place added successfuly!");
+        } catch (err) {
+            toast.error(err.body.message);
         }
-
-        let index = places.findIndex((place) => place.name === name);
-        places.splice(index, 1);
     }
 
     async function handleChange(name, event) {
-        const response = await fetch(API + "places/" + name, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + data.token,
-            },
-            body: JSON.stringify({
-                [event.target.name]: event.target.value,
-            }),
-        });
+        try {
+            const res = await fetch(API + "places/" + name, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + data.token,
+                },
+                body: JSON.stringify({
+                    [event.target.name]: event.target.value,
+                }),
+            });
 
-        if (!response.ok) {
-            error("Failed to update place:", response.statusText);
-            return;
+            if (!res.ok) {
+                error(res.status, "Could not update place");
+            }
+
+            let index = places.findIndex((place) => place.name === name);
+            places[index] = await response.json();
+            toast.success("Place updated successfuly!");
+        } catch (err) {
+            toast.error(err.body.message);
         }
-
-        let index = places.findIndex((place) => place.name === name);
-        places[index] = await response.json();
     }
 </script>
 
 <div class="container">
-    <form method="POST">
+    <form
+        method="POST"
+        use:enhance={() => {
+            return ({ result }) => {
+                if (result.type !== "success") {
+                    toast.error(
+                        result.status + " : Could not add a new place!",
+                    );
+                } else {
+                    places.push(result.data);
+                    toast.success("Place added successfuly!");
+                }
+            };
+        }}
+    >
         <p>Add new place</p>
         <div class="row bg-light border rounded-1 p-2 g-2">
             <div class="col-xxl flex-fill">

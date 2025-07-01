@@ -13,12 +13,16 @@ export async function load({ parent, fetch }) {
     error(403, "Not authorized");
   }
 
-  const response = await fetch(API + "places", {
+  const res = await fetch(API + "places", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
 
-  return { places: await response.json() };
+  if (!res.ok) {
+    error(res.status, "Could not fetch places");
+  }
+
+  return { places: await res.json() };
 }

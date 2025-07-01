@@ -6,25 +6,23 @@ export const actions = {
   default: async ({ request, cookies }) => {
     const data = await request.formData();
 
-    const res = await fetch(API + "retreats", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookies.get("token"),
-      },
-      body: JSON.stringify({
-        type: "fixed",
-        start_date: data.get("startDate"),
-        end_date: data.get("endDate"),
-      }),
-    });
+    try {
+      const res = await fetch(API + "retreats", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + cookies.get("token"),
+        },
+        body: JSON.stringify({
+          type: "fixed",
+          start_date: data.get("startDate"),
+          end_date: data.get("endDate"),
+        }),
+      });
 
-    const body = await res.json();
-
-    if (body.errors) {
-      return fail(400, body);
+      return await res.json();
+    } catch (err) {
+      return fail(err.status, err);
     }
-
-    return { body };
   },
 };

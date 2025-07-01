@@ -38,6 +38,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.6",
     "dayjs": "^1.11.13",
-    "dotenv": "^16.5.0"
+    "dotenv": "^16.5.0",
+    "svelte-5-french-toast": "^2.0.4"
   }
 }

@@ -1,4 +1,5 @@
 <script>
+    import { setContext } from "svelte";
     import Nav from "./Nav.svelte";
     let { children, data } = $props();
 </script>
