@@ -249,8 +249,8 @@
         <div class="col">
             <div class="table-responsive text-nowrap">
                 <table
-                    class="table table-striped table-hover table-borderless
-                align-middle text-capitalize table-sm"
+                    class="table table-striped table-hover borderless
+                align-middle text-capitalize"
                 >
                     <thead>
                         <tr>

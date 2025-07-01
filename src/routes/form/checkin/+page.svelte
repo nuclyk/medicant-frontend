@@ -2,15 +2,19 @@
     import FloatingInputField from "$lib/components/FloatingInputField.svelte";
     import SelectInput from "$lib/components/SelectInput.svelte";
     import InputGroup from "$lib/components/InputGroup.svelte";
+
     import blocks from "$lib/assets/images/blocks.png";
     import cleanse from "$lib/assets/images/cleanse.png";
     import donationbox from "$lib/assets/images/donationbox.jpg";
     import basket from "$lib/assets/images/basket.jpg";
     import clothes from "$lib/assets/images/whitecloths.jpg";
     import laundry from "$lib/assets/images/laundryroom.jpg";
+    import inspiration from "$lib/assets/images/inspiration.png";
 
     import { fade } from "svelte/transition";
     import { countries } from "$lib/countries.js";
+    import { enhance } from "$app/forms";
+    import toast from "svelte-5-french-toast";
 
     let { data, form } = $props();
     let showForm = $state(true);
@@ -29,6 +33,8 @@
         retreat_id: form?.formData?.retreat_id || (() => selectedRetreatId),
         leave_date: form?.formData?.leave_date || "",
     });
+
+    console.log(form);
 
     function formatRetreatName(retreat) {
         if (retreat) {
@@ -53,18 +59,40 @@
     }
 </script>
 
-<div class="row vstack g-3 mt-3">
+<div class="row vstack g-3 my-3">
     <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto text-center">
         <h4>Welcome to Papae Meditation Retreat</h4>
         <h6>Follow the steps below for self check-in</h6>
     </div>
-    <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Please fill out the form</h5>
-                <div class="card-text">
-                    {#if showForm}
-                        <form method="POST" transition:fade>
+
+    {#if showForm}
+        <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Please fill out the form</h5>
+                    <div class="card-text">
+                        <form
+                            method="POST"
+                            use:enhance={() => {
+                                return ({ result }) => {
+                                    console.log(result);
+                                    if (result.type !== "success") {
+                                        let msg = result.data
+                                            ? result.data.error
+                                            : result.error.message;
+
+                                        toast.error(
+                                            result.status + " : " + msg,
+                                        );
+                                    } else {
+                                        toast.success(
+                                            "Check-in form submitted!",
+                                        );
+                                        showForm = false;
+                                    }
+                                };
+                            }}
+                        >
                             <div class="row">
                                 <div class="col">
                                     <FloatingInputField
@@ -179,20 +207,17 @@
                                 </div>
                             </div>
                         </form>
-                    {:else}
-                        <div class="row" id="success">
-                            <div class="col">
-                                <div class="alert alert-success" role="alert">
-                                    Thank you for filling out the form. Please
-                                    continue with the steps below.
-                                </div>
-                            </div>
-                        </div>
-                    {/if}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {:else}
+        <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
+            <div class="alert alert-success" role="alert">
+                Thank you for filling out the form.
+            </div>
+        </div>
+    {/if}
 
     <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
         <div class="card">
@@ -212,26 +237,39 @@
                     You can then keep them even after the retreat.
                 </p>
             </div>
+            <div class="card-body w-75 mx-auto">
+                <figure class="figure border rounded p-3">
+                    <img
+                        src={blocks}
+                        class="figure-img img-fluid rounded"
+                        alt="Building block of meditation"
+                    />
+                    <figcaption class="figure-caption">
+                        Building blocks of meditaiton
+                    </figcaption>
+                </figure>
 
-            <div class="card-body text-center">
-                <img
-                    src={blocks}
-                    class="card-img-top"
-                    style="width: 8rem;"
-                    alt="Building block of meditation"
-                />
-                <img
-                    src={cleanse}
-                    class="card-img-top"
-                    style="width: 8rem;"
-                    alt="Buddhist cleanse"
-                />
-                <img
-                    src={cleanse}
-                    class="card-img-top"
-                    style="width: 8rem;"
-                    alt="Building block of meditation"
-                />
+                <figure class="figure border rounded p-3">
+                    <img
+                        src={cleanse}
+                        class="figure-img img-fluid rounded"
+                        alt="the budhist cleanse"
+                    />
+                    <figcaption class="figure-caption">
+                        The Budhist Cleanse
+                    </figcaption>
+                </figure>
+
+                <figure class="figure border rounded p-3">
+                    <img
+                        src={inspiration}
+                        class="figure-img img-fluid rounded"
+                        alt="inspirational meditation"
+                    />
+                    <figcaption class="figure-caption">
+                        Inspirational meditation for beginners
+                    </figcaption>
+                </figure>
             </div>
         </div>
     </div>
@@ -263,11 +301,18 @@
                     </li>
                 </ul>
 
-                <img
-                    src={donationbox}
-                    alt="Donation box"
-                    class="card-img my-3"
-                />
+                <div class="card-body w-75 mx-auto">
+                    <figure class="figure border rounded p-3">
+                        <img
+                            src={donationbox}
+                            class="figure-img img-fluid rounded"
+                            alt="donation box"
+                        />
+                        <figcaption class="figure-caption">
+                            Donation box
+                        </figcaption>
+                    </figure>
+                </div>
 
                 <ul class="list-group">
                     <li class="list-group-item active">
@@ -416,6 +461,23 @@
                         Basket for dirty clothes
                     </figcaption>
                 </figure>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Get your room</h5>
+                <p class="card-text">
+                    If there is no one at reception and no thai staff in the
+                    laundry room to show you to your room, you can call the Thai
+                    staff via Whatsapp :
+                </p>
+                <p class="card-text">
+                    - Nara : +66 90 326 5251 <br />
+                    - P'Than : +66 84 093 8383
+                </p>
             </div>
         </div>
     </div>
