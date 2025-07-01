@@ -1,5 +1,4 @@
 import { API } from "$lib/api";
-import dayjs from "dayjs";
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {

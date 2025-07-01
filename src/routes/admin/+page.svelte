@@ -3,14 +3,14 @@
     import dayjs from "dayjs";
     import utc from "dayjs/plugin/utc";
 
-    dayjs.extend(utc);
-
-    import { getContext, onMount } from "svelte";
+    import { onMount } from "svelte";
     import { API } from "$lib/api";
-    import toast from "svelte-5-french-toast";
     import { error } from "@sveltejs/kit";
+    import toast from "svelte-5-french-toast";
 
     let { data } = $props();
+
+    dayjs.extend(utc);
 
     let users = $state(
         data?.users

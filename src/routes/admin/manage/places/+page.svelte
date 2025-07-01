@@ -1,10 +1,8 @@
 <script>
     import { API } from "$lib/api";
     import { error } from "@sveltejs/kit";
-    import { page } from "$app/state";
-    import { isHttpError } from "@sveltejs/kit";
-    import toast from "svelte-5-french-toast";
     import { enhance } from "$app/forms";
+    import toast from "svelte-5-french-toast";
 
     let { data } = $props();
     let places = $state(data.places.filter((place) => place.name != "None"));
@@ -51,7 +49,7 @@
             }
 
             let index = places.findIndex((place) => place.name === name);
-            places[index] = await response.json();
+            places[index] = await res.json();
             toast.success("Place updated successfuly!");
         } catch (err) {
             toast.error(err.body.message);

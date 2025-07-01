@@ -2,9 +2,7 @@
     import { API } from "$lib/api";
     import { error } from "@sveltejs/kit";
     import dayjs from "dayjs";
-    import utc from "dayjs/plugin/utc";
     import toast from "svelte-5-french-toast";
-    import { page } from "$app/state";
     import { enhance } from "$app/forms";
 
     let { data } = $props();

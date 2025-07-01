@@ -11,7 +11,6 @@
     import laundry from "$lib/assets/images/laundryroom.jpg";
     import inspiration from "$lib/assets/images/inspiration.png";
 
-    import { fade } from "svelte/transition";
     import { countries } from "$lib/countries.js";
     import { enhance } from "$app/forms";
     import toast from "svelte-5-french-toast";
@@ -33,8 +32,6 @@
         retreat_id: form?.formData?.retreat_id || (() => selectedRetreatId),
         leave_date: form?.formData?.leave_date || "",
     });
-
-    console.log(form);
 
     function formatRetreatName(retreat) {
         if (retreat) {
@@ -74,21 +71,28 @@
                         <form
                             method="POST"
                             use:enhance={() => {
-                                return ({ result }) => {
-                                    console.log(result);
-                                    if (result.type !== "success") {
-                                        let msg = result.data
-                                            ? result.data.error
-                                            : result.error.message;
-
+                                return async ({ result, update }) => {
+                                    if (result.type === "failure") {
                                         toast.error(
-                                            result.status + " : " + msg,
+                                            result.status +
+                                                " : " +
+                                                result?.data?.error,
                                         );
-                                    } else {
+                                    }
+
+                                    if (result.type === "success") {
                                         toast.success(
                                             "Check-in form submitted!",
                                         );
                                         showForm = false;
+                                    }
+
+                                    if (result.type === "error") {
+                                        toast.error(
+                                            result.status +
+                                                " : " +
+                                                result?.error?.message,
+                                        );
                                     }
                                 };
                             }}
@@ -198,11 +202,7 @@
                                     <button
                                         type="submit"
                                         class="btn btn-primary btn-lg w-100"
-                                        onclick={() => {
-                                            if (form?.error) {
-                                                showForm = false;
-                                            }
-                                        }}>Submit</button
+                                        >Submit</button
                                     >
                                 </div>
                             </div>

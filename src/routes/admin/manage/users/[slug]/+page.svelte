@@ -1,12 +1,9 @@
 <script>
     import { countries } from "$lib/countries.js";
     import dayjs from "dayjs";
-    import utc from "dayjs/plugin/utc";
-    import { page } from "$app/state";
     import toast from "svelte-5-french-toast";
     import { enhance } from "$app/forms";
-
-    let { data, form } = $props();
+    let { data } = $props();
     let user = $state(data.user);
     let roles = $state(data.roles);
     let retreats = $state(data.retreats);
