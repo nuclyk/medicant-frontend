@@ -42,12 +42,7 @@ export const actions = {
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) {
-        console.log(res);
-        return fail(res.status, await res.json());
-      }
-
-      return body;
+      return await res.json();
     } catch (err) {
       return error(err.status, err);
     }
