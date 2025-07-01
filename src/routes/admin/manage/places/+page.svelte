@@ -27,7 +27,7 @@
 
             let index = places.findIndex((place) => place.name === name);
             places.splice(index, 1);
-            toast.success("Place added successfuly!");
+            toast.success("Place deleted successfuly!");
         } catch (err) {
             toast.error(err.body.message);
         }
@@ -65,9 +65,7 @@
         use:enhance={() => {
             return ({ result }) => {
                 if (result.type !== "success") {
-                    toast.error(
-                        result.status + " : Could not add a new place!",
-                    );
+                    toast.error(result.status + " : " + result.data.error);
                 } else {
                     places.push(result.data);
                     toast.success("Place added successfuly!");

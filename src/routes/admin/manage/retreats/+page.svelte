@@ -68,7 +68,7 @@
         use:enhance={() => {
             return ({ result }) => {
                 if (result.type !== "success") {
-                    toast.error(result.status + " : Could not add the retreat");
+                    toast.error(result.status + " : " + result.data.error);
                 } else {
                     retreats.push(result.data);
                     toast.success("Retreat added successfuly!");

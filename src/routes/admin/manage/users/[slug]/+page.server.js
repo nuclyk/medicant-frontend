@@ -1,6 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 import { API } from "$lib/api";
 import { error } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ cookies, parent, fetch, params }) {
@@ -47,19 +48,19 @@ export const actions = {
       place: data.get("place"),
     };
 
-    try {
-      const res = await fetch(API + "users/" + params.slug, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + cookies.get("token"),
-        },
-        body: JSON.stringify(updateUser),
-      });
+    const res = await fetch(API + "users/" + params.slug, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + cookies.get("token"),
+      },
+      body: JSON.stringify(updateUser),
+    });
 
-      return await res.json();
-    } catch (err) {
-      fail(err.status, err);
+    if (!res.ok) {
+      return fail(res.status, { error: "Could not update the participant" });
     }
+
+    return await res.json();
   },
 };
