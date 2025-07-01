@@ -3,54 +3,71 @@
     import { error } from "@sveltejs/kit";
     import dayjs from "dayjs";
     import utc from "dayjs/plugin/utc";
+    import toast from "svelte-5-french-toast";
+    import { page } from "$app/state";
+    import { enhance } from "$app/forms";
 
-    let { data } = $props();
+    let { data, form } = $props();
 
     let retreats = $state(
         data.retreats.filter((retreat) => retreat.type != "flexible"),
     );
 
     async function handleDelete(id) {
-        const response = await fetch(API + "retreats/" + id, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + data.token,
-            },
-        });
+        try {
+            const res = await fetch(API + "retreat/" + id, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + data.token,
+                },
+            });
 
-        if (!response.ok) {
-            error("Failed to delete retreat:", response.statusText);
-            return;
+            if (!res.ok) {
+                error(res.status, "Failed to delete retreat");
+            }
+
+            let index = retreats.findIndex((retreat) => retreat.id === id);
+            retreats.splice(index, 1);
+        } catch (err) {
+            toast.error(err.body.message);
         }
-
-        let index = retreats.findIndex((retreat) => retreat.id === id);
-        retreats.splice(index, 1);
     }
 
     async function handleChange(id, event) {
-        const response = await fetch(API + "retreats/" + id, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + data.token,
-            },
-            body: JSON.stringify({
-                [event.target.name]: event.target.value,
-            }),
-        });
+        try {
+            const res = await fetch(API + "retreats/" + id, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + data.token,
+                },
+                body: JSON.stringify({
+                    [event.target.name]: event.target.value,
+                }),
+            });
 
-        if (!response.ok) {
-            error("Failed to update retreat:", response.statusText);
-            return;
+            if (!res.ok) {
+                error(res.status, "Failed to update the retreat");
+            }
+        } catch (err) {
+            toast.error(err.status + " : " + err.body.message);
         }
     }
-
-    dayjs.extend(utc);
 </script>
 
 <div class="container">
-    <form method="POST">
+    <form
+        method="POST"
+        use:enhance={() => {
+            return ({ result }) => {
+                console.log(result);
+                if (result.type !== "success") {
+                    toast.error(result.status + " : Could not add the retreat");
+                }
+            };
+        }}
+    >
         <p>Add new retreat</p>
         <div class="row bg-light border rounded-1 p-2 g-2">
             <div class="col-xxl input-group">

@@ -5,7 +5,7 @@
 
     dayjs.extend(utc);
 
-    import { onMount } from "svelte";
+    import { getContext, onMount } from "svelte";
     import { API } from "$lib/api";
 
     let { data } = $props();
@@ -20,15 +20,15 @@
     let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
 
     let veg = $derived(
-        users.filter((user) => user.diet === "Vegetarian").length,
+        users?.filter((user) => user.diet === "Vegetarian").length,
     );
 
     let totalInPlace = $derived.by((placeName) => {
-        return users.filter((user) => user.place === placeName).length;
+        return users?.filter((user) => user.place === placeName).length;
     });
 
     function countUsersInPlace(placeName) {
-        return users.filter((user) => user.place === placeName).length;
+        return users?.filter((user) => user.place === placeName).length;
     }
 
     onMount(() => {
@@ -43,12 +43,12 @@
     });
 
     let currentlyStaying = $derived(
-        users.filter((user) => !user.check_out_date).length,
+        users?.filter((user) => !user.check_out_date).length,
     );
 
     let onRetreat = $state(
         (retreatType) =>
-            users.filter((user) => {
+            users?.filter((user) => {
                 let retreat = findRetreat(user.retreat_id);
                 if (retreat.type === retreatType && user.check_out_date == "")
                     return true;
@@ -56,7 +56,7 @@
     );
 
     let leaving = $derived(
-        users.filter(
+        users?.filter(
             (user) =>
                 new Date(user.leave_date).toDateString() ===
                     new Date().toDateString() && !user.check_out_date,
@@ -64,7 +64,7 @@
     );
 
     let newArrivals = $derived(
-        users.filter(
+        users?.filter(
             (user) =>
                 new Date(user.check_in_date).toDateString() ===
                 new Date().toDateString(),

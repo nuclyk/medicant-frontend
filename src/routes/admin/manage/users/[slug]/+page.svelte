@@ -2,7 +2,9 @@
     import { countries } from "$lib/countries.js";
     import dayjs from "dayjs";
     import utc from "dayjs/plugin/utc";
-    let { data } = $props();
+    import { page } from "$app/state";
+    import toast from "svelte-5-french-toast";
+    let { data, error } = $props();
     let user = $state(data.user);
     let roles = $state(data.roles);
     let retreats = $state(data.retreats);
@@ -10,7 +12,7 @@
     let retreat = retreats.find((retreat) => retreat.id === user.retreat_id);
     let genders = ["Female", "Male", "Other"];
 
-    dayjs.extend(utc);
+    console.log(page);
 </script>
 
 <form method="POST">
