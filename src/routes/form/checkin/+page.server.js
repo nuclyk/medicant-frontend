@@ -1,5 +1,6 @@
 import { API } from "$lib/api";
 import { fail } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
@@ -32,20 +33,23 @@ export const actions = {
       place: "None",
     };
 
-    const res = await fetch(API + "users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    try {
+      const res = await fetch(API + "users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    const body = await res.json();
+      if (!res.ok) {
+        console.log(res);
+        return fail(res.status, await res.json());
+      }
 
-    if (body.error) {
-      return fail(400, { error: body.error, formData: data });
+      return body;
+    } catch (err) {
+      return error(err.status, err);
     }
-
-    return body;
   },
 };
