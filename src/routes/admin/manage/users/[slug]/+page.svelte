@@ -6,7 +6,7 @@
     import toast from "svelte-5-french-toast";
     import { enhance } from "$app/forms";
 
-    let { data, error } = $props();
+    let { data, form } = $props();
     let user = $state(data.user);
     let roles = $state(data.roles);
     let retreats = $state(data.retreats);
@@ -20,7 +20,7 @@
     use:enhance={() => {
         return ({ result }) => {
             if (result.type !== "success") {
-                toast.error(result.status + " : Could not update the user!");
+                toast.error(result.status + " : " + result.data.error);
             } else {
                 toast.success("User updated successfuly!");
             }
