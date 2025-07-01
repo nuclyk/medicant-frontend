@@ -7,13 +7,19 @@
 
     import { getContext, onMount } from "svelte";
     import { API } from "$lib/api";
+    import toast from "svelte-5-french-toast";
+    import { error } from "@sveltejs/kit";
 
     let { data } = $props();
 
     let users = $state(
-        data?.users?.filter(
-            (user) => user.role != "admin" && user.check_out_date === "",
-        ),
+        data?.users
+            ?.filter(
+                (user) => user.role != "admin" && user.check_out_date === "",
+            )
+            .sort(
+                (a, b) => new Date(b.check_in_date) - new Date(a.check_in_date),
+            ),
     );
 
     let places = $derived(data?.places);
@@ -73,7 +79,7 @@
 
     async function handleCheckout(id) {
         try {
-            const response = await fetch(API + "users/" + id, {
+            const res = await fetch(API + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -85,20 +91,21 @@
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (!res.ok) {
+                error(res.status, "Could not checkout the user!");
             }
-        } catch (error) {
-            console.error("Error when updating the user: ", error);
-            throw error;
-        }
 
-        location.reload();
+            let index = users.findIndex((user) => user.id === id);
+            users.splice(index, 1);
+            toast.success("Participant successfuly checked out!");
+        } catch (err) {
+            toast.error(err.status + " : " + err.body.message);
+        }
     }
 
     async function handleUserUpdate(id, event) {
         try {
-            const response = await fetch(API + "users/" + id, {
+            const res = await fetch(API + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -109,12 +116,14 @@
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (!res.ok) {
+                console.log(res);
+                error(res.status, "Could not update the user!");
             }
-        } catch (error) {
-            console.error("Error when updating the user: ", error);
-            throw error;
+
+            toast.success("Updated successfuly!");
+        } catch (err) {
+            toast.error(err.status + " : " + err.body.message);
         }
     }
 
@@ -276,20 +285,14 @@
                                     )}
                                 </td>
                                 <td>
-                                    {#if user.check_out_date != ""}
-                                        {dayjs(user.check_out_date).format(
-                                            "DD MMM HH:mm",
-                                        )}
-                                    {:else}
-                                        <button
-                                            type="button"
-                                            class="btn btn-primary btn-sm"
-                                            onclick={() => {
-                                                handleCheckout(user.id);
-                                            }}
-                                            >Checkout
-                                        </button>
-                                    {/if}
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary btn-sm"
+                                        onclick={() => {
+                                            handleCheckout(user.id);
+                                        }}
+                                        >Checkout
+                                    </button>
                                 </td>
                                 <td>
                                     <div class="input-group">
@@ -308,7 +311,6 @@
                                                     event,
                                                 );
                                             }}
-                                            disabled={user.check_out_date != ""}
                                         />
 
                                         {#if dayjs().isAfter(user.leave_date, "day") && user.check_out_date == ""}

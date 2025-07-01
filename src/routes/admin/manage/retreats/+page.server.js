@@ -22,7 +22,7 @@ export const actions = {
 
       return await res.json();
     } catch (err) {
-      return fail(400, err);
+      return fail(err.status, err);
     }
   },
 };

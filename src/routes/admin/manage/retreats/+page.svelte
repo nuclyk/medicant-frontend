@@ -7,15 +7,17 @@
     import { page } from "$app/state";
     import { enhance } from "$app/forms";
 
-    let { data, form } = $props();
+    let { data } = $props();
 
     let retreats = $state(
-        data.retreats.filter((retreat) => retreat.type != "flexible"),
+        data.retreats
+            .filter((retreat) => retreat.type != "flexible")
+            .sort((a, b) => new Date(a.start_date) - new Date(b.start_date)),
     );
 
     async function handleDelete(id) {
         try {
-            const res = await fetch(API + "retreat/" + id, {
+            const res = await fetch(API + "retreats/" + id, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -29,6 +31,8 @@
 
             let index = retreats.findIndex((retreat) => retreat.id === id);
             retreats.splice(index, 1);
+
+            toast.success("Retreat deleted successfuly!");
         } catch (err) {
             toast.error(err.body.message);
         }
@@ -50,6 +54,8 @@
             if (!res.ok) {
                 error(res.status, "Failed to update the retreat");
             }
+
+            toast.success("Retreat updated successfuly!");
         } catch (err) {
             toast.error(err.status + " : " + err.body.message);
         }
@@ -61,9 +67,11 @@
         method="POST"
         use:enhance={() => {
             return ({ result }) => {
-                console.log(result);
                 if (result.type !== "success") {
                     toast.error(result.status + " : Could not add the retreat");
+                } else {
+                    retreats.push(result.data);
+                    toast.success("Retreat added successfuly!");
                 }
             };
         }}

@@ -47,16 +47,19 @@ export const actions = {
       place: data.get("place"),
     };
 
-    const body = await fetch(API + "users/" + params.slug, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookies.get("token"),
-      },
-      body: JSON.stringify(updateUser),
-    });
+    try {
+      const res = await fetch(API + "users/" + params.slug, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + cookies.get("token"),
+        },
+        body: JSON.stringify(updateUser),
+      });
 
-    const result = await body.json();
-    return result;
+      return await res.json();
+    } catch (err) {
+      fail(err.status, err);
+    }
   },
 };

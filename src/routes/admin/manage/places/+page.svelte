@@ -4,6 +4,7 @@
     import { page } from "$app/state";
     import { isHttpError } from "@sveltejs/kit";
     import toast from "svelte-5-french-toast";
+    import { enhance } from "$app/forms";
 
     let { data } = $props();
     let places = $state(data.places.filter((place) => place.name != "None"));
@@ -57,7 +58,16 @@
 </script>
 
 <div class="container">
-    <form method="POST">
+    <form
+        method="POST"
+        use:enhance={() => {
+            return ({ result }) => {
+                if (result.type !== "success") {
+                    toast.error(result.status + " : Could not add a new place");
+                }
+            };
+        }}
+    >
         <p>Add new place</p>
         <div class="row bg-light border rounded-1 p-2 g-2">
             <div class="col-xxl flex-fill">

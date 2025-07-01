@@ -4,6 +4,8 @@
     import utc from "dayjs/plugin/utc";
     import { page } from "$app/state";
     import toast from "svelte-5-french-toast";
+    import { enhance } from "$app/forms";
+
     let { data, error } = $props();
     let user = $state(data.user);
     let roles = $state(data.roles);
@@ -11,11 +13,20 @@
     let places = $state(data.places);
     let retreat = retreats.find((retreat) => retreat.id === user.retreat_id);
     let genders = ["Female", "Male", "Other"];
-
-    console.log(page);
 </script>
 
-<form method="POST">
+<form
+    method="POST"
+    use:enhance={() => {
+        return ({ result }) => {
+            if (result.type !== "success") {
+                toast.error(result.status + " : Could not update the user!");
+            } else {
+                toast.success("User updated successfuly!");
+            }
+        };
+    }}
+>
     <div class="row g-3 mt-3">
         <div class="col">
             <div class="form-floating mb-3">
