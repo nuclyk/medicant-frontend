@@ -1,13 +1,7 @@
+import { parseJwt } from "$lib/parseJWT";
+
 export function handle({ event, resolve }) {
   const token = event.cookies.get("token");
-
-  const parseJwt = (token) => {
-    try {
-      return JSON.parse(atob(token.split(".")[1]));
-    } catch (e) {
-      return null;
-    }
-  };
 
   if (token) {
     let user = parseJwt(token);

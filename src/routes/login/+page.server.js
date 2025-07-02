@@ -1,5 +1,6 @@
 import { error, redirect } from "@sveltejs/kit";
 import { API } from "$env/static/private";
+import { parseJwt } from "$lib/parseJWT";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
@@ -32,8 +33,14 @@ export const actions = {
     }
 
     const body = await res.json();
+    let token = parseJwt(body.token);
 
-    cookies.set("token", body.token, { path: "/" });
+    cookies.set("token", body.token, {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      maxAge: token.exp - token.iat,
+    });
     throw redirect(302, "/admin");
   },
 };
