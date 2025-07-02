@@ -133,7 +133,7 @@
     }
 </script>
 
-<div class="container">
+<div class="container-fluid">
     <div class="row mb-3 mt-3 g-3 vh-25">
         <div class="col">
             <div class="card">

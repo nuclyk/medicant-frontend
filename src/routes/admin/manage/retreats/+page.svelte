@@ -59,7 +59,7 @@
     }
 </script>
 
-<div class="container">
+<div class="container-fluid">
     <form
         method="POST"
         use:enhance={() => {
