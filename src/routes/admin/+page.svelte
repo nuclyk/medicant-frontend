@@ -252,85 +252,84 @@
                 >
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Retreat</th>
                             <th scope="col">Check-In</th>
                             <th scope="col">Check-Out</th>
                             <th scope="col">Leave date</th>
                             <th scope="col">Room</th>
-                            <th scope="col">Phone</th>
                             <th scope="col">Role</th>
-                            <th scope="col">Gender</th>
+                            <th scope="col">Donation</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {#each users as user, index (user.id)}
                             <tr>
-                                <th scope="row">{index + 1}</th>
                                 <td>
                                     <a href={"admin/manage/users/" + user.id}>
                                         {user.first_name}
                                         {user.last_name}
                                     </a>
                                 </td>
+
                                 <td>
                                     {findRetreat(user.retreat_id).retreat_code}
                                 </td>
+
                                 <td>
                                     {dayjs(user.check_in_date).format(
                                         "DD MMM HH:mm",
                                     )}
                                 </td>
+
                                 <td>
                                     <button
                                         type="button"
-                                        class="btn btn-primary btn-sm"
+                                        class="btn btn-primary btn-sm w-100"
                                         onclick={() => {
                                             handleCheckout(user.id);
                                         }}
                                         >Checkout
                                     </button>
                                 </td>
-                                <td>
-                                    <div class="input-group">
-                                        <input
-                                            class="form-control flex-fill"
-                                            type="date"
-                                            name="leave_date"
-                                            value={dayjs(
-                                                user.leave_date,
-                                            ).format("YYYY-MM-DD")}
-                                            onchange={(event) => {
-                                                user.leave_date =
-                                                    event.target.value;
-                                                handleUserUpdate(
-                                                    user.id,
-                                                    event,
-                                                );
-                                            }}
-                                        />
 
-                                        {#if dayjs().isAfter(user.leave_date, "day") && user.check_out_date == ""}
-                                            <button
-                                                aria-label="Info"
-                                                type="button"
-                                                class="btn btn-warning btn-sm"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-html="true"
-                                                data-bs-placement="top"
-                                                data-bs-title="<p>Check if the participant is still in the retreat.
+                                <td>
+                                    <input
+                                        class="form-control form-control-sm w-100"
+                                        type="date"
+                                        name="leave_date"
+                                        value={dayjs(user.leave_date).format(
+                                            "YYYY-MM-DD",
+                                        )}
+                                        onchange={(event) => {
+                                            user.leave_date =
+                                                event.target.value;
+                                            handleUserUpdate(user.id, event);
+                                        }}
+                                    />
+
+                                    {#if dayjs().isAfter(user.leave_date, "day") && user.check_out_date == ""}
+                                        <button
+                                            aria-label="Info"
+                                            type="button"
+                                            class="btn btn-warning btn-sm"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-html="true"
+                                            data-bs-placement="top"
+                                            data-bs-title="<p>Check if the participant is still in the retreat.
                                         As per leave date, they should be checked out already.</p><p>Change the leave date
                                         or check them out.</p>"
-                                            >
-                                                <InfoIcon></InfoIcon>
-                                            </button>
-                                        {/if}
-                                    </div>
+                                        >
+                                            <InfoIcon></InfoIcon>
+                                        </button>
+                                    {/if}
                                 </td>
+
                                 <td>
                                     <select
-                                        class="form-control w-auto"
+                                        class="form-select form-select-sm"
+                                        style="min-width: 12rem;"
                                         aria-label="Place select"
                                         name="place"
                                         onchange={(event) => {
@@ -354,21 +353,11 @@
                                         {/each}
                                     </select>
                                 </td>
-                                <td>
-                                    <input
-                                        class="form-control w-auto"
-                                        size="11"
-                                        type="text"
-                                        name="phone"
-                                        value={user.phone}
-                                        onchange={(event) => {
-                                            handleUserUpdate(user.id, event);
-                                        }}
-                                    />
-                                </td>
+
                                 <td>
                                     <select
-                                        class="form-select w-auto"
+                                        class="form-select form-select-sm"
+                                        style="min-width: 8rem;"
                                         aria-label="Role select"
                                         name="role"
                                         onchange={(event) => {
@@ -386,8 +375,9 @@
                                         {/each}
                                     </select>
                                 </td>
-                                <td>{user.gender}</td>
-                            </tr>
+
+                                <td>Donation</td><td> </td></tr
+                            >
                         {/each}
                     </tbody>
                 </table>
