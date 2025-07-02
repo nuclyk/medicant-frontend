@@ -71,7 +71,7 @@
                         <form
                             method="POST"
                             use:enhance={() => {
-                                return async ({ result, update }) => {
+                                return async ({ result }) => {
                                     if (result.type === "failure") {
                                         toast.error(
                                             result.status +

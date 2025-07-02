@@ -16,10 +16,10 @@ export function handle({ event, resolve }) {
 }
 
 export function handleError({ error }) {
-  console.error(error.stack);
+  console.error(error);
 
   return {
-    message: "Internal server error",
-    code: "500",
+    message: error.message,
+    code: error.code,
   };
 }
