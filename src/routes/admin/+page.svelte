@@ -376,8 +376,13 @@
                                     </select>
                                 </td>
 
-                                <td>Donation</td><td> </td></tr
-                            >
+                                <td
+                                    >{dayjs(user.leave_date).diff(
+                                        user.check_in_date,
+                                        "day",
+                                    ) * 500}
+                                </td>
+                            </tr>
                         {/each}
                     </tbody>
                 </table>
