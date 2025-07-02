@@ -40,7 +40,7 @@ export const actions = {
       body: JSON.stringify(data),
     });
 
-    if (res.status < 500) {
+    if (res.status > 400 && res.status < 500) {
       const body = await res.json();
       return fail(res.status, { error: body.error });
     }
