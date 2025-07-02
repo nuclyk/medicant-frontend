@@ -217,9 +217,9 @@
                     <li
                         class="list-group-item d-flex justify-content-between align-items-center"
                     >
-                        Vegetarian:
+                        Veg / Non-veg:
                         <span class="badge text-bg-primary rounded-pill">
-                            {veg}
+                            {veg} / {users.length - veg}
                         </span>
                     </li>
                     <li
@@ -257,9 +257,33 @@
                             <th scope="col">Check-In</th>
                             <th scope="col">Check-Out</th>
                             <th scope="col">Leave date</th>
-                            <th scope="col">Room</th>
+                            <th scope="col"
+                                >Room
+                                <span
+                                    class="badge text-bg-primary rounded-pill"
+                                    aria-label="Info"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-html="true"
+                                    data-bs-placement="top"
+                                    data-bs-title="After check-in, please select correct room for the participant"
+                                >
+                                    ?
+                                </span>
+                            </th>
                             <th scope="col">Role</th>
-                            <th scope="col">Donation</th>
+                            <th scope="col"
+                                >Donation
+                                <span
+                                    class="badge text-bg-primary rounded-pill"
+                                    aria-label="Info"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-html="true"
+                                    data-bs-placement="top"
+                                    data-bs-title="Donation 500 baht per night based on the planned leave date."
+                                >
+                                    ?
+                                </span>
+                            </th>
                         </tr>
                     </thead>
 
@@ -295,35 +319,41 @@
                                 </td>
 
                                 <td>
-                                    <input
-                                        class="form-control form-control-sm w-100"
-                                        type="date"
-                                        name="leave_date"
-                                        value={dayjs(user.leave_date).format(
-                                            "YYYY-MM-DD",
-                                        )}
-                                        onchange={(event) => {
-                                            user.leave_date =
-                                                event.target.value;
-                                            handleUserUpdate(user.id, event);
-                                        }}
-                                    />
+                                    <div class="input-group">
+                                        <input
+                                            class="form-control form-control-sm"
+                                            type="date"
+                                            name="leave_date"
+                                            value={dayjs(
+                                                user.leave_date,
+                                            ).format("YYYY-MM-DD")}
+                                            id="leaveDate"
+                                            onchange={(event) => {
+                                                user.leave_date =
+                                                    event.target.value;
+                                                handleUserUpdate(
+                                                    user.id,
+                                                    event,
+                                                );
+                                            }}
+                                        />
 
-                                    {#if dayjs().isAfter(user.leave_date, "day") && user.check_out_date == ""}
-                                        <button
-                                            aria-label="Info"
-                                            type="button"
-                                            class="btn btn-warning btn-sm"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-html="true"
-                                            data-bs-placement="top"
-                                            data-bs-title="<p>Check if the participant is still in the retreat.
+                                        {#if dayjs().isSame(user.leave_date, "day") || (dayjs().isAfter(user.leave_date, "day") && user.check_out_date == "")}
+                                            <button
+                                                aria-label="Info"
+                                                type="button"
+                                                class="btn btn-warning btn-sm"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-html="true"
+                                                data-bs-placement="top"
+                                                data-bs-title="<p>Check if the participant is still in the retreat.
                                         As per leave date, they should be checked out already.</p><p>Change the leave date
                                         or check them out.</p>"
-                                        >
-                                            <InfoIcon></InfoIcon>
-                                        </button>
-                                    {/if}
+                                            >
+                                                i
+                                            </button>
+                                        {/if}
+                                    </div>
                                 </td>
 
                                 <td>
