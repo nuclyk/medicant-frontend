@@ -1,4 +1,4 @@
-import { API } from "$lib/api";
+import { API } from "$env/static/private";
 import { fail } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */

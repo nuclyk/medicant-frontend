@@ -1,5 +1,4 @@
 <script>
-    import { API } from "$lib/api";
     import { error } from "@sveltejs/kit";
     import dayjs from "dayjs";
     import toast from "svelte-5-french-toast";
@@ -15,7 +14,7 @@
 
     async function handleDelete(id) {
         try {
-            const res = await fetch(API + "retreats/" + id, {
+            const res = await fetch(data.apiUrl + "retreats/" + id, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,7 +37,7 @@
 
     async function handleChange(id, event) {
         try {
-            const res = await fetch(API + "retreats/" + id, {
+            const res = await fetch(data.apiUrl + "retreats/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

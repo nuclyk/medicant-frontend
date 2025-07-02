@@ -1,5 +1,5 @@
 import { redirect } from "@sveltejs/kit";
-import { API } from "$lib/api";
+import { API } from "$env/static/private";
 import { error } from "@sveltejs/kit";
 import { fail } from "@sveltejs/kit";
 

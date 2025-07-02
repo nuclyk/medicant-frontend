@@ -1,5 +1,4 @@
 <script>
-    import { API } from "$lib/api";
     import { error } from "@sveltejs/kit";
     import { enhance } from "$app/forms";
     import toast from "svelte-5-french-toast";
@@ -11,7 +10,7 @@
 
     async function handleDelete(name) {
         try {
-            const res = await fetch(API + "places/" + name, {
+            const res = await fetch(data.apiUrl + "places/" + name, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -33,7 +32,7 @@
 
     async function handleChange(name, event) {
         try {
-            const res = await fetch(API + "places/" + name, {
+            const res = await fetch(data.apiUrl + "places/" + name, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

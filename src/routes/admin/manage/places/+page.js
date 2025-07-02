@@ -1,6 +1,4 @@
-import { API } from "$lib/api";
 import { error } from "@sveltejs/kit";
-
 import { redirect } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageLoad} */
@@ -13,7 +11,7 @@ export async function load({ parent, fetch }) {
     error(403, "Not authorized");
   }
 
-  const res = await fetch(API + "places", {
+  const res = await fetch(p.apiUrl + "places", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

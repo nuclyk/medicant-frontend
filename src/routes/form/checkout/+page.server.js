@@ -1,4 +1,4 @@
-import { API } from "$lib/api";
+import { API } from "$env/static/private";
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {

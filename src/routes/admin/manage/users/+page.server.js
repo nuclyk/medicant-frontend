@@ -1,4 +1,4 @@
-import { API } from "$lib/api";
+import { API } from "$env/static/private";
 
 import { redirect, error } from "@sveltejs/kit";
 

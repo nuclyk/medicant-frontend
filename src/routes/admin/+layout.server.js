@@ -1,4 +1,4 @@
-import { API } from "$lib/api";
+import { API } from "$env/static/private";
 
 /** @type {import('./$types').LayoutServerLoad} */
 export async function load({ locals, fetch, cookies }) {

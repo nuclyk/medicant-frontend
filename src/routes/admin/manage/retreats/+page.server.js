@@ -1,9 +1,9 @@
-import { API } from "$lib/api";
+import { API } from "$env/static/private";
 import { fail } from "@sveltejs/kit";
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {
-  default: async ({ request, cookies }) => {
+  default: async ({ request, cookies, fetch }) => {
     const data = await request.formData();
 
     const res = await fetch(API + "retreats", {

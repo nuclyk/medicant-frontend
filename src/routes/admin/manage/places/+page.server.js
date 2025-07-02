@@ -1,4 +1,4 @@
-import { API } from "$lib/api.js";
+import { API } from "$env/static/private";
 import { fail } from "@sveltejs/kit";
 
 /** @satisfies {import('./$types').Actions} */

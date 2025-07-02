@@ -2,9 +2,7 @@
     import InfoIcon from "./InfoIcon.svelte";
     import dayjs from "dayjs";
     import utc from "dayjs/plugin/utc";
-
     import { onMount } from "svelte";
-    import { API } from "$lib/api";
     import { error } from "@sveltejs/kit";
     import toast from "svelte-5-french-toast";
 
@@ -79,7 +77,7 @@
 
     async function handleCheckout(id) {
         try {
-            const res = await fetch(API + "users/" + id, {
+            const res = await fetch(data.apiUrl + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -105,7 +103,7 @@
 
     async function handleUserUpdate(id, event) {
         try {
-            const res = await fetch(API + "users/" + id, {
+            const res = await fetch(data.apiUrl + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,6 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import { error } from "@sveltejs/kit";
-import { API } from "$lib/api";
+import { API } from "$env/static/private";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals, cookies, fetch }) {
