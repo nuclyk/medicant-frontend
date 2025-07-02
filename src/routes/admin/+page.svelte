@@ -133,7 +133,7 @@
     }
 </script>
 
-<div class="container">
+<div class="container-fluid">
     <div class="row mb-3 mt-3 g-3 vh-25">
         <div class="col">
             <div class="card">
@@ -217,9 +217,9 @@
                     <li
                         class="list-group-item d-flex justify-content-between align-items-center"
                     >
-                        Vegetarian:
+                        Veg / Non-veg:
                         <span class="badge text-bg-primary rounded-pill">
-                            {veg}
+                            {veg} / {users.length - veg}
                         </span>
                     </li>
                     <li
@@ -252,55 +252,82 @@
                 >
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Retreat</th>
                             <th scope="col">Check-In</th>
                             <th scope="col">Check-Out</th>
                             <th scope="col">Leave date</th>
-                            <th scope="col">Room</th>
-                            <th scope="col">Phone</th>
+                            <th scope="col"
+                                >Room
+                                <span
+                                    class="badge text-bg-primary rounded-pill"
+                                    aria-label="Info"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-html="true"
+                                    data-bs-placement="top"
+                                    data-bs-title="After check-in, please select correct room for the participant"
+                                >
+                                    ?
+                                </span>
+                            </th>
                             <th scope="col">Role</th>
-                            <th scope="col">Gender</th>
+                            <th scope="col"
+                                >Donation
+                                <span
+                                    class="badge text-bg-primary rounded-pill"
+                                    aria-label="Info"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-html="true"
+                                    data-bs-placement="top"
+                                    data-bs-title="Donation 500 baht per night based on the planned leave date."
+                                >
+                                    ?
+                                </span>
+                            </th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {#each users as user, index (user.id)}
                             <tr>
-                                <th scope="row">{index + 1}</th>
                                 <td>
                                     <a href={"admin/manage/users/" + user.id}>
                                         {user.first_name}
                                         {user.last_name}
                                     </a>
                                 </td>
+
                                 <td>
                                     {findRetreat(user.retreat_id).retreat_code}
                                 </td>
+
                                 <td>
                                     {dayjs(user.check_in_date).format(
                                         "DD MMM HH:mm",
                                     )}
                                 </td>
+
                                 <td>
                                     <button
                                         type="button"
-                                        class="btn btn-primary btn-sm"
+                                        class="btn btn-primary btn-sm w-100"
                                         onclick={() => {
                                             handleCheckout(user.id);
                                         }}
                                         >Checkout
                                     </button>
                                 </td>
+
                                 <td>
                                     <div class="input-group">
                                         <input
-                                            class="form-control flex-fill"
+                                            class="form-control form-control-sm"
                                             type="date"
                                             name="leave_date"
                                             value={dayjs(
                                                 user.leave_date,
                                             ).format("YYYY-MM-DD")}
+                                            id="leaveDate"
                                             onchange={(event) => {
                                                 user.leave_date =
                                                     event.target.value;
@@ -311,7 +338,7 @@
                                             }}
                                         />
 
-                                        {#if dayjs().isAfter(user.leave_date, "day") && user.check_out_date == ""}
+                                        {#if dayjs().isSame(user.leave_date, "day") || (dayjs().isAfter(user.leave_date, "day") && user.check_out_date == "")}
                                             <button
                                                 aria-label="Info"
                                                 type="button"
@@ -323,14 +350,16 @@
                                         As per leave date, they should be checked out already.</p><p>Change the leave date
                                         or check them out.</p>"
                                             >
-                                                <InfoIcon></InfoIcon>
+                                                i
                                             </button>
                                         {/if}
                                     </div>
                                 </td>
+
                                 <td>
                                     <select
-                                        class="form-control w-auto"
+                                        class="form-select form-select-sm"
+                                        style="min-width: 12rem;"
                                         aria-label="Place select"
                                         name="place"
                                         onchange={(event) => {
@@ -354,21 +383,11 @@
                                         {/each}
                                     </select>
                                 </td>
-                                <td>
-                                    <input
-                                        class="form-control w-auto"
-                                        size="11"
-                                        type="text"
-                                        name="phone"
-                                        value={user.phone}
-                                        onchange={(event) => {
-                                            handleUserUpdate(user.id, event);
-                                        }}
-                                    />
-                                </td>
+
                                 <td>
                                     <select
-                                        class="form-select w-auto"
+                                        class="form-select form-select-sm"
+                                        style="min-width: 8rem;"
                                         aria-label="Role select"
                                         name="role"
                                         onchange={(event) => {
@@ -386,7 +405,13 @@
                                         {/each}
                                     </select>
                                 </td>
-                                <td>{user.gender}</td>
+
+                                <td
+                                    >{dayjs(user.leave_date).diff(
+                                        user.check_in_date,
+                                        "day",
+                                    ) * 500}
+                                </td>
                             </tr>
                         {/each}
                     </tbody>
