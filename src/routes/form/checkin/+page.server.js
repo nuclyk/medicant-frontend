@@ -27,11 +27,41 @@ export const actions = {
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
       check_in_date: new Date(),
+      check_out_date: "",
       leave_date: formData.get("leave_date"),
-      is_checked_in: true,
       place: "None",
     };
 
+    // Check if the participant is already in db
+    const userExists = await fetch(API + "users/exists", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: data.email }),
+    });
+
+    // If the participant is already in db, just update the record
+    if (userExists.ok) {
+      const user = await userExists.json();
+
+      const updateUser = await fetch(API + "users/" + user.userID, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + user.token,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!updateUser.ok) {
+        return fail(res.status, { error: body.error });
+      }
+
+      return { msg: "success" };
+    }
+
+    // If it's a first time participant, create new record
     const res = await fetch(API + "users", {
       method: "POST",
       headers: {
