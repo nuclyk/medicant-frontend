@@ -1,5 +1,6 @@
 import { API } from "$env/static/private";
 import { fail } from "@sveltejs/kit";
+import dayjs from "dayjs";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
@@ -16,6 +17,8 @@ export const actions = {
   default: async ({ request, fetch }) => {
     const formData = await request.formData();
 
+    const now = dayjs().format("YYYY-MM-DD HH:mm").toString();
+
     const data = {
       first_name: formData.get("first_name"),
       last_name: formData.get("last_name"),
@@ -26,8 +29,8 @@ export const actions = {
       diet: formData.get("diet"),
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
-      check_in_date: new Date(),
-      check_out_date: "",
+      check_in_date: now,
+      check_out_date: null,
       leave_date: formData.get("leave_date"),
       place: "None",
     };
@@ -58,7 +61,7 @@ export const actions = {
         return fail(res.status, { error: body.error });
       }
 
-      return { msg: "success" };
+      return await updateUser.json();
     }
 
     // If it's a first time participant, create new record
