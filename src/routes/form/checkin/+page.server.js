@@ -2,6 +2,7 @@ import { API } from "$env/static/private";
 import { fail } from "@sveltejs/kit";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
@@ -19,7 +20,8 @@ export const actions = {
     const formData = await request.formData();
 
     dayjs.extend(utc);
-    const now = dayjs().utc().format("YYYY-MM-DD HH:mm");
+    dayjs.extend(timezone);
+    const now = dayjs().tz("Asia/Bangkok").format("YYYY-MM-DD HH:mm");
 
     const data = {
       first_name: formData.get("first_name"),
