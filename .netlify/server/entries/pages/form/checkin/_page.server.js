@@ -21,10 +21,32 @@ const actions = {
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
       check_in_date: /* @__PURE__ */ new Date(),
+      check_out_date: "",
       leave_date: formData.get("leave_date"),
-      is_checked_in: true,
       place: "None"
     };
+    const userExists = await fetch(API + "users/exists", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email: data.email })
+    });
+    if (userExists.ok) {
+      const user = await userExists.json();
+      const updateUser = await fetch(API + "users/" + user.userID, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + user.token
+        },
+        body: JSON.stringify(data)
+      });
+      if (!updateUser.ok) {
+        return fail(res.status, { error: body.error });
+      }
+      return { msg: "success" };
+    }
     const res = await fetch(API + "users", {
       method: "POST",
       headers: {
@@ -33,8 +55,8 @@ const actions = {
       body: JSON.stringify(data)
     });
     if (res.status > 400 && res.status < 500) {
-      const body = await res.json();
-      return fail(res.status, { error: body.error });
+      const body2 = await res.json();
+      return fail(res.status, { error: body2.error });
     }
     if (res.status >= 500) {
       return fail(res.status, { error: res.statusText });

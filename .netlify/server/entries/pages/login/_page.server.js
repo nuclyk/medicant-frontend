@@ -11,7 +11,6 @@ const actions = {
   },
   login: async ({ request, cookies, fetch }) => {
     const data = await request.formData();
-    console.log(API);
     const res = await fetch(API + "login", {
       method: "POST",
       headers: {

@@ -28,6 +28,7 @@
     "globals": "^16.0.0",
     "prettier": "^3.4.2",
     "prettier-plugin-svelte": "^3.3.3",
+    "sass": "^1.89.2",
     "svelte": "^5.33.10",
     "svelte-check": "^4.0.0",
     "typescript": "^5.0.0",
@@ -36,9 +37,10 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.6",
+    "bootstrap": "^5.3.7",
     "dayjs": "^1.11.13",
     "dotenv": "^16.5.0",
+    "lodash": "^4.17.21",
     "svelte-5-french-toast": "^2.0.4"
   }
 }

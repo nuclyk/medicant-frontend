@@ -1,14 +1,24 @@
 import { j as ensure_array_like, m as maybe_selected, a as pop, p as push } from "../../../chunks/index3.js";
+import "clsx";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc.js";
-import "../../../chunks/index.js";
+import "lodash";
 import "../../../chunks/Toaster.svelte_svelte_type_style_lang.js";
 import { e as escape_html, a as attr } from "../../../chunks/attributes.js";
+import "../../../chunks/index.js";
+function SortDown($$payload) {
+  $$payload.out += `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sort-down" viewBox="0 0 16 16"><path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"></path></svg>`;
+}
+function SortUp($$payload) {
+  $$payload.out += `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sort-up" viewBox="0 0 16 16"><path d="M3.5 12.5a.5.5 0 0 1-1 0V3.707L1.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L3.5 3.707zm3.5-9a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"></path></svg>`;
+}
 function _page($$payload, $$props) {
   push();
   let { data } = $$props;
-  dayjs.extend(utc);
   let users = data?.users?.filter((user) => user.role != "admin" && user.check_out_date === "").sort((a, b) => new Date(b.check_in_date) - new Date(a.check_in_date));
+  let onRetreat = (retreatType) => users?.filter((user) => {
+    let retreat = findRetreat(user.retreat_id);
+    if (retreat.type === retreatType && user.check_out_date == "") return true;
+  }).length;
   let places = data?.places;
   let roles = data?.roles?.filter((role) => role.name != "admin");
   let veg = users?.filter((user) => user.diet === "Vegetarian").length;
@@ -16,10 +26,6 @@ function _page($$payload, $$props) {
     return users?.filter((user) => user.place === placeName).length;
   })();
   let currentlyStaying = users?.filter((user) => !user.check_out_date).length;
-  let onRetreat = (retreatType) => users?.filter((user) => {
-    let retreat = findRetreat(user.retreat_id);
-    if (retreat.type === retreatType && user.check_out_date == "") return true;
-  }).length;
   let leaving = users?.filter((user) => new Date(user.leave_date).toDateString() === (/* @__PURE__ */ new Date()).toDateString() && !user.check_out_date).length;
   let newArrivals = users?.filter((user) => new Date(user.check_in_date).toDateString() === (/* @__PURE__ */ new Date()).toDateString()).length;
   function findRetreat(retreat_id) {
@@ -44,12 +50,37 @@ function _page($$payload, $$props) {
   } else {
     $$payload.out += "<!--[!-->";
   }
-  $$payload.out += `<!--]--></span></li></ul></div></div></div> <div class="row"><div class="col"><div class="table-responsive text-nowrap"><table class="table table-striped table-hover borderless align-middle text-capitalize"><thead><tr><th scope="col">Name</th><th scope="col">Retreat</th><th scope="col">Check-In</th><th scope="col">Check-Out</th><th scope="col">Leave date</th><th scope="col">Room <span class="badge text-bg-primary rounded-pill" aria-label="Info" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="After check-in, please select correct room for the participant">?</span></th><th scope="col">Role</th><th scope="col">Donation <span class="badge text-bg-primary rounded-pill" aria-label="Info" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="Donation 500 baht per night based on the planned leave date.">?</span></th></tr></thead><tbody><!--[-->`;
+  $$payload.out += `<!--]--></span></li></ul></div></div></div> <div class="row"><div class="col"><div class="table-responsive text-nowrap"><table class="table table-striped table-hover borderless align-middle text-capitalize"><thead><tr><th scope="col">Name <button class="btn m-0 p-0">`;
+  {
+    $$payload.out += "<!--[-->";
+    SortUp($$payload);
+  }
+  $$payload.out += `<!--]--></button></th><th scope="col">Retreat</th><th scope="col">Check-In <button class="btn m-0 p-0">`;
+  {
+    $$payload.out += "<!--[-->";
+    SortDown($$payload);
+  }
+  $$payload.out += `<!--]--></button></th><th scope="col">Check-Out</th><th scope="col">Leave date <button class="btn m-0 p-0">`;
+  {
+    $$payload.out += "<!--[-->";
+    SortDown($$payload);
+  }
+  $$payload.out += `<!--]--></button></th><th scope="col">Room <button class="btn m-0 p-0">`;
+  {
+    $$payload.out += "<!--[-->";
+    SortDown($$payload);
+  }
+  $$payload.out += `<!--]--></button> <span class="badge text-bg-primary rounded-pill" aria-label="Info" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="After check-in, please select correct room for the participant">?</span></th><th scope="col">Role <button class="btn m-0 p-0">`;
+  {
+    $$payload.out += "<!--[-->";
+    SortDown($$payload);
+  }
+  $$payload.out += `<!--]--></button></th><th scope="col">Donation <span class="badge text-bg-primary rounded-pill" aria-label="Info" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" data-bs-title="Donation 500 baht per night based on the planned leave date.">?</span></th></tr></thead><tbody><!--[-->`;
   for (let index = 0, $$length = each_array.length; index < $$length; index++) {
     let user = each_array[index];
     const each_array_1 = ensure_array_like(places);
     const each_array_2 = ensure_array_like(roles);
-    $$payload.out += `<tr><td><a${attr("href", "admin/manage/users/" + user.id)}>${escape_html(user.first_name)}
+    $$payload.out += `<tr><td><a${attr("href", "admin/manage/users/" + user.id)} class="d-inline-block text-truncate" style="max-width: 8rem;">${escape_html(user.first_name)}
                                         ${escape_html(user.last_name)}</a></td><td>${escape_html(findRetreat(user.retreat_id).retreat_code)}</td><td>${escape_html(dayjs(user.check_in_date).format("DD MMM HH:mm"))}</td><td><button type="button" class="btn btn-primary btn-sm w-100">Checkout</button></td><td><div class="input-group"><input class="form-control form-control-sm" type="date" name="leave_date"${attr("value", dayjs(user.leave_date).format("YYYY-MM-DD"))} id="leaveDate"/> `;
     if (dayjs().isSame(user.leave_date, "day") || dayjs().isAfter(user.leave_date, "day") && user.check_out_date == "") {
       $$payload.out += "<!--[-->";

@@ -1,14 +1,20 @@
 <script>
     import InfoIcon from "./InfoIcon.svelte";
+    import SortAlphaDownIcon from "$lib/components/SortAlphaDownIcon.svelte";
+    import SortAlphaUpIcon from "$lib/components/SortAlphaUpIcon.svelte";
+    import SortDown from "$lib/components/SortDown.svelte";
+    import SortUp from "$lib/components/SortUp.svelte";
+
     import dayjs from "dayjs";
-    import utc from "dayjs/plugin/utc";
-    import { onMount } from "svelte";
-    import { error } from "@sveltejs/kit";
+    import _ from "lodash";
     import toast from "svelte-5-french-toast";
+
+    import { onMount, setContext } from "svelte";
+    import { error } from "@sveltejs/kit";
 
     let { data } = $props();
 
-    dayjs.extend(utc);
+    setContext("user", "test");
 
     let users = $state(
         data?.users
@@ -20,7 +26,25 @@
             ),
     );
 
+    let onRetreat = $state(
+        (retreatType) =>
+            users?.filter((user) => {
+                let retreat = findRetreat(user.retreat_id);
+                if (retreat.type === retreatType && user.check_out_date == "")
+                    return true;
+            }).length,
+    );
+
+    let sortState = $state({
+        name: true,
+        check_in: true,
+        leave_date: true,
+        role: true,
+        place: true,
+    });
+
     let places = $derived(data?.places);
+
     let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
 
     let veg = $derived(
@@ -31,32 +55,8 @@
         return users?.filter((user) => user.place === placeName).length;
     });
 
-    function countUsersInPlace(placeName) {
-        return users?.filter((user) => user.place === placeName).length;
-    }
-
-    onMount(() => {
-        const tooltipTriggerList = document.querySelectorAll(
-            '[data-bs-toggle="tooltip"]',
-        );
-
-        // eslint-disable-next-line no-unused-vars
-        const tooltipList = [...tooltipTriggerList].map(
-            (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl),
-        );
-    });
-
     let currentlyStaying = $derived(
         users?.filter((user) => !user.check_out_date).length,
-    );
-
-    let onRetreat = $state(
-        (retreatType) =>
-            users?.filter((user) => {
-                let retreat = findRetreat(user.retreat_id);
-                if (retreat.type === retreatType && user.check_out_date == "")
-                    return true;
-            }).length,
     );
 
     let leaving = $derived(
@@ -74,6 +74,21 @@
                 new Date().toDateString(),
         ).length,
     );
+
+    function countUsersInPlace(placeName) {
+        return users?.filter((user) => user.place === placeName).length;
+    }
+
+    onMount(() => {
+        const tooltipTriggerList = document.querySelectorAll(
+            '[data-bs-toggle="tooltip"]',
+        );
+
+        // eslint-disable-next-line no-unused-vars
+        const tooltipList = [...tooltipTriggerList].map(
+            (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl),
+        );
+    });
 
     async function handleCheckout(id) {
         try {
@@ -243,6 +258,8 @@
         </div>
     </div>
 
+    <!-- Table of participants currently checked-in -->
+
     <div class="row">
         <div class="col">
             <div class="table-responsive text-nowrap">
@@ -252,13 +269,90 @@
                 >
                     <thead>
                         <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Retreat</th>
-                            <th scope="col">Check-In</th>
-                            <th scope="col">Check-Out</th>
-                            <th scope="col">Leave date</th>
+                            <th scope="col"
+                                >Name <button
+                                    class="btn m-0 p-0"
+                                    onclick={() => {
+                                        users = _.orderBy(
+                                            users,
+                                            "first_name",
+                                            sortState.name ? "asc" : "desc",
+                                        );
+                                        sortState.name = !sortState.name;
+                                    }}
+                                >
+                                    {#if sortState.name}
+                                        <SortUp />
+                                    {:else}
+                                        <SortDown />
+                                    {/if}
+                                </button></th
+                            >
+                            <th scope="col">Retreat </th>
+                            <th scope="col"
+                                >Check-In
+                                <button
+                                    class="btn m-0 p-0"
+                                    onclick={() => {
+                                        users = _.orderBy(
+                                            users,
+                                            "check_in_date",
+                                            sortState.check_in ? "asc" : "desc",
+                                        );
+                                        sortState.check_in =
+                                            !sortState.check_in;
+                                    }}
+                                >
+                                    {#if sortState.check_in}
+                                        <SortDown />
+                                    {:else}
+                                        <SortUp />
+                                    {/if}
+                                </button>
+                            </th>
+                            <th scope="col">Check-Out </th>
+                            <th scope="col"
+                                >Leave date
+                                <button
+                                    class="btn m-0 p-0"
+                                    onclick={() => {
+                                        users = _.orderBy(
+                                            users,
+                                            "leave_date",
+                                            sortState.leave_date
+                                                ? "asc"
+                                                : "desc",
+                                        );
+                                        sortState.leave_date =
+                                            !sortState.leave_date;
+                                    }}
+                                >
+                                    {#if sortState.leave_date}
+                                        <SortDown />
+                                    {:else}
+                                        <SortUp />
+                                    {/if}
+                                </button>
+                            </th>
                             <th scope="col"
                                 >Room
+                                <button
+                                    class="btn m-0 p-0"
+                                    onclick={() => {
+                                        users = _.orderBy(
+                                            users,
+                                            "place",
+                                            sortState.place ? "asc" : "desc",
+                                        );
+                                        sortState.place = !sortState.place;
+                                    }}
+                                >
+                                    {#if sortState.place}
+                                        <SortDown />
+                                    {:else}
+                                        <SortUp />
+                                    {/if}
+                                </button>
                                 <span
                                     class="badge text-bg-primary rounded-pill"
                                     aria-label="Info"
@@ -270,7 +364,26 @@
                                     ?
                                 </span>
                             </th>
-                            <th scope="col">Role</th>
+                            <th scope="col"
+                                >Role
+                                <button
+                                    class="btn m-0 p-0"
+                                    onclick={() => {
+                                        users = _.orderBy(
+                                            users,
+                                            "role",
+                                            sortState.role ? "asc" : "desc",
+                                        );
+                                        sortState.role = !sortState.role;
+                                    }}
+                                >
+                                    {#if sortState.role}
+                                        <SortDown />
+                                    {:else}
+                                        <SortUp />
+                                    {/if}
+                                </button>
+                            </th>
                             <th scope="col"
                                 >Donation
                                 <span
@@ -291,7 +404,11 @@
                         {#each users as user, index (user.id)}
                             <tr>
                                 <td>
-                                    <a href={"admin/manage/users/" + user.id}>
+                                    <a
+                                        href={"admin/manage/users/" + user.id}
+                                        class="d-inline-block text-truncate"
+                                        style="max-width: 8rem;"
+                                    >
                                         {user.first_name}
                                         {user.last_name}
                                     </a>
