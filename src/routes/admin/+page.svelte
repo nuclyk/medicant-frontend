@@ -6,16 +6,15 @@
     import SortUp from "$lib/components/SortUp.svelte";
 
     import dayjs from "dayjs";
-    import utc from "dayjs/plugin/utc";
     import _ from "lodash";
     import toast from "svelte-5-french-toast";
 
-    import { onMount } from "svelte";
+    import { onMount, setContext } from "svelte";
     import { error } from "@sveltejs/kit";
 
     let { data } = $props();
 
-    dayjs.extend(utc);
+    setContext("user", "test");
 
     let users = $state(
         data?.users
