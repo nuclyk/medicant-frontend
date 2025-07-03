@@ -1,6 +1,7 @@
 # build folder
 dist/
 build/
+.netlify
 
 # logs
 logs/
