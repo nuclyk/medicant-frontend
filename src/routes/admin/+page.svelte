@@ -2,14 +2,16 @@
     import InfoIcon from "./InfoIcon.svelte";
     import SortAlphaDownIcon from "$lib/components/SortAlphaDownIcon.svelte";
     import SortAlphaUpIcon from "$lib/components/SortAlphaUpIcon.svelte";
-    import dayjs from "dayjs";
-    import utc from "dayjs/plugin/utc";
-    import { onMount } from "svelte";
-    import { error } from "@sveltejs/kit";
-    import toast from "svelte-5-french-toast";
-    import _ from "lodash";
     import SortDown from "$lib/components/SortDown.svelte";
     import SortUp from "$lib/components/SortUp.svelte";
+
+    import dayjs from "dayjs";
+    import utc from "dayjs/plugin/utc";
+    import _ from "lodash";
+    import toast from "svelte-5-french-toast";
+
+    import { onMount } from "svelte";
+    import { error } from "@sveltejs/kit";
 
     let { data } = $props();
 
@@ -25,6 +27,15 @@
             ),
     );
 
+    let onRetreat = $state(
+        (retreatType) =>
+            users?.filter((user) => {
+                let retreat = findRetreat(user.retreat_id);
+                if (retreat.type === retreatType && user.check_out_date == "")
+                    return true;
+            }).length,
+    );
+
     let sortState = $state({
         name: true,
         check_in: true,
@@ -34,50 +45,19 @@
     });
 
     let places = $derived(data?.places);
+
     let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
 
     let veg = $derived(
         users?.filter((user) => user.diet === "Vegetarian").length,
     );
 
-    function sortAlpha(by, asc) {
-        sortAsc = !sortAsc;
-        users = _.sortBy(users, [by]);
-        if (asc === false) {
-            users = _.reverse(users);
-        }
-    }
-
     let totalInPlace = $derived.by((placeName) => {
         return users?.filter((user) => user.place === placeName).length;
     });
 
-    function countUsersInPlace(placeName) {
-        return users?.filter((user) => user.place === placeName).length;
-    }
-
-    onMount(() => {
-        const tooltipTriggerList = document.querySelectorAll(
-            '[data-bs-toggle="tooltip"]',
-        );
-
-        // eslint-disable-next-line no-unused-vars
-        const tooltipList = [...tooltipTriggerList].map(
-            (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl),
-        );
-    });
-
     let currentlyStaying = $derived(
         users?.filter((user) => !user.check_out_date).length,
-    );
-
-    let onRetreat = $state(
-        (retreatType) =>
-            users?.filter((user) => {
-                let retreat = findRetreat(user.retreat_id);
-                if (retreat.type === retreatType && user.check_out_date == "")
-                    return true;
-            }).length,
     );
 
     let leaving = $derived(
@@ -95,6 +75,21 @@
                 new Date().toDateString(),
         ).length,
     );
+
+    function countUsersInPlace(placeName) {
+        return users?.filter((user) => user.place === placeName).length;
+    }
+
+    onMount(() => {
+        const tooltipTriggerList = document.querySelectorAll(
+            '[data-bs-toggle="tooltip"]',
+        );
+
+        // eslint-disable-next-line no-unused-vars
+        const tooltipList = [...tooltipTriggerList].map(
+            (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl),
+        );
+    });
 
     async function handleCheckout(id) {
         try {
