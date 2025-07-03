@@ -189,12 +189,11 @@
                 <span class="input-group-text">Check-in date</span>
                 <input
                     class="form-control"
-                    type="datetime"
+                    type="datetime-local"
                     id="check_in_date"
                     name="check_in_date"
                     placeholder=""
                     value={dayjs(user.check_in_date).format("YYYY-MM-DD HH:mm")}
-                    disabled
                 />
             </div>
 
@@ -202,14 +201,13 @@
                 <span class="input-group-text">Check-out date</span>
                 <input
                     class="form-control"
-                    type="datetime"
+                    type="datetime-local"
                     id="check_out_date"
                     name="check_out_date"
                     placeholder=""
                     value={dayjs(user.check_out_date).format(
                         "YYYY-MM-DD HH:mm",
                     )}
-                    disabled
                 />
             </div>
 
