@@ -65,14 +65,16 @@
                                     >Check-out Form</a
                                 >
                             </li>
-                            <!-- <li> -->
-                            <!--     <hr class="dropdown-divider" /> -->
-                            <!-- </li> -->
-                            <!-- <li> -->
-                            <!--     <a class="dropdown-item" href="#" -->
-                            <!--         >Something else here</a -->
-                            <!--     > -->
-                            <!-- </li> -->
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                            <li>
+                                <a
+                                    class="dropdown-item"
+                                    href="https://drive.google.com/file/d/1bkHNBi1SC7h8odB1kxZ4-qnAI83dS0yr/view?usp=drive_link"
+                                    target="_blank">Guidelines</a
+                                >
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
