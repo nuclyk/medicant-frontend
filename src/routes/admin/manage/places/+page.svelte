@@ -2,9 +2,12 @@
     import { error } from "@sveltejs/kit";
     import { enhance } from "$app/forms";
     import toast from "svelte-5-french-toast";
+    import { getContext } from "svelte";
+    import { invalidateAll } from "$app/navigation";
 
-    let { data } = $props();
-    let places = $state(data.places.filter((place) => place.name != "None"));
+    let data = getContext("sharedData");
+    let places = $derived(data.places.filter((place) => place.name != "None"));
+
     let placeName = $state("");
     let placeCapacity = $state();
 
@@ -23,7 +26,10 @@
             }
 
             let index = places.findIndex((place) => place.name === name);
+
             places.splice(index, 1);
+            data.places = places;
+
             toast.success("Place deleted successfuly!");
         } catch (err) {
             toast.error(err.body.message);
@@ -48,7 +54,10 @@
             }
 
             let index = places.findIndex((place) => place.name === name);
+
             places[index] = await res.json();
+            data.places = places;
+
             toast.success("Place updated successfuly!");
         } catch (err) {
             toast.error(err.body.message);
@@ -64,7 +73,7 @@
                 if (result.type !== "success") {
                     toast.error(result.status + " : " + result.data.error);
                 } else {
-                    places.push(result.data);
+                    data.places.push(result.data);
                     toast.success("Place added successfuly!");
                 }
             };

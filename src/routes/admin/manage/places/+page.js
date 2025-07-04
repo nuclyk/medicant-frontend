@@ -11,16 +11,16 @@ export async function load({ parent, fetch }) {
     error(403, "Not authorized");
   }
 
-  const res = await fetch(p.apiUrl + "places", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!res.ok) {
-    error(res.status, "Could not fetch places");
-  }
-
-  return { places: await res.json() };
+  // const res = await fetch(p.apiUrl + "places", {
+  //   method: "GET",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  // });
+  //
+  // if (!res.ok) {
+  //   error(res.status, "Could not fetch places");
+  // }
+  //
+  // return { places: await res.json() };
 }

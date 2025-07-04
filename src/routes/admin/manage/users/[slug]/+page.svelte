@@ -3,43 +3,45 @@
     import dayjs from "dayjs";
     import toast from "svelte-5-french-toast";
     import { enhance } from "$app/forms";
-    let { data, form } = $props();
+    import { getContext } from "svelte";
+    let { form } = $props();
+    import { page } from "$app/state";
+    import { invalidate, invalidateAll } from "$app/navigation";
 
-    let user = $state(data.user);
-    let roles = $state(data.roles);
-    let retreats = $state(data.retreats);
-    let places = $state(data.places);
-    let retreat = retreats.find((retreat) => retreat.id === user.retreat_id);
+    let data = getContext("sharedData");
+
+    let user = $state(data.users.find((user) => user.id === page.params.slug));
+    let roles = $derived(data.roles.filter((r) => r.name != "admin"));
+    let retreats = $derived(data.retreats);
+    let places = $derived(data.places);
+    let retreat = $derived(
+        retreats.find((retreat) => retreat.id === user.retreat_id),
+    );
     let genders = ["Female", "Male", "Other"];
+    let diet = ["None", "Vegetarian"];
 
     let disabled = $derived(dayjs(user?.check_out_date).year() !== 2001);
 
     let formData = $state({
-        first_name: user?.first_name || "",
-        last_name: user?.last_name || "",
-        email: user?.email || "",
-        phone: user?.phone || "",
-        age: user?.age || "",
-        gender: user?.gender || "",
-        nationality: user?.nationality || "",
-        diet: user?.diet || "None",
-        role: user?.role || "participant",
-        retreat_id: user?.retreat_id || 0,
-        check_in_date:
-            dayjs(user?.check_in_date).format("YYYY-MM-DD HH:mm") || "",
+        first_name: user?.first_name,
+        last_name: user?.last_name,
+        email: user?.email,
+        phone: user?.phone,
+        age: user?.age,
+        gender: user?.gender,
+        nationality: user?.nationality,
+        diet: user?.diet,
+        role: user?.role,
+        retreat_id: user?.retreat_id,
+        check_in_date: dayjs(user?.check_in_date).format("YYYY-MM-DD HH:mm"),
+        // DATETIME field in SQLite returns special date not just null
         check_out_date:
             dayjs(user?.check_out_date).year() === 2001
                 ? ""
                 : dayjs(user.check_out_date).format("YYYY-MM-DD HH:mm"),
-        leave_date: dayjs(user?.leave_date).format("YYYY-MM-DD") || "",
-        place: user?.place || "",
+        leave_date: dayjs(user?.leave_date).format("YYYY-MM-DD"),
+        place: user?.place,
     });
-
-    let dateOut = $state(
-        dayjs(user.check_out_date).year() === 2001
-            ? ""
-            : dayjs(user.check_out_date),
-    );
 </script>
 
 <form
@@ -49,6 +51,12 @@
             if (result.type !== "success") {
                 toast.error(result.status + " : " + result.data.error);
             } else {
+                let index = data.users.findIndex(
+                    (u) => u.id === result.data.id,
+                );
+
+                data.users[index] = result.data;
+
                 toast.success("User updated successfuly!");
             }
         };

@@ -14,20 +14,20 @@ export async function load({ cookies, parent, fetch, params }) {
     error(403, "Not authorized");
   }
 
-  const res = await fetch(API + "users/" + params.slug, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + cookies.get("token"),
-    },
-  });
-
-  if (res.status !== 302) {
-    error(404, "User not found");
-  }
-
-  const user = await res.json();
-  return { user: user };
+  // const res = await fetch(API + "users/" + params.slug, {
+  //   method: "GET",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     Authorization: "Bearer " + cookies.get("token"),
+  //   },
+  // });
+  //
+  // if (res.status !== 302) {
+  //   error(404, "User not found");
+  // }
+  //
+  // const user = await res.json();
+  // return { user: user };
 }
 
 export const actions = {

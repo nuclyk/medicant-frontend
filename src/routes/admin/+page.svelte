@@ -9,12 +9,12 @@
     import _ from "lodash";
     import toast from "svelte-5-french-toast";
 
-    import { onMount, setContext } from "svelte";
+    import { getContext, onMount, setContext } from "svelte";
     import { error } from "@sveltejs/kit";
 
-    let { data } = $props();
+    let data = $state(getContext("sharedData"));
 
-    let users = $state(
+    let users = $derived(
         data?.users
             ?.filter(
                 (user) =>
@@ -28,7 +28,7 @@
 
     let onRetreat = $state(
         (retreatType) =>
-            users?.filter((user) => {
+            data?.users?.filter((user) => {
                 let retreat = findRetreat(user.retreat_id);
                 if (retreat.type === retreatType && user.check_out_date == "")
                     return true;
@@ -48,7 +48,7 @@
     let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
 
     let veg = $derived(
-        users?.filter((user) => user.diet === "Vegetarian").length,
+        data?.users?.filter((user) => user.diet === "Vegetarian").length,
     );
 
     let totalInPlace = $derived.by((placeName) => {
@@ -56,11 +56,11 @@
     });
 
     let currentlyStaying = $derived(
-        users?.filter((user) => !user.check_out_date).length,
+        data?.users?.filter((user) => !user.check_out_date).length,
     );
 
     let leaving = $derived(
-        users?.filter(
+        data?.users?.filter(
             (user) =>
                 new Date(user.leave_date).toDateString() ===
                     new Date().toDateString() && !user.check_out_date,
@@ -68,7 +68,7 @@
     );
 
     let newArrivals = $derived(
-        users?.filter(
+        data?.users?.filter(
             (user) =>
                 new Date(user.check_in_date).toDateString() ===
                 new Date().toDateString(),
@@ -76,7 +76,7 @@
     );
 
     function countUsersInPlace(placeName) {
-        return users?.filter((user) => user.place === placeName).length;
+        return data?.users?.filter((user) => user.place === placeName).length;
     }
 
     onMount(() => {
@@ -129,7 +129,6 @@
             });
 
             if (!res.ok) {
-                console.log(res);
                 error(res.status, "Could not update the user!");
             }
 

@@ -18,10 +18,7 @@ export async function load({ locals, cookies, fetch }) {
     },
   });
 
-  const body = await users.json();
-  console.log(body);
-
-  return {
-    users: body,
-  };
+  // return {
+  //   users: await users.json(),
+  // };
 }

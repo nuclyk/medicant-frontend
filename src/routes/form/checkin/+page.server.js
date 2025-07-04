@@ -19,10 +19,7 @@ export const actions = {
   default: async ({ request, fetch }) => {
     const formData = await request.formData();
 
-    dayjs.extend(utc);
-    dayjs.extend(timezone);
-
-    const now = dayjs().format("YYYY-MM-DD HH:mm");
+    const now = dayjs().toISOString();
 
     const data = {
       first_name: formData.get("first_name"),
@@ -35,7 +32,6 @@ export const actions = {
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
       check_in_date: now,
-      check_out_date: null,
       leave_date: formData.get("leave_date"),
       place: "None",
     };
@@ -51,8 +47,10 @@ export const actions = {
 
     // If the participant is already in db, just update the record
     if (userExists.ok) {
-      const user = await userExists.json();
+      // With this flag, the backend will reset check out date
+      data.reset = true;
 
+      const user = await userExists.json();
       const updateUser = await fetch(API + "users/" + user.userID, {
         method: "PUT",
         headers: {
