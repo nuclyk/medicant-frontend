@@ -142,7 +142,7 @@
                             <SelectInput
                                 id="gender"
                                 name="gender"
-                                options={["Male", "Female", "Other"]}
+                                options={["Male", "Female"]}
                                 label="Gender"
                                 bind:value={formData.gender}
                             />

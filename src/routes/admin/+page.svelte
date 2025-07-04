@@ -15,12 +15,13 @@
     let data = $state(getContext("sharedData"));
 
     let allUsers = $state(getContext("users"));
-    const places = $state(getContext("places"));
-    const roles = getContext("roles");
-    const retreats = getContext("retreats");
+    let places = $state(getContext("places"));
+    let roles = getContext("roles");
+    let retreats = getContext("retreats");
     const apiUrl = getContext("apiUrl");
     const token = getContext("token");
 
+    // checked-in and not admin
     let users = $derived(
         allUsers().filter(
             (u) =>
@@ -33,10 +34,7 @@
         (retreatType) =>
             users?.filter((user) => {
                 let retreat = findRetreat(user.retreat_id);
-                if (
-                    retreat.type === retreatType &&
-                    new Date(user.check_out_date).getFullYear() != 2001
-                ) {
+                if (retreat.type === retreatType) {
                     return true;
                 }
             }).length,
@@ -58,18 +56,11 @@
         return users?.filter((user) => user.place === placeName).length;
     });
 
-    let currentlyStaying = $derived(
-        users?.filter(
-            (user) => new Date(user.check_out_date).getFullYear() != 2001,
-        ).length,
-    );
-
     let leaving = $derived(
         users?.filter(
             (user) =>
                 new Date(user.leave_date).toDateString() ===
-                    new Date().toDateString() &&
-                new Date(user.check_out_date).getFullYear() != 2001,
+                new Date().toDateString(),
         ).length,
     );
 
@@ -160,7 +151,7 @@
                     >
                         Currently staying:
                         <span class="badge text-bg-primary rounded-pill">
-                            {currentlyStaying}</span
+                            {users.length}</span
                         >
                     </li>
                     <li
