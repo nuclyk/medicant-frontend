@@ -12,6 +12,7 @@
             .sort((a, b) => new Date(a.start_date) - new Date(b.start_date)),
     );
 
+    $inspect(retreats[1]);
     async function handleDelete(id) {
         try {
             const res = await fetch(data.apiUrl + "retreats/" + id, {
@@ -51,6 +52,10 @@
             if (!res.ok) {
                 error(res.status, "Failed to update the retreat");
             }
+
+            let updatedRetreat = await res.json();
+            let index = retreats.findIndex((r) => r.id === id);
+            retreats[index] = updatedRetreat;
 
             toast.success("Retreat updated successfuly!");
         } catch (err) {

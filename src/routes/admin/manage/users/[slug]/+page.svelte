@@ -3,13 +3,43 @@
     import dayjs from "dayjs";
     import toast from "svelte-5-french-toast";
     import { enhance } from "$app/forms";
-    let { data } = $props();
+    let { data, form } = $props();
+
     let user = $state(data.user);
     let roles = $state(data.roles);
     let retreats = $state(data.retreats);
     let places = $state(data.places);
     let retreat = retreats.find((retreat) => retreat.id === user.retreat_id);
     let genders = ["Female", "Male", "Other"];
+
+    let disabled = $derived(dayjs(user?.check_out_date).year() !== 2001);
+
+    let formData = $state({
+        first_name: user?.first_name || "",
+        last_name: user?.last_name || "",
+        email: user?.email || "",
+        phone: user?.phone || "",
+        age: user?.age || "",
+        gender: user?.gender || "",
+        nationality: user?.nationality || "",
+        diet: user?.diet || "None",
+        role: user?.role || "participant",
+        retreat_id: user?.retreat_id || 0,
+        check_in_date:
+            dayjs(user?.check_in_date).format("YYYY-MM-DD HH:mm") || "",
+        check_out_date:
+            dayjs(user?.check_out_date).year() === 2001
+                ? ""
+                : dayjs(user.check_out_date).format("YYYY-MM-DD HH:mm"),
+        leave_date: dayjs(user?.leave_date).format("YYYY-MM-DD") || "",
+        place: user?.place || "",
+    });
+
+    let dateOut = $state(
+        dayjs(user.check_out_date).year() === 2001
+            ? ""
+            : dayjs(user.check_out_date),
+    );
 </script>
 
 <form
@@ -31,7 +61,7 @@
                     class="form-control"
                     type="text"
                     name="first_name"
-                    bind:value={user.first_name}
+                    bind:value={formData.first_name}
                     placeholder="Enter your first name"
                     required
                 />
@@ -43,7 +73,7 @@
                     class="form-control"
                     type="text"
                     name="last_name"
-                    bind:value={user.last_name}
+                    bind:value={formData.last_name}
                     placeholder="Enter your last name"
                     required
                 />
@@ -55,7 +85,7 @@
                     class="form-control"
                     type="email"
                     name="email"
-                    bind:value={user.email}
+                    bind:value={formData.email}
                     placeholder="Enter your email"
                     required
                 />
@@ -67,7 +97,7 @@
                     class="form-control"
                     type="text"
                     name="phone"
-                    bind:value={user.phone}
+                    bind:value={formData.phone}
                     placeholder="Enter your phone number"
                     required
                 />
@@ -79,7 +109,7 @@
                     class="form-control"
                     type="number"
                     name="age"
-                    bind:value={user.age}
+                    bind:value={formData.age}
                     placeholder="Enter your age"
                 />
                 <label for="age">Age</label>
@@ -91,7 +121,7 @@
                     aria-label="Gender select"
                     id="gender"
                     name="gender"
-                    bind:value={user.gender}
+                    bind:value={formData.gender}
                     placeholder="Enter your gender"
                 >
                     {#each genders as gender, index (index)}
@@ -107,7 +137,7 @@
                     aria-label="Nationality select"
                     id="nationality"
                     name="nationality"
-                    bind:value={user.nationality}
+                    bind:value={formData.nationality}
                     placeholder="Enter your nationality"
                 >
                     {#each countries as country, index (index)}
@@ -124,7 +154,7 @@
                     class="form-control"
                     type="text"
                     name="diet"
-                    bind:value={user.diet}
+                    bind:value={formData.diet}
                     placeholder="Enter your diet"
                     required
                 />
@@ -137,7 +167,7 @@
                     aria-label="Role select"
                     id="role"
                     name="role"
-                    bind:value={user.role}
+                    bind:value={formData.role}
                     placeholder="Enter your role"
                 >
                     {#each roles as role (role.name)}
@@ -155,7 +185,7 @@
                     aria-label="Retreat select"
                     id="retreat"
                     name="retreat"
-                    bind:value={retreat.id}
+                    bind:value={formData.retreat_id}
                     placeholder="Enter your role"
                 >
                     {#each retreats as retreat (retreat.id)}
@@ -173,7 +203,7 @@
                     aria-label="Retreat select"
                     id="place"
                     name="place"
-                    bind:value={user.place}
+                    bind:value={formData.place}
                     placeholder="Enter your place"
                 >
                     {#each places as place (place.name)}
@@ -193,7 +223,8 @@
                     id="check_in_date"
                     name="check_in_date"
                     placeholder=""
-                    value={dayjs(user.check_in_date).format("YYYY-MM-DD HH:mm")}
+                    bind:value={formData.check_in_date}
+                    disabled
                 />
             </div>
 
@@ -205,9 +236,8 @@
                     id="check_out_date"
                     name="check_out_date"
                     placeholder=""
-                    value={dayjs(user.check_out_date).format(
-                        "YYYY-MM-DD HH:mm",
-                    )}
+                    bind:value={formData.check_out_date}
+                    disabled
                 />
             </div>
 
@@ -219,7 +249,8 @@
                     id="leave_date"
                     name="leave_date"
                     placeholder="Leave date"
-                    value={dayjs(user.leave_date).format("YYYY-MM-DD")}
+                    bind:value={formData.leave_date}
+                    {disabled}
                 />
             </div>
 

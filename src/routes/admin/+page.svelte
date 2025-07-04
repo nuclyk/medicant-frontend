@@ -14,12 +14,12 @@
 
     let { data } = $props();
 
-    setContext("user", "test");
-
     let users = $state(
         data?.users
             ?.filter(
-                (user) => user.role != "admin" && user.check_out_date === "",
+                (user) =>
+                    user.role != "admin" &&
+                    dayjs(user.check_out_date).year() === 2001,
             )
             .sort(
                 (a, b) => new Date(b.check_in_date) - new Date(a.check_in_date),
@@ -99,8 +99,7 @@
                     Authorization: "Bearer " + data.token,
                 },
                 body: JSON.stringify({
-                    check_out_date: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-                    leave_date: dayjs().format("YYYY-MM-DD"),
+                    check_out_date: dayjs().toISOString(),
                 }),
             });
 

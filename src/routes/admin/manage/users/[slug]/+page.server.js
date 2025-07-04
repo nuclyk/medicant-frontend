@@ -2,6 +2,7 @@ import { redirect } from "@sveltejs/kit";
 import { API } from "$env/static/private";
 import { error } from "@sveltejs/kit";
 import { fail } from "@sveltejs/kit";
+import dayjs from "dayjs";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ cookies, parent, fetch, params }) {
@@ -33,12 +34,6 @@ export const actions = {
   default: async ({ request, fetch, params, cookies }) => {
     const data = await request.formData();
 
-    let date_out = data.get("check_out_date");
-    let date_in = data.get("check_in_date");
-
-    console.log(date_in);
-    console.log(date_out);
-
     const updateUser = {
       first_name: data.get("first_name"),
       last_name: data.get("last_name"),
@@ -49,8 +44,6 @@ export const actions = {
       nationality: data.get("nationality"),
       role: data.get("role"),
       retreat_id: parseInt(data.get("retreat")),
-      check_in_date: data.get("check_in_date"),
-      check_out_date: data.get("check_out_date"),
       leave_date: data.get("leave_date"),
       diet: data.get("diet"),
       place: data.get("place"),

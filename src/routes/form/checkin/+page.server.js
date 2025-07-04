@@ -21,7 +21,8 @@ export const actions = {
 
     dayjs.extend(utc);
     dayjs.extend(timezone);
-    const now = dayjs().tz("Asia/Bangkok").format("YYYY-MM-DD HH:mm");
+
+    const now = dayjs().format("YYYY-MM-DD HH:mm");
 
     const data = {
       first_name: formData.get("first_name"),
@@ -34,7 +35,7 @@ export const actions = {
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
       check_in_date: now,
-      check_out_date: "",
+      check_out_date: null,
       leave_date: formData.get("leave_date"),
       place: "None",
     };

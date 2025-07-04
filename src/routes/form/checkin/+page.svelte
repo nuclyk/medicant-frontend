@@ -28,7 +28,7 @@
         phone: form?.formData?.phone || "",
         gender: form?.formData?.gender || "",
         nationality: form?.formData?.nationality || "",
-        diet: form?.formData?.diet || "",
+        diet: form?.formData?.diet || "None",
         retreat_id: form?.formData?.retreat_id || (() => selectedRetreatId),
         leave_date: form?.formData?.leave_date || "",
     });
