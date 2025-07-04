@@ -10,12 +10,12 @@ export async function load({ parent, fetch }) {
     error(403, "Not authorized");
   }
 
-  const response = await fetch(p.apiUrl + "retreats", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  return { retreats: await response.json() };
+  // const response = await fetch(p.apiUrl + "retreats", {
+  //   method: "GET",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  // });
+  //
+  // return { retreats: await response.json() };
 }

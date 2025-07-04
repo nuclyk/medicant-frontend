@@ -14,24 +14,31 @@
 
     let data = $state(getContext("sharedData"));
 
+    let allUsers = $state(getContext("users"));
+    const places = $state(getContext("places"));
+    const roles = getContext("roles");
+    const retreats = getContext("retreats");
+    const apiUrl = getContext("apiUrl");
+    const token = getContext("token");
+
     let users = $derived(
-        data?.users
-            ?.filter(
-                (user) =>
-                    user.role != "admin" &&
-                    dayjs(user.check_out_date).year() === 2001,
-            )
-            .sort(
-                (a, b) => new Date(b.check_in_date) - new Date(a.check_in_date),
-            ),
+        allUsers().filter(
+            (u) =>
+                u.role != "admin" &&
+                new Date(u.check_out_date).getFullYear() == 2001,
+        ),
     );
 
-    let onRetreat = $state(
+    let onRetreat = $derived(
         (retreatType) =>
-            data?.users?.filter((user) => {
+            users?.filter((user) => {
                 let retreat = findRetreat(user.retreat_id);
-                if (retreat.type === retreatType && user.check_out_date == "")
+                if (
+                    retreat.type === retreatType &&
+                    new Date(user.check_out_date).getFullYear() != 2001
+                ) {
                     return true;
+                }
             }).length,
     );
 
@@ -43,12 +50,8 @@
         place: true,
     });
 
-    let places = $derived(data?.places);
-
-    let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
-
     let veg = $derived(
-        data?.users?.filter((user) => user.diet === "Vegetarian").length,
+        users?.filter((user) => user.diet === "Vegetarian").length,
     );
 
     let totalInPlace = $derived.by((placeName) => {
@@ -56,19 +59,22 @@
     });
 
     let currentlyStaying = $derived(
-        data?.users?.filter((user) => !user.check_out_date).length,
+        users?.filter(
+            (user) => new Date(user.check_out_date).getFullYear() != 2001,
+        ).length,
     );
 
     let leaving = $derived(
-        data?.users?.filter(
+        users?.filter(
             (user) =>
                 new Date(user.leave_date).toDateString() ===
-                    new Date().toDateString() && !user.check_out_date,
+                    new Date().toDateString() &&
+                new Date(user.check_out_date).getFullYear() != 2001,
         ).length,
     );
 
     let newArrivals = $derived(
-        data?.users?.filter(
+        users?.filter(
             (user) =>
                 new Date(user.check_in_date).toDateString() ===
                 new Date().toDateString(),
@@ -76,7 +82,7 @@
     );
 
     function countUsersInPlace(placeName) {
-        return data?.users?.filter((user) => user.place === placeName).length;
+        return users?.filter((user) => user.place === placeName).length;
     }
 
     onMount(() => {
@@ -92,11 +98,11 @@
 
     async function handleCheckout(id) {
         try {
-            const res = await fetch(data.apiUrl + "users/" + id, {
+            const res = await fetch(apiUrl() + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + data.token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
                     check_out_date: dayjs().toISOString(),
@@ -107,8 +113,8 @@
                 error(res.status, "Could not checkout the user!");
             }
 
-            let index = users.findIndex((user) => user.id === id);
-            users.splice(index, 1);
+            let index = allUsers()?.findIndex((user) => user.id === id);
+            allUsers()?.splice(index, 1);
             toast.success("Participant successfuly checked out!");
         } catch (err) {
             toast.error(err.status + " : " + err.body.message);
@@ -117,11 +123,11 @@
 
     async function handleUserUpdate(id, event) {
         try {
-            const res = await fetch(data.apiUrl + "users/" + id, {
+            const res = await fetch(apiUrl() + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + data.token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
                     [event.target.name]: event.target.value,
@@ -139,10 +145,7 @@
     }
 
     function findRetreat(retreat_id) {
-        const retreat = data.retreats.find(
-            (retreat) => retreat_id === retreat.id,
-        );
-        return retreat;
+        return retreats().find((retreat) => retreat_id === retreat.id);
     }
 </script>
 
@@ -220,7 +223,7 @@
                         Participants / Volunteers:
                         <span class="badge text-bg-primary rounded-pill">
                             {#if users}
-                                {@const volunteers = users.filter(
+                                {@const volunteers = users?.filter(
                                     (user) => user.role === "volunteer",
                                 ).length}
                                 {users.length - volunteers} / {volunteers}
@@ -241,10 +244,10 @@
                         Male / Female:
                         <span class="badge text-bg-primary rounded-pill">
                             {#if users}
-                                {@const male = users.filter(
+                                {@const male = users?.filter(
                                     (user) => user.gender === "Male",
                                 ).length}
-                                {@const female = users.filter(
+                                {@const female = users?.filter(
                                     (user) => user.gender === "Female",
                                 ).length}
                                 {male} / {female}
@@ -403,7 +406,7 @@
                             <tr>
                                 <td>
                                     <a
-                                        href={"admin/manage/users/" + user.id}
+                                        href={"/admin/manage/users/" + user.id}
                                         class="d-inline-block text-truncate"
                                         style="max-width: 8rem;"
                                     >
@@ -427,6 +430,7 @@
                                         type="button"
                                         class="btn btn-primary btn-sm w-100"
                                         onclick={() => {
+                                            console.log(user.id);
                                             handleCheckout(user.id);
                                         }}
                                         >Checkout
@@ -483,10 +487,12 @@
                                         }}
                                         value={user.place}
                                     >
-                                        {#each places as place (place.name)}
-                                            {@const totalInPlace = users.filter(
-                                                (u) => u.place === place.name,
-                                            ).length}
+                                        {#each places() as place (place.name)}
+                                            {@const totalInPlace =
+                                                users?.filter(
+                                                    (u) =>
+                                                        u.place === place.name,
+                                                ).length}
 
                                             <option value={place.name}>
                                                 {place.name}
@@ -513,7 +519,7 @@
                                         <option value={user.role} selected
                                             >{user.role}</option
                                         >
-                                        {#each roles as role (role.name)}
+                                        {#each roles().filter((r) => r.name != "admin") as role (role.name)}
                                             <option value={role.name}>
                                                 {role.name}
                                             </option>

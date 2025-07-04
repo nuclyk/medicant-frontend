@@ -3,21 +3,21 @@
     import { enhance } from "$app/forms";
     import toast from "svelte-5-french-toast";
     import { getContext } from "svelte";
-    import { invalidateAll } from "$app/navigation";
 
-    let data = getContext("sharedData");
-    let places = $derived(data.places.filter((place) => place.name != "None"));
+    let places = $state(getContext("places"));
+    let token = getContext("token");
+    let apiUrl = getContext("apiUrl");
 
     let placeName = $state("");
     let placeCapacity = $state();
 
     async function handleDelete(name) {
         try {
-            const res = await fetch(data.apiUrl + "places/" + name, {
+            const res = await fetch(apiUrl() + "places/" + name, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + data.token,
+                    Authorization: "Bearer " + token(),
                 },
             });
 
@@ -25,10 +25,9 @@
                 error(res.status, "Could not delete the place!");
             }
 
-            let index = places.findIndex((place) => place.name === name);
+            let index = places().findIndex((place) => place.name === name);
 
-            places.splice(index, 1);
-            data.places = places;
+            places().splice(index, 1);
 
             toast.success("Place deleted successfuly!");
         } catch (err) {
@@ -38,11 +37,11 @@
 
     async function handleChange(name, event) {
         try {
-            const res = await fetch(data.apiUrl + "places/" + name, {
+            const res = await fetch(apiUrl() + "places/" + name, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + data.token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
                     [event.target.name]: event.target.value,
@@ -53,15 +52,13 @@
                 error(res.status, "Could not update place");
             }
 
-            let index = places.findIndex((place) => place.name === name);
-
-            places[index] = await res.json();
-            data.places = places;
-
+            let index = places().findIndex((p) => p.name === name);
+            places()[index] = await res.json();
             toast.success("Place updated successfuly!");
         } catch (err) {
             toast.error(err.body.message);
         }
+        invalidate("/admin");
     }
 </script>
 
@@ -73,7 +70,7 @@
                 if (result.type !== "success") {
                     toast.error(result.status + " : " + result.data.error);
                 } else {
-                    data.places.push(result.data);
+                    places().push(result.data);
                     toast.success("Place added successfuly!");
                 }
             };
@@ -112,7 +109,7 @@
     <hr class="border border-1 opacity-50" />
 
     <p>Edit places</p>
-    {#each places as place (place.name)}
+    {#each places().filter((p) => p.name != "None") as place (place.name)}
         <div class="row g-2 bg-light border rounded-1 p-2 my-2">
             <div class="col-lg-auto flex-fill">
                 <input
