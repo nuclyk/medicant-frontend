@@ -5,6 +5,7 @@
     import { getContext } from "svelte";
 
     let places = $state(getContext("places"));
+    let users = $state(getContext("users"));
     let token = getContext("token");
     let apiUrl = getContext("apiUrl");
 
@@ -54,11 +55,11 @@
 
             let index = places().findIndex((p) => p.name === name);
             places()[index] = await res.json();
+
             toast.success("Place updated successfuly!");
         } catch (err) {
             toast.error(err.body.message);
         }
-        invalidate("/admin");
     }
 </script>
 

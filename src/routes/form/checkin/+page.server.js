@@ -1,16 +1,12 @@
 import { API } from "$env/static/private";
 import { fail } from "@sveltejs/kit";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
-  const response = await fetch(API + "retreats");
-  const data = await response.json();
-
+  const res = await fetch(API + "retreats");
   return {
-    retreats: data,
+    retreats: await res.json(),
   };
 }
 

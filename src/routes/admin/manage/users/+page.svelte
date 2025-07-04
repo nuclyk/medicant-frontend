@@ -1,13 +1,12 @@
 <script>
-    import { getContext } from "svelte";
+    let { data } = $props();
 
-    let data = getContext("sharedData");
-
-    let users = $derived(data.users.filter((user) => user.role != "admin"));
+    let users = $state(data?.allUsers?.filter((user) => user.role != "admin"));
 
     let searchQuery = $state("");
+
     let filteredUsers = $derived(
-        users.filter((user) =>
+        users?.filter((user) =>
             user.email.toLowerCase().includes(searchQuery.toLowerCase()),
         ),
     );
@@ -27,7 +26,7 @@
             <div class="col">
                 <h5>
                     <a
-                        href={"/admin/manage/users/" + user.id}
+                        href={"user?id=" + user.id}
                         data-sveltekit-preload-data="off"
                         >{user.first_name} {user.last_name}</a
                     >

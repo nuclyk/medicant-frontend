@@ -5,8 +5,6 @@
     import { enhance } from "$app/forms";
     import { getContext } from "svelte";
 
-    let data = getContext("sharedData");
-
     let allRetreats = getContext("retreats");
     let token = getContext("token");
     let apiUrl = getContext("apiUrl");
@@ -141,8 +139,8 @@
                     type="date"
                     name="end_date"
                     value={dayjs(retreat.end_date).format("YYYY-MM-DD")}
-                    retreat.end_date="event.target.value"
                     onchange={(event) => {
+                        retreat.end_date = "event.target.value";
                         handleChange(retreat.id, event);
                     }}
                     required

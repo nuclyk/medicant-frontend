@@ -1,34 +1,18 @@
 import { redirect } from "@sveltejs/kit";
-import { API } from "$env/static/private";
 import { error } from "@sveltejs/kit";
 import { fail } from "@sveltejs/kit";
-import dayjs from "dayjs";
+import { API } from "$env/static/private";
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ cookies, parent, fetch, params }) {
-  const p = await parent();
-
-  if (!p.user) redirect(307, "/login");
-
-  if (p.user.role != "admin" && p.user.role != "volunteer") {
-    error(403, "Not authorized");
-  }
-
-  // const res = await fetch(API + "users/" + params.slug, {
-  //   method: "GET",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //     Authorization: "Bearer " + cookies.get("token"),
-  //   },
-  // });
-  //
-  // if (res.status !== 302) {
-  //   error(404, "User not found");
-  // }
-  //
-  // const user = await res.json();
-  // return { user: user };
-}
+// /** @type {import('./$types').PageServerLoad} */
+// export async function load({ parent }) {
+//   const p = await parent();
+//
+//   if (!p.user) redirect(307, "/login");
+//
+//   if (p.user.role != "admin" && p.user.role != "volunteer") {
+//     error(403, "Not authorized");
+//   }
+// }
 
 export const actions = {
   default: async ({ request, fetch, params, cookies }) => {

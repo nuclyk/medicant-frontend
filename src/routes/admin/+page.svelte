@@ -1,7 +1,4 @@
 <script>
-    import InfoIcon from "./InfoIcon.svelte";
-    import SortAlphaDownIcon from "$lib/components/SortAlphaDownIcon.svelte";
-    import SortAlphaUpIcon from "$lib/components/SortAlphaUpIcon.svelte";
     import SortDown from "$lib/components/SortDown.svelte";
     import SortUp from "$lib/components/SortUp.svelte";
 
@@ -9,10 +6,8 @@
     import _ from "lodash";
     import toast from "svelte-5-french-toast";
 
-    import { getContext, onMount, setContext } from "svelte";
+    import { getContext, onMount } from "svelte";
     import { error } from "@sveltejs/kit";
-
-    let data = $state(getContext("sharedData"));
 
     let allUsers = $state(getContext("users"));
     let places = $state(getContext("places"));
@@ -106,6 +101,7 @@
 
             let index = allUsers()?.findIndex((user) => user.id === id);
             allUsers()?.splice(index, 1);
+
             toast.success("Participant successfuly checked out!");
         } catch (err) {
             toast.error(err.status + " : " + err.body.message);
@@ -393,11 +389,13 @@
                     </thead>
 
                     <tbody>
-                        {#each users as user, index (user.id)}
+                        {#each users as user (user.id)}
                             <tr>
                                 <td>
                                     <a
-                                        href={"/admin/manage/users/" + user.id}
+                                        href={"/admin/manage/user?id=" +
+                                            user.id}
+                                        data-sveltekit-preload-data="off"
                                         class="d-inline-block text-truncate"
                                         style="max-width: 8rem;"
                                     >
@@ -473,10 +471,10 @@
                                         aria-label="Place select"
                                         name="place"
                                         onchange={(event) => {
-                                            handleUserUpdate(user.id, event);
                                             user.place = event.target.value;
+                                            handleUserUpdate(user.id, event);
                                         }}
-                                        value={user.place}
+                                        bind:value={user.place}
                                     >
                                         {#each places() as place (place.name)}
                                             {@const totalInPlace =

@@ -6,21 +6,25 @@
     import { getContext } from "svelte";
     import { page } from "$app/state";
 
-    let data = $state(getContext("sharedData"));
+    let { data } = $props();
 
-    let user = $state(data.users.find((user) => user.id === page.params.slug));
-    let roles = $derived(data.roles.filter((r) => r.name != "admin"));
-    let retreats = $derived(data.retreats);
-    let places = $derived(data.places);
-    let retreat = $derived(
-        retreats.find((retreat) => retreat.id === user.retreat_id),
-    );
-    let genders = ["Female", "Male", "Other"];
+    $inspect(page, data);
+
+    let allUsers = getContext("users");
+    let allRoles = getContext("roles");
+    let allRetreats = getContext("retreats");
+    let places = getContext("places");
+
+    //let user = $state(allUsers().find((user) => user.id === page.params.slug));
+    let user = $state(data.user);
+    let roles = $derived(allRoles().filter((r) => r.name != "admin"));
+
+    let genders = ["Female", "Male"];
     let diet = ["None", "Vegetarian"];
 
     let disabled = $derived(dayjs(user?.check_out_date).year() !== 2001);
 
-    let userData = $state({
+    let formData = $state({
         first_name: user?.first_name,
         last_name: user?.last_name,
         email: user?.email,
@@ -49,11 +53,11 @@
             if (result.type !== "success") {
                 toast.error(result.status + " : " + result.data.error);
             } else {
-                let index = data.users.findIndex(
+                let index = allUsers().findIndex(
                     (u) => u.id === result.data.id,
                 );
 
-                data.users[index] = result.data;
+                allUsers()[index] = result.data;
                 toast.success("User updated successfuly!");
             }
         };
@@ -66,7 +70,7 @@
                     class="form-control"
                     type="text"
                     name="first_name"
-                    bind:value={user.first_name}
+                    bind:value={formData.first_name}
                     placeholder="Enter your first name"
                     required
                 />
@@ -78,7 +82,7 @@
                     class="form-control"
                     type="text"
                     name="last_name"
-                    bind:value={user.last_name}
+                    bind:value={formData.last_name}
                     placeholder="Enter your last name"
                     required
                 />
@@ -90,7 +94,7 @@
                     class="form-control"
                     type="email"
                     name="email"
-                    bind:value={user.email}
+                    bind:value={formData.email}
                     placeholder="Enter your email"
                     required
                 />
@@ -102,7 +106,7 @@
                     class="form-control"
                     type="text"
                     name="phone"
-                    bind:value={user.phone}
+                    bind:value={formData.phone}
                     placeholder="Enter your phone number"
                     required
                 />
@@ -114,7 +118,7 @@
                     class="form-control"
                     type="number"
                     name="age"
-                    bind:value={user.age}
+                    bind:value={formData.age}
                     placeholder="Enter your age"
                 />
                 <label for="age">Age</label>
@@ -126,7 +130,7 @@
                     aria-label="Gender select"
                     id="gender"
                     name="gender"
-                    bind:value={user.gender}
+                    bind:value={formData.gender}
                     placeholder="Enter your gender"
                 >
                     {#each genders as gender, index (index)}
@@ -142,7 +146,7 @@
                     aria-label="Nationality select"
                     id="nationality"
                     name="nationality"
-                    bind:value={user.nationality}
+                    bind:value={formData.nationality}
                     placeholder="Enter your nationality"
                 >
                     {#each countries as country, index (index)}
@@ -159,7 +163,7 @@
                     class="form-control"
                     type="text"
                     name="diet"
-                    bind:value={user.diet}
+                    bind:value={formData.diet}
                     placeholder="Enter your diet"
                     required
                 />
@@ -190,10 +194,10 @@
                     aria-label="Retreat select"
                     id="retreat"
                     name="retreat"
-                    bind:value={user.retreat_id}
+                    bind:value={formData.retreat_id}
                     placeholder="Enter your role"
                 >
-                    {#each retreats as retreat (retreat.id)}
+                    {#each allRetreats() as retreat (retreat.id)}
                         <option value={retreat.id} key={retreat.id}
                             >{retreat.retreat_code}</option
                         >
@@ -208,10 +212,10 @@
                     aria-label="Retreat select"
                     id="place"
                     name="place"
-                    bind:value={user.place}
+                    bind:value={formData.place}
                     placeholder="Enter your place"
                 >
-                    {#each places as place (place.name)}
+                    {#each places() as place (place.name)}
                         <option value={place.name} key={place.id}
                             >{place.name}</option
                         >
@@ -228,7 +232,7 @@
                     id="check_in_date"
                     name="check_in_date"
                     placeholder=""
-                    bind:value={user.check_in_date}
+                    bind:value={formData.check_in_date}
                     disabled
                 />
             </div>
@@ -241,7 +245,7 @@
                     id="check_out_date"
                     name="check_out_date"
                     placeholder=""
-                    bind:value={user.check_out_date}
+                    bind:value={formData.check_out_date}
                     disabled
                 />
             </div>
@@ -254,7 +258,7 @@
                     id="leave_date"
                     name="leave_date"
                     placeholder="Leave date"
-                    bind:value={user.leave_date}
+                    bind:value={formData.leave_date}
                     {disabled}
                 />
             </div>

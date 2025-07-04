@@ -2,7 +2,7 @@ import { error } from "@sveltejs/kit";
 import { redirect } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageLoad} */
-export async function load({ parent, fetch }) {
+export async function load({ parent }) {
   const p = await parent();
 
   if (!p.user) redirect(307, "/login");
@@ -10,17 +10,4 @@ export async function load({ parent, fetch }) {
   if (p.user.role != "admin" && p.user.role != "volunteer") {
     error(403, "Not authorized");
   }
-
-  // const res = await fetch(p.apiUrl + "places", {
-  //   method: "GET",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  // });
-  //
-  // if (!res.ok) {
-  //   error(res.status, "Could not fetch places");
-  // }
-  //
-  // return { places: await res.json() };
 }
