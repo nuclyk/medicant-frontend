@@ -16,8 +16,6 @@
     const apiUrl = getContext("apiUrl");
     const token = getContext("token");
 
-    $inspect(places(), allUsers());
-
     // checked-in and not admin
     let users = $derived(
         allUsers().filter(
@@ -26,6 +24,8 @@
                 new Date(u.check_out_date).getFullYear() == 2001,
         ),
     );
+
+    let sortedPlaces = $derived(_.sortBy(places(), [(p) => p.name]));
 
     let onRetreat = $derived(
         (retreatType) =>
@@ -488,18 +488,17 @@
                                         }}
                                         bind:value={user.place}
                                     >
-                                        {#each places() as place (place.id)}
-                                            <!-- {@const totalInPlace = -->
-                                            <!--     users?.filter( -->
-                                            <!--         (u) => u.place == place.id, -->
-                                            <!--     ).length} -->
+                                        {#each sortedPlaces as place (place.id)}
+                                            {@const totalInPlace =
+                                                users?.filter(
+                                                    (u) => u.place == place.id,
+                                                ).length}
 
                                             <option value={place.id}>
                                                 {place.name}
-
-                                                <!-- {#if place.id != 0} -->
-                                                <!--     ({totalInPlace}/{place.capacity}) -->
-                                                <!-- {/if} -->
+                                                {#if place.name !== "None"}
+                                                    (R:{place.room}) ({totalInPlace}/{place.capacity})
+                                                {/if}
                                             </option>
                                         {/each}
                                     </select>

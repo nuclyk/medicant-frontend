@@ -119,7 +119,9 @@
     <hr class="border border-1 opacity-50" />
 
     <p>Edit places</p>
-    {#each places().filter((p) => p.name != "None") as place (place.id)}
+    {#each places()
+        .filter((p) => p.name != "None")
+        .sort((a, b) => a.name.localeCompare(b.name)) as place (place.id)}
         <div class="row g-2 bg-light border rounded-1 p-2 my-2">
             <div class="col-auto input-group">
                 <span class="input-group-text">Name </span>
