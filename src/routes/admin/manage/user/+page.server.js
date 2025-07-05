@@ -15,8 +15,9 @@ import { API } from "$env/static/private";
 // }
 
 export const actions = {
-  default: async ({ request, fetch, params, cookies }) => {
+  default: async ({ request, fetch, cookies, url, params }) => {
     const data = await request.formData();
+    console.log(url, params);
 
     const updateUser = {
       first_name: data.get("first_name"),
@@ -33,7 +34,7 @@ export const actions = {
       place: data.get("place"),
     };
 
-    const res = await fetch(API + "users/" + params.slug, {
+    const res = await fetch(API + "users/" + url.searchParams.get("id"), {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
