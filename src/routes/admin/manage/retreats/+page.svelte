@@ -9,11 +9,7 @@
     let token = getContext("token");
     let apiUrl = getContext("apiUrl");
 
-    let retreats = $derived(
-        allRetreats()
-            .filter((retreat) => retreat.type != "flexible")
-            .sort((a, b) => new Date(a.start_date) - new Date(b.start_date)),
-    );
+    let retreats = $derived(allRetreats());
 
     async function handleDelete(id) {
         try {

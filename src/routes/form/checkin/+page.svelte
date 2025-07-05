@@ -32,28 +32,6 @@
         retreat_id: form?.formData?.retreat_id || (() => selectedRetreatId),
         leave_date: form?.formData?.leave_date || "",
     });
-
-    function formatRetreatName(retreat) {
-        if (retreat) {
-            return (
-                retreat.type +
-                " (" +
-                new Date(retreat.start_date).toLocaleDateString("en-DB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                }) +
-                " to " +
-                new Date(retreat.end_date).toLocaleDateString("en-DB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                }) +
-                ")"
-            );
-        }
-        return "";
-    }
 </script>
 
 <div class="row vstack g-3 my-3">
@@ -177,10 +155,8 @@
                                 >
                                     <option value="">Select a retreat</option>
                                     {#each data.retreats as retreat (retreat.id)}
-                                        <option value={retreat.id}>
-                                            {retreat.type === "flexible"
-                                                ? retreat.type
-                                                : formatRetreatName(retreat)}
+                                        <option value={retreat.id}
+                                            >{retreat.retreat_code}
                                         </option>
                                     {/each}
                                 </select>

@@ -9,23 +9,16 @@
     import { getContext, onMount } from "svelte";
     import { error } from "@sveltejs/kit";
 
-    let allUsers = $state(getContext("users"));
-    let places = $state(getContext("places"));
-    let roles = getContext("roles");
-    let retreats = getContext("retreats");
-    const apiUrl = getContext("apiUrl");
-    const token = getContext("token");
+    let { data } = $props();
 
-    // checked-in and not admin
-    let users = $derived(
-        allUsers().filter(
-            (u) =>
-                u.role != "admin" &&
-                new Date(u.check_out_date).getFullYear() == 2001,
-        ),
+    let users = $state(
+        data.users.filter((u) => u.role != "admin" && u.is_checked_in),
     );
-
-    let sortedPlaces = $derived(_.sortBy(places(), [(p) => p.name]));
+    let places = $state(data.places);
+    let roles = $state(data.roles);
+    let retreats = $state(data.retreats);
+    let apiUrl = $state(data.apiUrl);
+    let token = $state(data.token);
 
     let onRetreat = $derived(
         (retreatType) =>
@@ -86,11 +79,11 @@
 
     async function handleCheckout(id) {
         try {
-            const res = await fetch(apiUrl() + "users/" + id, {
+            const res = await fetch(apiUrl + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + token(),
+                    Authorization: "Bearer " + token,
                 },
                 body: JSON.stringify({
                     check_out_date: dayjs().toISOString(),
@@ -102,12 +95,13 @@
                 error(res.status, "Could not checkout the user!");
             }
 
-            let index = allUsers()?.findIndex((user) => user.id === id);
-            allUsers()?.splice(index, 1);
+            let index = users?.findIndex((user) => user.id === id);
+            users?.splice(index, 1);
 
             toast.success("Participant successfuly checked out!");
         } catch (err) {
-            toast.error(err.status + " : " + err.body.message);
+            console.log(err);
+            toast.error(err.status + " : " + err.message);
         }
     }
 
@@ -118,7 +112,7 @@
         }
 
         try {
-            const res = await fetch(apiUrl() + "users/" + id, {
+            const res = await fetch(apiUrl + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -140,7 +134,7 @@
     }
 
     function findRetreat(retreat_id) {
-        return retreats().find((retreat) => retreat_id === retreat.id);
+        return retreats.find((retreat) => retreat_id === retreat.id);
     }
 </script>
 
@@ -456,7 +450,7 @@
                                             }}
                                         />
 
-                                        {#if dayjs().isSame(user.leave_date, "day") || (dayjs().isAfter(user.leave_date, "day") && user.check_out_date == "")}
+                                        {#if dayjs().isSame(user.leave_date, "day") || dayjs().isAfter(user.leave_date, "day")}
                                             <button
                                                 aria-label="Info"
                                                 type="button"
@@ -488,7 +482,7 @@
                                         }}
                                         bind:value={user.place}
                                     >
-                                        {#each sortedPlaces as place (place.id)}
+                                        {#each places as place (place.id)}
                                             {@const totalInPlace =
                                                 users?.filter(
                                                     (u) => u.place == place.id,
@@ -518,7 +512,7 @@
                                         <option value={user.role} selected
                                             >{user.role}</option
                                         >
-                                        {#each roles().filter((r) => r.name != "admin") as role (role.name)}
+                                        {#each roles.filter((r) => r.name != "admin") as role (role.name)}
                                             <option value={role.name}>
                                                 {role.name}
                                             </option>

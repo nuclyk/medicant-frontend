@@ -37,8 +37,6 @@ export const actions = {
 
     cookies.set("token", body.token, {
       path: "/",
-      httpOnly: true,
-      secure: true,
       maxAge: token.exp - token.iat,
     });
     throw redirect(302, "/admin");
