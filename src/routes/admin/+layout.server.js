@@ -23,12 +23,22 @@ export async function load({ locals, fetch, cookies }) {
       "Content-Type": "application/json",
     },
   });
+
+  const users = await fetch(API + "users", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + cookies.get("token"),
+    },
+  });
+
   return {
     user: locals.user && {
       id: locals.user.sub,
       role: locals.user.role,
     },
     token: cookies.get("token"),
+    users: await users.json(),
     retreats: await retreats.json(),
     roles: await roles.json(),
     places: await places.json(),

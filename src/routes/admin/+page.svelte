@@ -1,7 +1,4 @@
 <script>
-    import InfoIcon from "./InfoIcon.svelte";
-    import SortAlphaDownIcon from "$lib/components/SortAlphaDownIcon.svelte";
-    import SortAlphaUpIcon from "$lib/components/SortAlphaUpIcon.svelte";
     import SortDown from "$lib/components/SortDown.svelte";
     import SortUp from "$lib/components/SortUp.svelte";
 
@@ -9,29 +6,34 @@
     import _ from "lodash";
     import toast from "svelte-5-french-toast";
 
-    import { onMount, setContext } from "svelte";
+    import { getContext, onMount } from "svelte";
     import { error } from "@sveltejs/kit";
 
-    let { data } = $props();
+    let allUsers = $state(getContext("users"));
+    let places = $state(getContext("places"));
+    let roles = getContext("roles");
+    let retreats = getContext("retreats");
+    const apiUrl = getContext("apiUrl");
+    const token = getContext("token");
 
-    setContext("user", "test");
-
-    let users = $state(
-        data?.users
-            ?.filter(
-                (user) => user.role != "admin" && user.check_out_date === "",
-            )
-            .sort(
-                (a, b) => new Date(b.check_in_date) - new Date(a.check_in_date),
-            ),
+    // checked-in and not admin
+    let users = $derived(
+        allUsers().filter(
+            (u) =>
+                u.role != "admin" &&
+                new Date(u.check_out_date).getFullYear() == 2001,
+        ),
     );
 
-    let onRetreat = $state(
+    let sortedPlaces = $derived(_.sortBy(places(), [(p) => p.name]));
+
+    let onRetreat = $derived(
         (retreatType) =>
             users?.filter((user) => {
                 let retreat = findRetreat(user.retreat_id);
-                if (retreat.type === retreatType && user.check_out_date == "")
+                if (retreat.type === retreatType) {
                     return true;
+                }
             }).length,
     );
 
@@ -43,10 +45,6 @@
         place: true,
     });
 
-    let places = $derived(data?.places);
-
-    let roles = $derived(data?.roles?.filter((role) => role.name != "admin"));
-
     let veg = $derived(
         users?.filter((user) => user.diet === "Vegetarian").length,
     );
@@ -55,15 +53,11 @@
         return users?.filter((user) => user.place === placeName).length;
     });
 
-    let currentlyStaying = $derived(
-        users?.filter((user) => !user.check_out_date).length,
-    );
-
     let leaving = $derived(
         users?.filter(
             (user) =>
                 new Date(user.leave_date).toDateString() ===
-                    new Date().toDateString() && !user.check_out_date,
+                new Date().toDateString(),
         ).length,
     );
 
@@ -92,15 +86,15 @@
 
     async function handleCheckout(id) {
         try {
-            const res = await fetch(data.apiUrl + "users/" + id, {
+            const res = await fetch(apiUrl() + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + data.token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
-                    check_out_date: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-                    leave_date: dayjs().format("YYYY-MM-DD"),
+                    check_out_date: dayjs().toISOString(),
+                    is_checked_in: false,
                 }),
             });
 
@@ -108,8 +102,9 @@
                 error(res.status, "Could not checkout the user!");
             }
 
-            let index = users.findIndex((user) => user.id === id);
-            users.splice(index, 1);
+            let index = allUsers()?.findIndex((user) => user.id === id);
+            allUsers()?.splice(index, 1);
+
             toast.success("Participant successfuly checked out!");
         } catch (err) {
             toast.error(err.status + " : " + err.body.message);
@@ -117,20 +112,24 @@
     }
 
     async function handleUserUpdate(id, event) {
+        let value = event.target.value;
+        if (Number(value)) {
+            value = Number(value);
+        }
+
         try {
-            const res = await fetch(data.apiUrl + "users/" + id, {
+            const res = await fetch(apiUrl() + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + data.token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
-                    [event.target.name]: event.target.value,
+                    [event.target.name]: value,
                 }),
             });
 
             if (!res.ok) {
-                console.log(res);
                 error(res.status, "Could not update the user!");
             }
 
@@ -141,10 +140,7 @@
     }
 
     function findRetreat(retreat_id) {
-        const retreat = data.retreats.find(
-            (retreat) => retreat_id === retreat.id,
-        );
-        return retreat;
+        return retreats().find((retreat) => retreat_id === retreat.id);
     }
 </script>
 
@@ -159,7 +155,7 @@
                     >
                         Currently staying:
                         <span class="badge text-bg-primary rounded-pill">
-                            {currentlyStaying}</span
+                            {users.length}</span
                         >
                     </li>
                     <li
@@ -222,7 +218,7 @@
                         Participants / Volunteers:
                         <span class="badge text-bg-primary rounded-pill">
                             {#if users}
-                                {@const volunteers = users.filter(
+                                {@const volunteers = users?.filter(
                                     (user) => user.role === "volunteer",
                                 ).length}
                                 {users.length - volunteers} / {volunteers}
@@ -243,10 +239,10 @@
                         Male / Female:
                         <span class="badge text-bg-primary rounded-pill">
                             {#if users}
-                                {@const male = users.filter(
+                                {@const male = users?.filter(
                                     (user) => user.gender === "Male",
                                 ).length}
-                                {@const female = users.filter(
+                                {@const female = users?.filter(
                                     (user) => user.gender === "Female",
                                 ).length}
                                 {male} / {female}
@@ -401,13 +397,17 @@
                     </thead>
 
                     <tbody>
-                        {#each users as user, index (user.id)}
+                        {#each users as user (user.id)}
                             <tr>
                                 <td>
                                     <a
-                                        href={"admin/manage/users/" + user.id}
-                                        class="d-inline-block text-truncate"
-                                        style="max-width: 8rem;"
+                                        href={"/admin/manage/user?id=" +
+                                            user.id}
+                                        data-sveltekit-preload-data="off"
+                                        class="d-inline-block link-secondary {user.gender ===
+                                        'Male'
+                                            ? 'link-danger'
+                                            : 'link-info'}"
                                     >
                                         {user.first_name}
                                         {user.last_name}
@@ -429,6 +429,7 @@
                                         type="button"
                                         class="btn btn-primary btn-sm w-100"
                                         onclick={() => {
+                                            console.log(user.id);
                                             handleCheckout(user.id);
                                         }}
                                         >Checkout
@@ -481,20 +482,22 @@
                                         name="place"
                                         onchange={(event) => {
                                             handleUserUpdate(user.id, event);
-                                            user.place = event.target.value;
+                                            user.place = Number(
+                                                event.target.value,
+                                            );
                                         }}
-                                        value={user.place}
+                                        bind:value={user.place}
                                     >
-                                        {#each places as place (place.name)}
-                                            {@const totalInPlace = users.filter(
-                                                (u) => u.place === place.name,
-                                            ).length}
+                                        {#each sortedPlaces as place (place.id)}
+                                            {@const totalInPlace =
+                                                users?.filter(
+                                                    (u) => u.place == place.id,
+                                                ).length}
 
-                                            <option value={place.name}>
+                                            <option value={place.id}>
                                                 {place.name}
-
                                                 {#if place.name !== "None"}
-                                                    ({totalInPlace}/{place.capacity})
+                                                    (R:{place.room}) ({totalInPlace}/{place.capacity})
                                                 {/if}
                                             </option>
                                         {/each}
@@ -515,7 +518,7 @@
                                         <option value={user.role} selected
                                             >{user.role}</option
                                         >
-                                        {#each roles as role (role.name)}
+                                        {#each roles().filter((r) => r.name != "admin") as role (role.name)}
                                             <option value={role.name}>
                                                 {role.name}
                                             </option>

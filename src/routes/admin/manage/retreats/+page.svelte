@@ -3,22 +3,25 @@
     import dayjs from "dayjs";
     import toast from "svelte-5-french-toast";
     import { enhance } from "$app/forms";
+    import { getContext } from "svelte";
 
-    let { data } = $props();
+    let allRetreats = getContext("retreats");
+    let token = getContext("token");
+    let apiUrl = getContext("apiUrl");
 
-    let retreats = $state(
-        data.retreats
+    let retreats = $derived(
+        allRetreats()
             .filter((retreat) => retreat.type != "flexible")
             .sort((a, b) => new Date(a.start_date) - new Date(b.start_date)),
     );
 
     async function handleDelete(id) {
         try {
-            const res = await fetch(data.apiUrl + "retreats/" + id, {
+            const res = await fetch(apiUrl() + "retreats/" + id, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + data.token,
+                    Authorization: "Bearer " + token(),
                 },
             });
 
@@ -26,8 +29,8 @@
                 error(res.status, "Failed to delete retreat");
             }
 
-            let index = retreats.findIndex((retreat) => retreat.id === id);
-            retreats.splice(index, 1);
+            let index = allRetreats().findIndex((retreat) => retreat.id === id);
+            allRetreats().splice(index, 1);
 
             toast.success("Retreat deleted successfuly!");
         } catch (err) {
@@ -37,11 +40,11 @@
 
     async function handleChange(id, event) {
         try {
-            const res = await fetch(data.apiUrl + "retreats/" + id, {
+            const res = await fetch(apiUrl() + "retreats/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + data.token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
                     [event.target.name]: event.target.value,
@@ -51,6 +54,9 @@
             if (!res.ok) {
                 error(res.status, "Failed to update the retreat");
             }
+
+            let index = allRetreats().findIndex((r) => r.id === id);
+            allRetreats()[index] = await res.json();
 
             toast.success("Retreat updated successfuly!");
         } catch (err) {
@@ -67,7 +73,7 @@
                 if (result.type !== "success") {
                     toast.error(result.status + " : " + result.data.error);
                 } else {
-                    retreats.push(result.data);
+                    allRetreats().push(result.data);
                     toast.success("Retreat added successfuly!");
                 }
             };
@@ -133,8 +139,8 @@
                     type="date"
                     name="end_date"
                     value={dayjs(retreat.end_date).format("YYYY-MM-DD")}
-                    retreat.end_date="event.target.value"
                     onchange={(event) => {
+                        retreat.end_date = "event.target.value";
                         handleChange(retreat.id, event);
                     }}
                     required

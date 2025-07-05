@@ -1,16 +1,9 @@
+import { redirect, error } from "@sveltejs/kit";
 import { API } from "$env/static/private";
 
-import { redirect, error } from "@sveltejs/kit";
-
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch, cookies, locals }) {
-  if (!locals.user) redirect(307, "/login");
-
-  if (locals.user.role != "admin" && locals.user.role != "volunteer") {
-    error(403, "Not authorized");
-  }
-
-  const users = await fetch(API + "users", {
+export async function load({ locals, cookies, fetch }) {
+  const res = await fetch(API + "users", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -18,7 +11,9 @@ export async function load({ fetch, cookies, locals }) {
     },
   });
 
-  return {
-    users: await users.json(),
-  };
+  if (!res.ok) {
+    error(res.status, res.statusText);
+  }
+
+  return { allUsers: await res.json() };
 }

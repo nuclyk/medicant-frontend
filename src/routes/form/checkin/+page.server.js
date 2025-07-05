@@ -1,16 +1,12 @@
 import { API } from "$env/static/private";
 import { fail } from "@sveltejs/kit";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
-  const response = await fetch(API + "retreats");
-  const data = await response.json();
-
+  const res = await fetch(API + "retreats");
   return {
-    retreats: data,
+    retreats: await res.json(),
   };
 }
 
@@ -19,9 +15,7 @@ export const actions = {
   default: async ({ request, fetch }) => {
     const formData = await request.formData();
 
-    dayjs.extend(utc);
-    dayjs.extend(timezone);
-    const now = dayjs().tz("Asia/Bangkok").format("YYYY-MM-DD HH:mm");
+    const now = dayjs().toISOString();
 
     const data = {
       first_name: formData.get("first_name"),
@@ -34,9 +28,8 @@ export const actions = {
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
       check_in_date: now,
-      check_out_date: "",
       leave_date: formData.get("leave_date"),
-      place: "None",
+      place: 1,
     };
 
     // Check if the participant is already in db
@@ -50,8 +43,11 @@ export const actions = {
 
     // If the participant is already in db, just update the record
     if (userExists.ok) {
-      const user = await userExists.json();
+      // With this flag, the backend will reset check out date
+      data.reset = true;
+      data.is_checked_in = true;
 
+      const user = await userExists.json();
       const updateUser = await fetch(API + "users/" + user.userID, {
         method: "PUT",
         headers: {

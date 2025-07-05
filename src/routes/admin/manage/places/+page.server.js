@@ -14,6 +14,7 @@ export const actions = {
       },
       body: JSON.stringify({
         name: data.get("name"),
+        room: data.get("room"),
         capacity: data.get("capacity"),
       }),
     });
