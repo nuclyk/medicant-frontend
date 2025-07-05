@@ -215,8 +215,8 @@
                     bind:value={formData.place}
                     placeholder="Enter your place"
                 >
-                    {#each places() as place (place.name)}
-                        <option value={place.name} key={place.id}
+                    {#each places() as place (place.id)}
+                        <option value={place.id} key={place.id}
                             >{place.name}</option
                         >
                     {/each}

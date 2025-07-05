@@ -31,7 +31,7 @@ export const actions = {
       retreat_id: parseInt(data.get("retreat")),
       leave_date: data.get("leave_date"),
       diet: data.get("diet"),
-      place: data.get("place"),
+      place: parseInt(data.get("place")),
     };
 
     const res = await fetch(API + "users/" + url.searchParams.get("id"), {

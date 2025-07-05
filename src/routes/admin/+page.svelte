@@ -94,6 +94,7 @@
                 },
                 body: JSON.stringify({
                     check_out_date: dayjs().toISOString(),
+                    is_checked_in: false,
                 }),
             });
 
@@ -403,8 +404,10 @@
                                         href={"/admin/manage/user?id=" +
                                             user.id}
                                         data-sveltekit-preload-data="off"
-                                        class="d-inline-block text-truncate"
-                                        style="max-width: 8rem;"
+                                        class="d-inline-block link-secondary {user.gender ===
+                                        'Male'
+                                            ? 'link-danger'
+                                            : 'link-info'}"
                                     >
                                         {user.first_name}
                                         {user.last_name}
