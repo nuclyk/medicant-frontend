@@ -15,7 +15,6 @@
     let allRetreats = getContext("retreats");
     let places = getContext("places");
 
-    //let user = $state(allUsers().find((user) => user.id === page.params.slug));
     let user = $state(data.user);
     let roles = $derived(allRoles().filter((r) => r.name != "admin"));
 

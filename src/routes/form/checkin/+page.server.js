@@ -45,7 +45,6 @@ export const actions = {
     if (userExists.ok) {
       // With this flag, the backend will reset check out date
       data.reset = true;
-      data.is_checked_in = true;
 
       const user = await userExists.json();
       const updateUser = await fetch(API + "users/" + user.userID, {

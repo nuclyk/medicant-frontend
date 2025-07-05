@@ -17,8 +17,6 @@
     setContext("places", () => places);
     setContext("token", () => token);
     setContext("apiUrl", () => apiUrl);
-
-    $inspect(users);
 </script>
 
 <div class="container-fluid">

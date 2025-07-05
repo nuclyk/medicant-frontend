@@ -3,17 +3,6 @@ import { error } from "@sveltejs/kit";
 import { fail } from "@sveltejs/kit";
 import { API } from "$env/static/private";
 
-// /** @type {import('./$types').PageServerLoad} */
-// export async function load({ parent }) {
-//   const p = await parent();
-//
-//   if (!p.user) redirect(307, "/login");
-//
-//   if (p.user.role != "admin" && p.user.role != "volunteer") {
-//     error(403, "Not authorized");
-//   }
-// }
-
 export const actions = {
   default: async ({ request, fetch, cookies, url, params }) => {
     const data = await request.formData();
