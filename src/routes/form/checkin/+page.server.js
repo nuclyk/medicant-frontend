@@ -29,7 +29,7 @@ export const actions = {
       retreat_id: parseInt(formData.get("retreat")),
       check_in_date: now,
       leave_date: formData.get("leave_date"),
-      place: "None",
+      place: 1,
     };
 
     // Check if the participant is already in db

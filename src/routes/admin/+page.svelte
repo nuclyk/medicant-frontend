@@ -16,6 +16,8 @@
     const apiUrl = getContext("apiUrl");
     const token = getContext("token");
 
+    $inspect(places(), allUsers());
+
     // checked-in and not admin
     let users = $derived(
         allUsers().filter(
@@ -109,6 +111,11 @@
     }
 
     async function handleUserUpdate(id, event) {
+        let value = event.target.value;
+        if (Number(value)) {
+            value = Number(value);
+        }
+
         try {
             const res = await fetch(apiUrl() + "users/" + id, {
                 method: "PUT",
@@ -117,7 +124,7 @@
                     Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
-                    [event.target.name]: event.target.value,
+                    [event.target.name]: value,
                 }),
             });
 
@@ -471,24 +478,25 @@
                                         aria-label="Place select"
                                         name="place"
                                         onchange={(event) => {
-                                            user.place = event.target.value;
                                             handleUserUpdate(user.id, event);
+                                            user.place = Number(
+                                                event.target.value,
+                                            );
                                         }}
                                         bind:value={user.place}
                                     >
-                                        {#each places() as place (place.name)}
-                                            {@const totalInPlace =
-                                                users?.filter(
-                                                    (u) =>
-                                                        u.place === place.name,
-                                                ).length}
+                                        {#each places() as place (place.id)}
+                                            <!-- {@const totalInPlace = -->
+                                            <!--     users?.filter( -->
+                                            <!--         (u) => u.place == place.id, -->
+                                            <!--     ).length} -->
 
-                                            <option value={place.name}>
+                                            <option value={place.id}>
                                                 {place.name}
 
-                                                {#if place.name !== "None"}
-                                                    ({totalInPlace}/{place.capacity})
-                                                {/if}
+                                                <!-- {#if place.id != 0} -->
+                                                <!--     ({totalInPlace}/{place.capacity}) -->
+                                                <!-- {/if} -->
                                             </option>
                                         {/each}
                                     </select>
