@@ -4,12 +4,14 @@
     import toast from "svelte-5-french-toast";
     import { enhance } from "$app/forms";
     import { getContext } from "svelte";
+    import ConfirmDeleteModal from "$lib/components/ConfirmDeleteModal.svelte";
 
     let allRetreats = getContext("retreats");
     let token = getContext("token");
     let apiUrl = getContext("apiUrl");
 
-    let retreats = $derived(allRetreats());
+    let id = $state();
+    let text = $state();
 
     async function handleDelete(id) {
         try {
@@ -61,6 +63,8 @@
     }
 </script>
 
+<ConfirmDeleteModal bind:id bind:text confirm={handleDelete} />
+
 <div class="container-fluid">
     <form
         method="POST"
@@ -108,7 +112,7 @@
     <hr class="border border-1 opacity-50" />
 
     <p>Edit retreats</p>
-    {#each retreats as retreat (retreat.id)}
+    {#each allRetreats().filter((r) => r.name != "flexible") as retreat (retreat.id)}
         <div
             class="row g-2 bg-light border rounded-1 p-2 my-2 align-items-center"
         >
@@ -145,9 +149,16 @@
             <div class="col-lg-auto">
                 <button
                     type="button"
-                    class="btn btn-dark flex-fill w-100"
-                    onclick={() => handleDelete(retreat.id)}>Delete</button
+                    class="btn btn-primary flex-fill w-100"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteModal"
+                    onclick={() => {
+                        id = retreat.id;
+                        text = retreat.retreat_code;
+                    }}
                 >
+                    Delete
+                </button>
             </div>
         </div>
     {/each}
