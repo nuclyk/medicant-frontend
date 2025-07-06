@@ -71,7 +71,7 @@
         return users?.filter((user) => user.place === placeName).length;
     }
 
-    onMount(() => {
+    onMount(async () => {
         const tooltipTriggerList = document.querySelectorAll(
             '[data-bs-toggle="tooltip"]',
         );
@@ -136,6 +136,9 @@
         } catch (err) {
             toast.error(err.status + " : " + err);
         }
+
+        // let index = users.findIndex((u) => u.id === id);
+        // users[index][event.target.name] = event.target.value;
     }
 
     function findRetreat(retreat_id) {
@@ -254,6 +257,9 @@
     </div>
 
     <!-- Table of participants currently checked-in -->
+    <!-- ------------------------------------------ -->
+    <!-- ------------------------------------------ -->
+    <!-- ------------------------------------------ -->
 
     <div class="row">
         <div class="col">
@@ -380,7 +386,7 @@
                                 </button>
                             </th>
                             <th scope="col"
-                                >Donation
+                                >To Donate
                                 <span
                                     class="badge text-bg-primary rounded-pill"
                                     aria-label="Info"
@@ -392,8 +398,13 @@
                                     ?
                                 </span>
                             </th>
+                            <th>Donated</th>
                         </tr>
                     </thead>
+
+                    <!-- ------------------------ TBODY -------------------------- -->
+                    <!-- ------------------------ TBODY -------------------------- -->
+                    <!-- ------------------------ TBODY -------------------------- -->
 
                     <tbody>
                         {#each users as user (user.id)}
@@ -525,11 +536,34 @@
                                     </select>
                                 </td>
 
-                                <td
-                                    >{dayjs(user.leave_date).diff(
+                                <td class="text-center">
+                                    {dayjs(user.leave_date).diff(
                                         user.check_in_date,
                                         "day",
                                     ) * 500}
+                                </td>
+
+                                <td>
+                                    <div class="row flex-nowrap">
+                                        <div class="col">
+                                            <input
+                                                type="number"
+                                                class="form-control form-control-sm text-center"
+                                                style="min-width: 4rem"
+                                                id="donation"
+                                                name="donation"
+                                                value={user.donation}
+                                                onchange={() => {
+                                                    handleUserUpdate(
+                                                        user.id,
+                                                        event,
+                                                    );
+                                                    user.donation =
+                                                        event.target.value;
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         {/each}
