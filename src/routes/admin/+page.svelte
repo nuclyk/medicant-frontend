@@ -12,8 +12,13 @@
     let { data } = $props();
 
     let users = $state(
-        data.users.filter((u) => u.role != "admin" && u.is_checked_in),
+        _.orderBy(
+            data.users.filter((u) => u.role != "admin" && u.is_checked_in),
+            ["check_in_date"],
+            ["desc"],
+        ),
     );
+
     let places = $state(data.places);
     let roles = $state(data.roles);
     let retreats = $state(data.retreats);
