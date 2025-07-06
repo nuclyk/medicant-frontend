@@ -1,9 +1,12 @@
 <script>
+    import logo from "$lib/assets/images/logo.png";
     const { user } = $props();
+    $inspect(user);
 </script>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
     <div class="container-fluid">
+        <img src={logo} alt="Medicant Logo" width="50" class="me-3" />
         <a class="navbar-brand" href="/">Medicant</a>
         <button
             class="navbar-toggler"
@@ -36,13 +39,17 @@
 
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
-                    <li class="nav-item" data-bs-dismiss="offcanvas">
-                        <a class="nav-link" href="/admin">Dashboard</a>
-                    </li>
-                    <li class="nav-item" data-bs-dismiss="offcanvas">
-                        <a class="nav-link" href="/admin/manage/users">Manage</a
-                        >
-                    </li>
+                    {#if user?.role === "admin" || user?.role === "volunteer"}
+                        <li class="nav-item" data-bs-dismiss="offcanvas">
+                            <a class="nav-link" href="/admin">Dashboard</a>
+                        </li>
+                        <li class="nav-item" data-bs-dismiss="offcanvas">
+                            <a class="nav-link" href="/admin/manage/users"
+                                >Manage</a
+                            >
+                        </li>
+                    {/if}
+
                     <li class="nav-item dropdown">
                         <span
                             class="nav-link dropdown-toggle"
@@ -109,23 +116,26 @@
                             <!-- </li> -->
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <div class="d-inline" data-bs-dismiss="offcanvas">
+                            {#if !user}
+                                <a
+                                    class="btn text-bg-primary rounded"
+                                    href="/login">Login</a
+                                >
+                            {:else}
+                                <form action="/login?/logout" method="POST">
+                                    <button
+                                        type="submit"
+                                        data-bs-dismiss="offcanvas"
+                                        class="btn text-bg-primary rounded d-inline"
+                                        >Logout</button
+                                    >
+                                </form>
+                            {/if}
+                        </div>
+                    </li>
                 </ul>
-                <div class="justify-self-end" data-bs-dismiss="offcanvas">
-                    {#if !user}
-                        <a class="btn text-bg-dark rounded" href="/login"
-                            >Login</a
-                        >
-                    {:else}
-                        <form action="/login?/logout" method="POST">
-                            <button
-                                type="submit"
-                                data-bs-dismiss="offcanvas"
-                                class="btn text-bg-secondary rounded"
-                                >Logout</button
-                            >
-                        </form>
-                    {/if}
-                </div>
             </div>
         </div>
     </div>

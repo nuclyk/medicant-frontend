@@ -2,14 +2,10 @@
     import { enhance } from "$app/forms";
 </script>
 
-<div class="container-sm vh-100 align-content-center">
-    <div
-        class="row row-cols-1 text-center border border-light-subtle rounded-4 g-3 p-3"
-    >
-        <div class="col">
+<div class="container mt-5 w-75" style="max-width: 30rem;">
+    <div class="row text-center rounded-4">
+        <div class="col border rounded p-3">
             <p class="lead">Login to Medicant</p>
-        </div>
-        <div class="col">
             <form use:enhance method="POST" action="?/login">
                 <div class="form-floating mb-3">
                     <input
@@ -33,6 +29,7 @@
                     />
                     <label for="password">Password</label>
                 </div>
+
                 <div class="row">
                     <div class="col text-center">
                         <button type="submit" class="btn btn-dark btn-md"
