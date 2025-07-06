@@ -8,7 +8,6 @@
     let users = $state(getContext("users"));
     let token = getContext("token");
     let apiUrl = getContext("apiUrl");
-    $inspect(places(), users(), token(), apiUrl());
 
     let placeName = $state("");
     let placeRoom = $state("");
