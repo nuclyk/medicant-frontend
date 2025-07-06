@@ -121,7 +121,7 @@
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + token(),
+                    Authorization: "Bearer " + token,
                 },
                 body: JSON.stringify({
                     [event.target.name]: value,
@@ -134,7 +134,7 @@
 
             toast.success("Updated successfuly!");
         } catch (err) {
-            toast.error(err.status + " : " + err.body.message);
+            toast.error(err.status + " : " + err);
         }
     }
 
