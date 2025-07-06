@@ -65,7 +65,7 @@
 
 <ConfirmDeleteModal bind:id bind:text confirm={handleDelete} />
 
-<div class="container-fluid">
+<div class="container">
     <form
         method="POST"
         use:enhance={() => {
@@ -80,6 +80,7 @@
         }}
     >
         <p>Add new retreat</p>
+
         <div class="row bg-light border rounded-1 p-2 g-2">
             <div class="col-xxl input-group">
                 <span class="input-group-text">Start date</span>
@@ -112,7 +113,8 @@
     <hr class="border border-1 opacity-50" />
 
     <p>Edit retreats</p>
-    {#each allRetreats().filter((r) => r.name != "flexible") as retreat (retreat.id)}
+
+    {#each allRetreats().filter((r) => r.retreat_code != "flexible") as retreat (retreat.id)}
         <div
             class="row g-2 bg-light border rounded-1 p-2 my-2 align-items-center"
         >
