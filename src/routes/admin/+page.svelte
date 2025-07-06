@@ -1,6 +1,7 @@
 <script>
     import SortDown from "$lib/components/SortDown.svelte";
     import SortUp from "$lib/components/SortUp.svelte";
+    import CheckoutModal from "$lib/components/CheckoutModal.svelte";
 
     import dayjs from "dayjs";
     import _ from "lodash";
@@ -8,10 +9,9 @@
 
     import { getContext, onMount } from "svelte";
     import { error } from "@sveltejs/kit";
-    import CheckoutModal from "$lib/components/CheckoutModal.svelte";
 
     let { data } = $props();
-
+    let showStats = $state(false);
     let userId = $state();
     let userName = $state();
 
@@ -152,114 +152,124 @@
 
 <CheckoutModal id={userId} name={userName} confirm={handleCheckout} />
 
-<div class="container-fluid">
-    <div class="row mb-3 mt-3 g-3 vh-25">
+<div class="container-fluid mt-3">
+    <div class="row">
         <div class="col">
-            <div class="card">
-                <div class="card-header">Participants</div>
-                <ul class="list-group list-group-flush text-nowrap">
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Currently staying:
-                        <span class="badge text-bg-primary rounded-pill">
-                            {users.length}</span
+            <button
+                class="btn btn-primary"
+                onclick={() => (showStats = !showStats)}>Show stats</button
+            >
+        </div>
+    </div>
+    <div class="row mb-1 mt-1 g-3 vh-25">
+        {#if showStats}
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">Participants</div>
+                    <ul class="list-group list-group-flush text-nowrap">
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
                         >
-                    </li>
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Arrived today:
-                        <span class="badge text-bg-primary rounded-pill">
-                            {newArrivals}
-                        </span>
-                    </li>
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Leaving today:
-                        <span class="badge text-bg-primary rounded-pill">
-                            {leaving}
-                        </span>
-                    </li>
-                </ul>
+                            Currently staying:
+                            <span class="badge text-bg-primary rounded-pill">
+                                {users.length}</span
+                            >
+                        </li>
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            Arrived today:
+                            <span class="badge text-bg-primary rounded-pill">
+                                {newArrivals}
+                            </span>
+                        </li>
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            Leaving today:
+                            <span class="badge text-bg-primary rounded-pill">
+                                {leaving}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card">
-                <div class="card-header">Retreats</div>
-                <ul class="list-group list-group-flush text-nowrap">
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Next retreat date:
-                        <span class="badge text-bg-primary rounded-pill">
-                            ?
-                        </span>
-                    </li>
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Flexible retreat:
-                        <span class="badge text-bg-primary rounded-pill">
-                            {onRetreat("flexible")}
-                        </span>
-                    </li>
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Fixed reatreat:
-                        <span class="badge text-bg-primary rounded-pill">
-                            {onRetreat("fixed")}
-                        </span>
-                    </li>
-                </ul>
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">Retreats</div>
+                    <ul class="list-group list-group-flush text-nowrap">
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            Next retreat date:
+                            <span class="badge text-bg-primary rounded-pill">
+                                ?
+                            </span>
+                        </li>
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            Flexible retreat:
+                            <span class="badge text-bg-primary rounded-pill">
+                                {onRetreat("flexible")}
+                            </span>
+                        </li>
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            Fixed reatreat:
+                            <span class="badge text-bg-primary rounded-pill">
+                                {onRetreat("fixed")}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card">
-                <div class="card-header">Stats</div>
-                <ul class="list-group list-group-flush text-nowrap">
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Participants / Volunteers:
-                        <span class="badge text-bg-primary rounded-pill">
-                            {#if users}
-                                {@const volunteers = users?.filter(
-                                    (user) => user.role === "volunteer",
-                                ).length}
-                                {users.length - volunteers} / {volunteers}
-                            {/if}
-                        </span>
-                    </li>
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Veg / Non-veg:
-                        <span class="badge text-bg-primary rounded-pill">
-                            {veg} / {users.length - veg}
-                        </span>
-                    </li>
-                    <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        Male / Female:
-                        <span class="badge text-bg-primary rounded-pill">
-                            {#if users}
-                                {@const male = users?.filter(
-                                    (user) => user.gender === "Male",
-                                ).length}
-                                {@const female = users?.filter(
-                                    (user) => user.gender === "Female",
-                                ).length}
-                                {male} / {female}
-                            {/if}
-                        </span>
-                    </li>
-                </ul>
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">Stats</div>
+                    <ul class="list-group list-group-flush text-nowrap">
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            Participants / Volunteers:
+                            <span class="badge text-bg-primary rounded-pill">
+                                {#if users}
+                                    {@const volunteers = users?.filter(
+                                        (user) => user.role === "volunteer",
+                                    ).length}
+                                    {users.length - volunteers} / {volunteers}
+                                {/if}
+                            </span>
+                        </li>
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            Veg / Non-veg:
+                            <span class="badge text-bg-primary rounded-pill">
+                                {veg} / {users.length - veg}
+                            </span>
+                        </li>
+                        <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            Male / Female:
+                            <span class="badge text-bg-primary rounded-pill">
+                                {#if users}
+                                    {@const male = users?.filter(
+                                        (user) => user.gender === "Male",
+                                    ).length}
+                                    {@const female = users?.filter(
+                                        (user) => user.gender === "Female",
+                                    ).length}
+                                    {male} / {female}
+                                {/if}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        {/if}
     </div>
 
     <!-- Table of participants currently checked-in -->
