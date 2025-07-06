@@ -8,8 +8,12 @@
 
     import { getContext, onMount } from "svelte";
     import { error } from "@sveltejs/kit";
+    import CheckoutModal from "$lib/components/CheckoutModal.svelte";
 
     let { data } = $props();
+
+    let userId = $state();
+    let userName = $state();
 
     let users = $state(
         _.orderBy(
@@ -145,6 +149,8 @@
         return retreats.find((retreat) => retreat_id === retreat.id);
     }
 </script>
+
+<CheckoutModal id={userId} name={userName} confirm={handleCheckout} />
 
 <div class="container-fluid">
     <div class="row mb-3 mt-3 g-3 vh-25">
@@ -438,11 +444,17 @@
                                     <button
                                         type="button"
                                         class="btn btn-primary btn-sm w-100"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#checkoutModal"
                                         onclick={() => {
-                                            console.log(user.id);
-                                            handleCheckout(user.id);
+                                            userId = user.id;
+                                            userName =
+                                                user.first_name +
+                                                " " +
+                                                user.last_name;
                                         }}
-                                        >Checkout
+                                    >
+                                        Checkout
                                     </button>
                                 </td>
 
