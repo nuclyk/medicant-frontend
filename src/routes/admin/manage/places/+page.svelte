@@ -3,9 +3,14 @@
     import { enhance } from "$app/forms";
     import toast from "svelte-5-french-toast";
     import { getContext } from "svelte";
+    import AddPlace from "./AddPlace.svelte";
+    import AddRoom from "./AddRoom.svelte";
+    import FloatingInputField from "$lib/components/FloatingInputField.svelte";
 
-    let places = $state(getContext("places"));
     let users = $state(getContext("users"));
+    let places = $state(getContext("places"));
+    let rooms = getContext("rooms");
+
     let token = getContext("token");
     let apiUrl = getContext("apiUrl");
 
@@ -64,105 +69,69 @@
     }
 </script>
 
-<div class="container-fluid">
-    <form
-        method="POST"
-        use:enhance={() => {
-            return ({ result }) => {
-                if (result.type !== "success") {
-                    toast.error(result.status + " : " + result.data.error);
-                } else {
-                    places().push(result.data);
-                    toast.success("Place added successfuly!");
-                }
-            };
-        }}
-    >
-        <p>Add new place</p>
-        <div class="row bg-light border rounded-1 p-2 g-2">
-            <div class="col-auto">
-                <input
-                    class="form-control"
-                    type="text"
-                    name="name"
-                    placeholder="Place name"
-                    bind:value={placeName}
-                    required
-                />
-            </div>
-            <div class="col">
-                <input
-                    class="form-control"
-                    type="text"
-                    name="room"
-                    placeholder="Room"
-                    bind:value={placeRoom}
-                />
-            </div>
-            <div class="col">
-                <input
-                    class="form-control"
-                    type="number"
-                    name="capacity"
-                    placeholder="Capacity"
-                    bind:value={placeCapacity}
-                />
-            </div>
-            <div class="col-xxl">
-                <button type="submit" class="btn btn-dark flex-fill w-100"
-                    >Add</button
-                >
-            </div>
-        </div>
-    </form>
+<div class="container">
+    <p>Add new place</p>
+
+    <AddPlace />
 
     <hr class="border border-1 opacity-50" />
 
-    <p>Edit places</p>
     {#each places()
         .filter((p) => p.name != "None")
         .sort((a, b) => a.name.localeCompare(b.name)) as place (place.id)}
-        <div class="row g-2 bg-light border rounded-1 p-2 my-2">
-            <div class="col-auto input-group">
-                <span class="input-group-text">Name </span>
+        <div class="row row-cols-3 g-1 p-2 border rounded mb-4">
+            <div class="col-12">
+                <label for="name" class="small">Place</label>
                 <input
                     class="form-control"
                     type="text"
                     name="name"
+                    id="name"
                     value={place.name}
                     onchange={(e) => handleChange(place.id, e)}
                     required
                 />
             </div>
-            <div class="col input-group">
-                <span class="input-group-text">Room </span>
-                <input
-                    class="form-control"
-                    type="number"
-                    name="room"
-                    value={place.room}
-                    onchange={(e) => handleChange(place.id, e)}
-                    required
-                />
-            </div>
-            <div class="col input-group">
-                <span class="input-group-text">Capacity </span>
-                <input
-                    class="form-control"
-                    type="number"
-                    name="capacity"
-                    value={place.capacity}
-                    onchange={(e) => handleChange(place.id, e)}
-                    required
-                />
-            </div>
-            <div class="col-lg-auto">
-                <button
-                    type="button"
-                    class="btn btn-dark flex-fill w-100"
-                    onclick={() => handleDelete(place.id)}>Delete</button
-                >
-            </div>
+
+            <div class="col col-6 flex-fill small">Room</div>
+            <div class="col col-6 flex-fill small">Beds</div>
+
+            {#each rooms()?.filter((room) => room.place_id === place.id) as room (room.id)}
+                <div class="col col-4 flex-fill">
+                    <input
+                        class="form-control form-control-sm text-center"
+                        type="number"
+                        name="room"
+                        id="room"
+                        value={room.number}
+                        onchange={(e) => handleChange(place.id, e)}
+                        required
+                    />
+                </div>
+
+                <div class="col col-4 flex-fill">
+                    <input
+                        class="form-control form-control-sm text-center"
+                        type="number"
+                        name="room"
+                        id="room"
+                        value={room.capacity}
+                        onchange={(e) => handleChange(place.id, e)}
+                        required
+                    />
+                </div>
+
+                <div class="col col-auto">
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger flex-fill w-100"
+                        onclick={() => handleDelete(place.id)}
+                    >
+                        X
+                    </button>
+                </div>
+            {/each}
+            <AddRoom />
         </div>
     {/each}
 </div>
