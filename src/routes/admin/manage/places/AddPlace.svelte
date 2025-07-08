@@ -1,9 +1,16 @@
 <script>
+    import { enhance } from "$app/forms";
+    import { getContext } from "svelte";
+    import toast from "svelte-5-french-toast";
+
     let placeName = $state("");
+    let places = getContext("places");
+    $inspect(places());
 </script>
 
 <form
     method="POST"
+    action="?/addPlace"
     use:enhance={() => {
         return ({ result }) => {
             if (result.type !== "success") {
@@ -15,8 +22,8 @@
         };
     }}
 >
-    <div class="row g-2">
-        <div class="col-9 col-auto col-xxl-4">
+    <div class="row row-cols-2 g-2">
+        <div class="col col-10 col-sm-6">
             <input
                 class="form-control"
                 type="text"
@@ -27,8 +34,8 @@
             />
         </div>
 
-        <div class="col col-3">
-            <button type="submit" class="btn btn-dark w-100">Add</button>
+        <div class="col col-auto">
+            <button type="submit" class="btn btn btn-outline-primary">+</button>
         </div>
     </div>
 </form>

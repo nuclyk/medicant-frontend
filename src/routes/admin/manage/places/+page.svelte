@@ -18,9 +18,11 @@
     let placeRoom = $state("");
     let placeCapacity = $state();
 
-    async function handleDelete(id) {
+    $inspect(rooms());
+
+    async function handleDelete(id, entity) {
         try {
-            const res = await fetch(apiUrl() + "places/" + id, {
+            const res = await fetch(apiUrl() + entity + "/" + id, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -32,9 +34,13 @@
                 error(res.status, "Could not delete the place!");
             }
 
-            let index = places().findIndex((place) => place.id === id);
-
-            places().splice(index, 1);
+            if (entity === "places") {
+                let index = places().findIndex((p) => p.id === id);
+                places().splice(index, 1);
+            } else if (entity === "rooms") {
+                let index = rooms().findIndex((r) => r.id === id);
+                rooms().splice(index, 1);
+            }
 
             toast.success("Place deleted successfuly!");
         } catch (err) {
@@ -42,16 +48,21 @@
         }
     }
 
-    async function handleChange(id, event) {
+    async function handleChange(id, entity, event) {
+        let value = event.target.value;
+        if (Number(value)) {
+            value = Number(value);
+        }
+
         try {
-            const res = await fetch(apiUrl() + "places/" + id, {
+            const res = await fetch(apiUrl() + entity + "/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
-                    [event.target.name]: event.target.value,
+                    [event.target.name]: value,
                 }),
             });
 
@@ -59,8 +70,13 @@
                 error(res.status, "Could not update place");
             }
 
-            let index = places().findIndex((p) => p.id === id);
-            places()[index] = await res.json();
+            if (entity === "places") {
+                let index = places().findIndex((p) => p.id === id);
+                places()[index] = await res.json();
+            } else if (entity == "rooms") {
+                let index = rooms().findIndex((r) => r.id === r);
+                rooms()[index] = await res.json();
+            }
 
             toast.success("Place updated successfuly!");
         } catch (err) {
@@ -76,62 +92,80 @@
 
     <hr class="border border-1 opacity-50" />
 
-    {#each places()
-        .filter((p) => p.name != "None")
-        .sort((a, b) => a.name.localeCompare(b.name)) as place (place.id)}
-        <div class="row row-cols-3 g-1 p-2 border rounded mb-4">
-            <div class="col-12">
-                <label for="name" class="small">Place</label>
-                <input
-                    class="form-control"
-                    type="text"
-                    name="name"
-                    id="name"
-                    value={place.name}
-                    onchange={(e) => handleChange(place.id, e)}
-                    required
-                />
+    <p>Edit places</p>
+
+    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 rounded gy-5">
+        {#each places()
+            .filter((p) => p.name != "None")
+            .sort((a, b) => a.name.localeCompare(b.name)) as place (place.id)}
+            <div class="col">
+                <div class="row mb-2">
+                    <div class="col">
+                        <input
+                            class="form-control"
+                            type="text"
+                            name="name"
+                            id="name"
+                            value={place.name}
+                            onchange={(e) =>
+                                handleChange(place.id, "places", e)}
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="row row-cols-3 g-2">
+                    <AddRoom placeID={place.id} />
+                    {#each rooms()?.filter((room) => room.place_id === place.id) as room (room.id)}
+                        <div class="col col-4 flex-fill">
+                            <input
+                                class="form-control form-control-sm text-center"
+                                type="number"
+                                name="number"
+                                id="number"
+                                value={room.number}
+                                onchange={(e) =>
+                                    handleChange(room.id, "rooms", e)}
+                                required
+                            />
+                        </div>
+
+                        <div class="col col-4 flex-fill">
+                            <input
+                                class="form-control form-control-sm text-center"
+                                type="number"
+                                name="capacity"
+                                id="capacity"
+                                value={room.capacity}
+                                onchange={(e) =>
+                                    handleChange(room.id, "rooms", e)}
+                                required
+                            />
+                        </div>
+
+                        <div class="col col-auto">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-danger"
+                                onclick={() => handleDelete(room.id, "rooms")}
+                            >
+                                X
+                            </button>
+                        </div>
+                    {/each}
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger flex-fill w-100"
+                            onclick={() => handleDelete(place.id, "places")}
+                        >
+                            Delete place
+                        </button>
+                    </div>
+                </div>
             </div>
-
-            <div class="col col-6 flex-fill small">Room</div>
-            <div class="col col-6 flex-fill small">Beds</div>
-
-            {#each rooms()?.filter((room) => room.place_id === place.id) as room (room.id)}
-                <div class="col col-4 flex-fill">
-                    <input
-                        class="form-control form-control-sm text-center"
-                        type="number"
-                        name="room"
-                        id="room"
-                        value={room.number}
-                        onchange={(e) => handleChange(place.id, e)}
-                        required
-                    />
-                </div>
-
-                <div class="col col-4 flex-fill">
-                    <input
-                        class="form-control form-control-sm text-center"
-                        type="number"
-                        name="room"
-                        id="room"
-                        value={room.capacity}
-                        onchange={(e) => handleChange(place.id, e)}
-                        required
-                    />
-                </div>
-
-                <div class="col col-auto">
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger flex-fill w-100"
-                        onclick={() => handleDelete(place.id)}
-                    >
-                        X
-                    </button>
-                </div>
-            {/each}
-            <AddRoom />
-        </div>
-    {/each}
+        {/each}
+    </div>
 </div>
