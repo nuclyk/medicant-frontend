@@ -31,9 +31,7 @@
     let apiUrl = $state(data.apiUrl);
     let token = $state(data.token);
 
-    $inspect(users);
-
-    $inspect(places);
+    $inspect(retreats);
 
     let onRetreat = $derived(
         (retreatType) =>
@@ -103,6 +101,8 @@
                 body: JSON.stringify({
                     check_out_date: dayjs().toISOString(),
                     is_checked_in: false,
+                    place: 1,
+                    room_id: 0,
                 }),
             });
 
@@ -127,9 +127,10 @@
             value = Number(value);
         }
 
-        let user = users.find((u) => u.id == id);
-
         try {
+            let user = users.find((u) => u.id == id);
+            let room = rooms().find((r) => r.id == user.room_id);
+
             const res = await fetch(apiUrl + "users/" + id, {
                 method: "PUT",
                 headers: {
@@ -138,7 +139,6 @@
                 },
                 body: JSON.stringify({
                     room_id: value,
-                    checked_in: user.check_in + 1,
                 }),
             });
 
@@ -584,6 +584,7 @@
                                                         user.id,
                                                         event,
                                                     );
+
                                                     user.room_id = Number(
                                                         event.target.value,
                                                     );
@@ -594,6 +595,13 @@
                                                     {#if room.id !== 0}
                                                         <option value={room.id}>
                                                             Room: {room.number}
+                                                            ({users.filter(
+                                                                (u) =>
+                                                                    u.room_id ===
+                                                                    room.id,
+                                                            ).length +
+                                                                "/" +
+                                                                room.capacity})
                                                         </option>
                                                     {/if}
                                                 {/each}
