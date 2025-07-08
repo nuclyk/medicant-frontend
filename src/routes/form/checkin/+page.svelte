@@ -3,14 +3,6 @@
     import SelectInput from "$lib/components/SelectInput.svelte";
     import InputGroup from "$lib/components/InputGroup.svelte";
 
-    import blocks from "$lib/assets/images/blocks.png";
-    import cleanse from "$lib/assets/images/cleanse.png";
-    import donationbox from "$lib/assets/images/donationbox.jpg";
-    import basket from "$lib/assets/images/basket.jpg";
-    import clothes from "$lib/assets/images/whitecloths.jpg";
-    import laundry from "$lib/assets/images/laundryroom.jpg";
-    import inspiration from "$lib/assets/images/inspiration.png";
-
     import { countries } from "$lib/countries.js";
     import { enhance } from "$app/forms";
     import toast from "svelte-5-french-toast";
@@ -18,6 +10,7 @@
     import Clothes from "./Clothes.svelte";
     import Room from "./Room.svelte";
     import Tour from "./Tour.svelte";
+    import Books from "./Books.svelte";
 
     let { data, form } = $props();
     let showForm = $state(true);

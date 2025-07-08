@@ -14,6 +14,7 @@
     let showStats = $state(false);
     let userId = $state();
     let userName = $state();
+    let placeId = $state();
 
     let users = $state(
         _.orderBy(
@@ -23,11 +24,16 @@
         ),
     );
 
+    let rooms = $state(getContext("rooms"));
     let places = $state(data.places);
     let roles = $state(data.roles);
     let retreats = $state(data.retreats);
     let apiUrl = $state(data.apiUrl);
     let token = $state(data.token);
+
+    $inspect(users);
+
+    $inspect(places);
 
     let onRetreat = $derived(
         (retreatType) =>
@@ -114,8 +120,41 @@
         }
     }
 
+    async function handleUserRoomUpdate(id, event) {
+        let value = event.target.value;
+
+        if (Number(value)) {
+            value = Number(value);
+        }
+
+        let user = users.find((u) => u.id == id);
+
+        try {
+            const res = await fetch(apiUrl + "users/" + id, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                },
+                body: JSON.stringify({
+                    room_id: value,
+                    checked_in: user.check_in + 1,
+                }),
+            });
+
+            if (!res.ok) {
+                error(res.status, "Could not update the user!");
+            }
+
+            toast.success("Updated successfuly!");
+        } catch (err) {
+            toast.error(err.status + " : " + err);
+        }
+    }
+
     async function handleUserUpdate(id, event) {
         let value = event.target.value;
+
         if (Number(value)) {
             value = Number(value);
         }
@@ -352,7 +391,7 @@
                                 </button>
                             </th>
                             <th scope="col"
-                                >Room
+                                >Place / Room
                                 <button
                                     class="btn m-0 p-0"
                                     onclick={() => {
@@ -507,33 +546,60 @@
                                 </td>
 
                                 <td>
-                                    <select
-                                        class="form-select form-select-sm"
-                                        style="min-width: 12rem;"
-                                        aria-label="Place select"
-                                        name="place"
-                                        onchange={(event) => {
-                                            handleUserUpdate(user.id, event);
-                                            user.place = Number(
-                                                event.target.value,
-                                            );
-                                        }}
-                                        bind:value={user.place}
-                                    >
-                                        {#each places as place (place.id)}
-                                            {@const totalInPlace =
-                                                users?.filter(
-                                                    (u) => u.place == place.id,
-                                                ).length}
+                                    <div class="row clearfix">
+                                        <div
+                                            class="col"
+                                            style="min-width: 6rem"
+                                        >
+                                            <select
+                                                class="form-select form-select-sm"
+                                                aria-label="Place select"
+                                                name="place"
+                                                onchange={(event) => {
+                                                    handleUserUpdate(
+                                                        user.id,
+                                                        event,
+                                                    );
+                                                    user.place = Number(
+                                                        event.target.value,
+                                                    );
+                                                }}
+                                                bind:value={user.place}
+                                            >
+                                                {#each places as place (place.id)}
+                                                    <option value={place.id}>
+                                                        {place.name}
+                                                    </option>
+                                                {/each}
+                                            </select>
+                                        </div>
 
-                                            <option value={place.id}>
-                                                {place.name}
-                                                {#if place.name !== "None"}
-                                                    (R:{place.room}) ({totalInPlace}/{place.capacity})
-                                                {/if}
-                                            </option>
-                                        {/each}
-                                    </select>
+                                        <div class="col">
+                                            <select
+                                                class="form-select form-select-sm"
+                                                aria-label="Place select room"
+                                                name="room_id"
+                                                onchange={(event) => {
+                                                    handleUserRoomUpdate(
+                                                        user.id,
+                                                        event,
+                                                    );
+                                                    user.room_id = Number(
+                                                        event.target.value,
+                                                    );
+                                                }}
+                                                bind:value={user.room_id}
+                                            >
+                                                {#each rooms().filter((r) => r.place_id === user.place) as room (room.id)}
+                                                    {#if room.id !== 0}
+                                                        <option value={room.id}>
+                                                            Room: {room.number}
+                                                        </option>
+                                                    {/if}
+                                                {/each}
+                                            </select>
+                                        </div>
+                                    </div>
                                 </td>
 
                                 <td>

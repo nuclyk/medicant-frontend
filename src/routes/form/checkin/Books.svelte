@@ -1,3 +1,9 @@
+<script>
+    import blocks from "$lib/assets/images/blocks.png";
+    import cleanse from "$lib/assets/images/cleanse.png";
+    import inspiration from "$lib/assets/images/inspiration.png";
+</script>
+
 <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
     <div class="card">
         <div class="card-body">
