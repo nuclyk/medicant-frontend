@@ -94,7 +94,7 @@
 
     <p>Edit places</p>
 
-    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 rounded gy-5">
+    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-3 gy-5">
         {#each places()
             .filter((p) => p.name != "None")
             .sort((a, b) => a.name.localeCompare(b.name)) as place (place.id)}
