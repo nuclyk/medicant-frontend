@@ -5,16 +5,22 @@
     const user = $state(data.user);
     const users = $state(data.users);
     const roles = $state(data.roles);
-    const places = $state(data.places);
     const retreats = $state(data.retreats);
+    const places = $state(data.places);
+    const rooms = $state(data.rooms);
+
     const token = $state(data.token);
     const apiUrl = $state(data.apiUrl);
+
+    $inspect(rooms);
 
     setContext("users", () => users);
     setContext("roles", () => roles);
     setContext("retreats", () => retreats);
     setContext("user", () => user);
     setContext("places", () => places);
+    setContext("rooms", () => rooms);
+
     setContext("token", () => token);
     setContext("apiUrl", () => apiUrl);
 </script>

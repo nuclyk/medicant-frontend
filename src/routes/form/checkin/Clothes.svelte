@@ -1,3 +1,9 @@
+<script>
+    import basket from "$lib/assets/images/basket.jpg";
+    import clothes from "$lib/assets/images/whitecloths.jpg";
+    import laundry from "$lib/assets/images/laundryroom.jpg";
+</script>
+
 <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
     <div class="card">
         <div class="card-body">

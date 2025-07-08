@@ -3,7 +3,7 @@ import { fail } from "@sveltejs/kit";
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {
-  default: async ({ request, fetch, cookies }) => {
+  addPlace: async ({ request, fetch, cookies }) => {
     const data = await request.formData();
 
     const res = await fetch(API + "places", {
@@ -14,8 +14,6 @@ export const actions = {
       },
       body: JSON.stringify({
         name: data.get("name"),
-        room: data.get("room"),
-        capacity: data.get("capacity"),
       }),
     });
 

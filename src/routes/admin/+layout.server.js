@@ -2,6 +2,14 @@ import { API } from "$env/static/private";
 
 /** @type {import('./$types').LayoutServerLoad} */
 export async function load({ locals, fetch, cookies }) {
+  const users = await fetch(API + "users", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + cookies.get("token"),
+    },
+  });
+
   const retreats = await fetch(API + "retreats", {
     method: "GET",
     headers: {
@@ -21,10 +29,11 @@ export async function load({ locals, fetch, cookies }) {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer " + cookies.get("token"),
     },
   });
 
-  const users = await fetch(API + "users", {
+  const rooms = await fetch(API + "rooms", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -42,5 +51,6 @@ export async function load({ locals, fetch, cookies }) {
     retreats: await retreats.json(),
     roles: await roles.json(),
     places: await places.json(),
+    rooms: await rooms.json(),
   };
 }

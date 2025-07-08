@@ -1,3 +1,7 @@
+<script>
+    import donationbox from "$lib/assets/images/donationbox.jpg";
+</script>
+
 <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
     <div class="card">
         <div class="card-body">
