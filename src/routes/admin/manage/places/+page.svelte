@@ -85,7 +85,7 @@
     }
 </script>
 
-<div class="container">
+<div class="container-fluid">
     <p>Add new place</p>
 
     <AddPlace />
@@ -94,7 +94,7 @@
 
     <p>Edit places</p>
 
-    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-3 gy-5">
+    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 gy-5">
         {#each places()
             .filter((p) => p.name != "None")
             .sort((a, b) => a.name.localeCompare(b.name)) as place (place.id)}
@@ -146,7 +146,7 @@
                         <div class="col col-auto">
                             <button
                                 type="button"
-                                class="btn btn-sm btn-outline-danger"
+                                class="btn btn-sm btn-outline-secondary"
                                 onclick={() => handleDelete(room.id, "rooms")}
                             >
                                 X
@@ -158,7 +158,7 @@
                     <div class="col">
                         <button
                             type="button"
-                            class="btn btn-sm btn-outline-danger flex-fill w-100"
+                            class="btn btn-sm btn-outline-secondary flex-fill w-100"
                             onclick={() => handleDelete(place.id, "places")}
                         >
                             Delete place

@@ -65,7 +65,7 @@
 
 <ConfirmDeleteModal bind:id bind:text confirm={handleDelete} />
 
-<div class="container">
+<div class="container-fluid">
     <form
         method="POST"
         use:enhance={() => {
@@ -81,28 +81,34 @@
     >
         <p>Add new retreat</p>
 
-        <div class="row bg-light border rounded-1 p-2 g-2">
-            <div class="col-xxl input-group">
-                <span class="input-group-text">Start date</span>
-                <input
-                    class="form-control"
-                    type="date"
-                    id="startDate"
-                    name="startDate"
-                    required
-                />
+        <div class="row g-2">
+            <div class="col col-12 col-md-auto">
+                <div class="input-group">
+                    <span class="input-group-text">Start date</span>
+                    <input
+                        class="form-control"
+                        type="date"
+                        id="startDate"
+                        name="startDate"
+                        required
+                    />
+                </div>
             </div>
-            <div class="col-xxl input-group">
-                <span class="input-group-text">End date</span>
-                <input
-                    class="form-control"
-                    type="date"
-                    id="endDate"
-                    name="endDate"
-                    required
-                />
+
+            <div class="col col-12 col-md-auto">
+                <div class="input-group">
+                    <span class="input-group-text">End date</span>
+                    <input
+                        class="form-control"
+                        type="date"
+                        id="endDate"
+                        name="endDate"
+                        required
+                    />
+                </div>
             </div>
-            <div class="col-xxl">
+
+            <div class="col col-12 col-md-auto">
                 <button type="submit" class="btn btn-dark flex-fill w-100"
                     >Add</button
                 >
@@ -115,15 +121,12 @@
     <p>Edit retreats</p>
 
     {#each allRetreats().filter((r) => r.retreat_code != "flexible") as retreat (retreat.id)}
-        <div
-            class="row g-2 bg-light border rounded-1 p-2 my-2 align-items-center"
-        >
-            <div class="col-lg-auto text-center">
-                <p class="lead m-0 mx-3">
-                    {retreat.retreat_code}
-                </p>
+        <div class="row 2 rounded-1 g-2">
+            <div class="col col-12 col-md-2 align-content-center">
+                <div class="form-control">{retreat.retreat_code}</div>
             </div>
-            <div class="col-lg-auto flex-fill">
+
+            <div class="col col-12 col-md-auto">
                 <input
                     class="form-control"
                     type="date"
@@ -135,7 +138,8 @@
                     required
                 />
             </div>
-            <div class="col-lg-auto flex-fill">
+
+            <div class="col col-12 col-md-auto">
                 <input
                     class="form-control"
                     type="date"
@@ -148,7 +152,7 @@
                     required
                 />
             </div>
-            <div class="col-lg-auto">
+            <div class="col col-12 col-md-auto">
                 <button
                     type="button"
                     class="btn btn-primary flex-fill w-100"
@@ -163,5 +167,6 @@
                 </button>
             </div>
         </div>
+        <hr />
     {/each}
 </div>

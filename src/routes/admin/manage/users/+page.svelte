@@ -13,14 +13,18 @@
 </script>
 
 <div class="container-fluid text-nowrap">
-    <input
-        type="search"
-        name="search"
-        id="search"
-        class="form-control"
-        placeholder="Search by email..."
-        bind:value={searchQuery}
-    />
+    <div class="row my-3 justify-content-start">
+        <div class="col col-sm-4">
+            <input
+                type="search"
+                name="search"
+                id="search"
+                class="form-control"
+                placeholder="Search by name or email..."
+                bind:value={searchQuery}
+            />
+        </div>
+    </div>
     {#each filteredUsers as user, index (index)}
         <div class="row pt-3 pb-3 g-3 row-cols-2 border-bottom">
             <div class="col">

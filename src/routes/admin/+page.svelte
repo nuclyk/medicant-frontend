@@ -15,12 +15,26 @@
     let userId = $state();
     let userName = $state();
     let placeId = $state();
+    let searchQuery = $state("");
 
     let users = $state(
         _.orderBy(
             data.users.filter((u) => u.role != "admin" && u.is_checked_in),
             ["check_in_date"],
             ["desc"],
+        ),
+    );
+
+    let filteredUsers = $derived(
+        users?.filter(
+            (user) =>
+                user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.first_name
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                user.last_name
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()),
         ),
     );
 
@@ -192,14 +206,6 @@
 <CheckoutModal id={userId} name={userName} confirm={handleCheckout} />
 
 <div class="container-fluid mt-3">
-    <div class="row">
-        <div class="col">
-            <button
-                class="btn btn-primary"
-                onclick={() => (showStats = !showStats)}>Show stats</button
-            >
-        </div>
-    </div>
     <div class="row mb-1 mt-1 g-3 vh-25">
         {#if showStats}
             <div class="col">
@@ -316,6 +322,26 @@
     <!-- ------------------------------------------ -->
     <!-- ------------------------------------------ -->
 
+    <div class="row my-3 justify-content-start w-100">
+        <div class="col col-sm-4">
+            <input
+                type="search"
+                name="search"
+                id="search"
+                class="form-control"
+                placeholder="Search by name or email..."
+                bind:value={searchQuery}
+            />
+        </div>
+
+        <div class="col">
+            <button
+                class="btn btn-primary"
+                onclick={() => (showStats = !showStats)}>Stats</button
+            >
+        </div>
+    </div>
+
     {#snippet th(text, sortBy, state)}
         {text}
         <button
@@ -411,7 +437,7 @@
                     <!-- ------------------------ TBODY -------------------------- -->
 
                     <tbody>
-                        {#each users as user (user.id)}
+                        {#each filteredUsers as user (user.id)}
                             <tr>
                                 <td>
                                     <a
@@ -420,7 +446,7 @@
                                         data-sveltekit-preload-data="off"
                                         class="d-inline-block link-secondary {user.gender ===
                                         'Male'
-                                            ? 'link-danger'
+                                            ? 'link-primary'
                                             : 'link-info'}"
                                     >
                                         {user.first_name}
@@ -441,7 +467,7 @@
                                 <td>
                                     <button
                                         type="button"
-                                        class="btn btn-primary btn-sm w-100"
+                                        class="btn btn-outline-dark btn-sm w-100"
                                         data-bs-toggle="modal"
                                         data-bs-target="#checkoutModal"
                                         onclick={() => {

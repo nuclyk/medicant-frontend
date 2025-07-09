@@ -44,7 +44,7 @@
 
 <div class="col col-4 flex-fill opacity-75">
     <input
-        class="form-control form-control-sm text-center"
+        class="form-control form-control-sm text-center border-success"
         type="number"
         name="room"
         id="room"
@@ -56,7 +56,7 @@
 
 <div class="col col-4 flex-fill opacity-75">
     <input
-        class="form-control form-control-sm text-center"
+        class="form-control form-control-sm text-center border-success"
         type="number"
         name="room"
         id="room"
@@ -69,7 +69,7 @@
 <div class="col col-auto">
     <button
         type="button"
-        class="btn btn-sm btn-outline-primary"
+        class="btn btn-sm btn-success"
         onclick={() => handleAddRoom()}
         >+
     </button>

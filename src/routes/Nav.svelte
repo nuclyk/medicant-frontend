@@ -6,7 +6,6 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
     <div class="container-fluid">
-        <img src={logo} alt="Medicant Logo" width="50" class="me-3" />
         <a class="navbar-brand" href="/">Medicant</a>
         <button
             class="navbar-toggler"
@@ -26,9 +25,7 @@
             aria-labelledby="offcanvasNavbarLabel"
         >
             <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
-                    Offcanvas
-                </h5>
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
                 <button
                     type="button"
                     class="btn-close"
