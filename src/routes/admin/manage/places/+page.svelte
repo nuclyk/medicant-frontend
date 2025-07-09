@@ -1,13 +1,13 @@
 <script>
+    import _ from "lodash";
+    import toast from "svelte-5-french-toast";
+
     import AddPlace from "./AddPlace.svelte";
     import AddRoom from "./AddRoom.svelte";
     import FloatingInputField from "$lib/components/FloatingInputField.svelte";
-    import toast from "svelte-5-french-toast";
-    import { error } from "@sveltejs/kit";
-    import { enhance } from "$app/forms";
+
     import { getContext } from "svelte";
     import { handleDelete, handleChange } from "$lib/api.js";
-    import _ from "lodash";
 
     let users = getContext("users");
     let places = getContext("places");
@@ -43,7 +43,7 @@
                             name="name"
                             id="name"
                             value={place.name}
-                            onchange={async (event) => {
+                            onchange={(event) => {
                                 handleChange(place.id, "places", event, token);
 
                                 let index = _.findIndex(places(), {
@@ -93,7 +93,7 @@
                                 id="capacity"
                                 value={room.capacity}
                                 onchange={(event) => {
-                                    let updatedRoom = handleChange(
+                                    handleChange(
                                         room.id,
                                         "rooms",
                                         event,
