@@ -7,8 +7,8 @@
     import AddRoom from "./AddRoom.svelte";
     import FloatingInputField from "$lib/components/FloatingInputField.svelte";
 
-    let users = $state(getContext("users"));
-    let places = $state(getContext("places"));
+    let users = getContext("users");
+    let places = getContext("places");
     let rooms = getContext("rooms");
 
     let token = getContext("token");
@@ -17,8 +17,6 @@
     let placeName = $state("");
     let placeRoom = $state("");
     let placeCapacity = $state();
-
-    $inspect(rooms());
 
     async function handleDelete(id, entity) {
         try {

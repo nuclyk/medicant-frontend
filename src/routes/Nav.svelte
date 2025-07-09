@@ -1,7 +1,6 @@
 <script>
     import logo from "$lib/assets/images/logo.png";
     const { user } = $props();
-    $inspect(user);
 </script>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
@@ -45,6 +44,11 @@
                                 >Manage</a
                             >
                         </li>
+                        {#if user}
+                            <li class="nav-item" data-bs-dismiss="offcanvas">
+                                <a class="nav-link" href="/stats">Stats</a>
+                            </li>
+                        {/if}
                     {/if}
 
                     <li class="nav-item dropdown">

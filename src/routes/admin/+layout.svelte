@@ -12,8 +12,6 @@
     const token = $state(data.token);
     const apiUrl = $state(data.apiUrl);
 
-    $inspect(rooms);
-
     setContext("users", () => users);
     setContext("roles", () => roles);
     setContext("retreats", () => retreats);

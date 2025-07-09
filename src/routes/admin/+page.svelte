@@ -45,8 +45,6 @@
     let apiUrl = $state(data.apiUrl);
     let token = $state(data.token);
 
-    $inspect(retreats);
-
     let onRetreat = $derived(
         (retreatType) =>
             users?.filter((user) => {
@@ -162,7 +160,7 @@
 
             toast.success("Updated successfuly!");
         } catch (err) {
-            toast.error(err.status + " : " + err);
+            toast.error(err.status + " : " + err.message);
         }
     }
 
@@ -191,7 +189,7 @@
 
             toast.success("Updated successfuly!");
         } catch (err) {
-            toast.error(err.status + " : " + err);
+            toast.error(err.status + " : " + err.message);
         }
 
         // let index = users.findIndex((u) => u.id === id);

@@ -8,8 +8,6 @@
 
     let { data } = $props();
 
-    $inspect(page, data);
-
     let allUsers = getContext("users");
     let allRoles = getContext("roles");
     let allRetreats = getContext("retreats");

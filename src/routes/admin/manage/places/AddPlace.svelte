@@ -5,7 +5,6 @@
 
     let placeName = $state("");
     let places = getContext("places");
-    $inspect(places());
 </script>
 
 <form
