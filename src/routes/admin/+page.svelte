@@ -316,6 +316,40 @@
     <!-- ------------------------------------------ -->
     <!-- ------------------------------------------ -->
 
+    {#snippet th(text, sortBy, state)}
+        {text}
+        <button
+            class="btn m-0 p-0"
+            onclick={() => {
+                users = _.orderBy(
+                    users,
+                    sortBy,
+                    sortState[state] ? "asc" : "desc",
+                );
+                sortState[state] = !sortState[state];
+            }}
+        >
+            {#if sortState[state]}
+                <SortUp />
+            {:else}
+                <SortDown />
+            {/if}
+        </button>
+    {/snippet}
+
+    {#snippet badge(text)}
+        <span
+            class="badge text-bg-primary rounded-pill"
+            aria-label="Info"
+            data-bs-toggle="tooltip"
+            data-bs-html="true"
+            data-bs-placement="top"
+            data-bs-title={text}
+        >
+            ?
+        </span>
+    {/snippet}
+
     <div class="row">
         <div class="col">
             <div class="table-responsive text-nowrap">
@@ -323,136 +357,51 @@
                     class="table table-striped table-hover borderless
                 align-middle text-capitalize"
                 >
-                    <thead>
+                    <thead class="small">
                         <tr>
-                            <th scope="col"
-                                >Name <button
-                                    class="btn m-0 p-0"
-                                    onclick={() => {
-                                        users = _.orderBy(
-                                            users,
-                                            "first_name",
-                                            sortState.name ? "asc" : "desc",
-                                        );
-                                        sortState.name = !sortState.name;
-                                    }}
-                                >
-                                    {#if sortState.name}
-                                        <SortUp />
-                                    {:else}
-                                        <SortDown />
-                                    {/if}
-                                </button></th
-                            >
+                            <th scope="col">
+                                {@render th("Name", "first_name", "name")}
+                            </th>
+
                             <th scope="col">Retreat </th>
-                            <th scope="col"
-                                >Check-In
-                                <button
-                                    class="btn m-0 p-0"
-                                    onclick={() => {
-                                        users = _.orderBy(
-                                            users,
-                                            "check_in_date",
-                                            sortState.check_in ? "asc" : "desc",
-                                        );
-                                        sortState.check_in =
-                                            !sortState.check_in;
-                                    }}
-                                >
-                                    {#if sortState.check_in}
-                                        <SortDown />
-                                    {:else}
-                                        <SortUp />
-                                    {/if}
-                                </button>
+
+                            <th scope="col">
+                                {@render th(
+                                    "Check-in",
+                                    "check_in_date",
+                                    "check_in",
+                                )}
                             </th>
-                            <th scope="col">Check-Out </th>
-                            <th scope="col"
-                                >Leave date
-                                <button
-                                    class="btn m-0 p-0"
-                                    onclick={() => {
-                                        users = _.orderBy(
-                                            users,
-                                            "leave_date",
-                                            sortState.leave_date
-                                                ? "asc"
-                                                : "desc",
-                                        );
-                                        sortState.leave_date =
-                                            !sortState.leave_date;
-                                    }}
-                                >
-                                    {#if sortState.leave_date}
-                                        <SortDown />
-                                    {:else}
-                                        <SortUp />
-                                    {/if}
-                                </button>
+
+                            <th scope="col">Check-Out</th>
+
+                            <th scope="col">
+                                {@render th(
+                                    "Leave Date",
+                                    "leave_date",
+                                    "leave_date",
+                                )}
                             </th>
-                            <th scope="col"
-                                >Place / Room
-                                <button
-                                    class="btn m-0 p-0"
-                                    onclick={() => {
-                                        users = _.orderBy(
-                                            users,
-                                            "place",
-                                            sortState.place ? "asc" : "desc",
-                                        );
-                                        sortState.place = !sortState.place;
-                                    }}
-                                >
-                                    {#if sortState.place}
-                                        <SortDown />
-                                    {:else}
-                                        <SortUp />
-                                    {/if}
-                                </button>
-                                <span
-                                    class="badge text-bg-primary rounded-pill"
-                                    aria-label="Info"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-html="true"
-                                    data-bs-placement="top"
-                                    data-bs-title="After check-in, please select correct room for the participant"
-                                >
-                                    ?
-                                </span>
+
+                            <th scope="col">
+                                {@render th("Place", "place", "place")}
+                                {@render badge(
+                                    "After check-in, please select correct room for the participant",
+                                )}
                             </th>
-                            <th scope="col"
-                                >Role
-                                <button
-                                    class="btn m-0 p-0"
-                                    onclick={() => {
-                                        users = _.orderBy(
-                                            users,
-                                            "role",
-                                            sortState.role ? "asc" : "desc",
-                                        );
-                                        sortState.role = !sortState.role;
-                                    }}
-                                >
-                                    {#if sortState.role}
-                                        <SortDown />
-                                    {:else}
-                                        <SortUp />
-                                    {/if}
-                                </button>
+
+                            <th scope="col">
+                                {@render th("Role", "role", "role")}
                             </th>
+
                             <th scope="col"
                                 >To Donate
-                                <span
-                                    class="badge text-bg-primary rounded-pill"
-                                    aria-label="Info"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-html="true"
-                                    data-bs-placement="top"
-                                    data-bs-title="Donation 500 baht per night based on the planned leave date."
-                                >
-                                    ?
-                                </span>
+
+                                {@render badge(
+                                    "Donation 500 baht per night based on the planned leave date.",
+                                )}
                             </th>
+
                             <th>Donated</th>
                         </tr>
                     </thead>
