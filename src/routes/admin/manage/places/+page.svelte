@@ -1,11 +1,13 @@
 <script>
-    import { error } from "@sveltejs/kit";
-    import { enhance } from "$app/forms";
-    import toast from "svelte-5-french-toast";
-    import { getContext } from "svelte";
     import AddPlace from "./AddPlace.svelte";
     import AddRoom from "./AddRoom.svelte";
     import FloatingInputField from "$lib/components/FloatingInputField.svelte";
+    import toast from "svelte-5-french-toast";
+    import { error } from "@sveltejs/kit";
+    import { enhance } from "$app/forms";
+    import { getContext } from "svelte";
+    import { handleDelete, handleChange } from "$lib/api.js";
+    import _ from "lodash";
 
     let users = getContext("users");
     let places = getContext("places");
@@ -17,70 +19,6 @@
     let placeName = $state("");
     let placeRoom = $state("");
     let placeCapacity = $state();
-
-    async function handleDelete(id, entity) {
-        try {
-            const res = await fetch(apiUrl() + entity + "/" + id, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token(),
-                },
-            });
-
-            if (!res.ok) {
-                error(res.status, "Could not delete the place!");
-            }
-
-            if (entity === "places") {
-                let index = places().findIndex((p) => p.id === id);
-                places().splice(index, 1);
-            } else if (entity === "rooms") {
-                let index = rooms().findIndex((r) => r.id === id);
-                rooms().splice(index, 1);
-            }
-
-            toast.success("Place deleted successfuly!");
-        } catch (err) {
-            toast.error(err.body.message);
-        }
-    }
-
-    async function handleChange(id, entity, event) {
-        let value = event.target.value;
-        if (Number(value)) {
-            value = Number(value);
-        }
-
-        try {
-            const res = await fetch(apiUrl() + entity + "/" + id, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token(),
-                },
-                body: JSON.stringify({
-                    [event.target.name]: value,
-                }),
-            });
-
-            if (!res.ok) {
-                error(res.status, "Could not update place");
-            }
-
-            if (entity === "places") {
-                let index = places().findIndex((p) => p.id === id);
-                places()[index] = await res.json();
-            } else if (entity == "rooms") {
-                let index = rooms().findIndex((r) => r.id === r);
-                rooms()[index] = await res.json();
-            }
-
-            toast.success("Place updated successfuly!");
-        } catch (err) {
-            toast.error(err.body.message);
-        }
-    }
 </script>
 
 <div class="container-fluid">
@@ -105,8 +43,15 @@
                             name="name"
                             id="name"
                             value={place.name}
-                            onchange={(e) =>
-                                handleChange(place.id, "places", e)}
+                            onchange={async (event) => {
+                                handleChange(place.id, "places", event, token);
+
+                                let index = _.findIndex(places(), {
+                                    id: place.id,
+                                });
+
+                                places()[index].name = event.target.value;
+                            }}
                             required
                         />
                     </div>
@@ -122,8 +67,20 @@
                                 name="number"
                                 id="number"
                                 value={room.number}
-                                onchange={(e) =>
-                                    handleChange(room.id, "rooms", e)}
+                                onchange={(event) => {
+                                    handleChange(
+                                        room.id,
+                                        "rooms",
+                                        event,
+                                        token,
+                                    );
+
+                                    let index = _.findIndex(rooms(), {
+                                        id: room.id,
+                                    });
+
+                                    rooms()[index].number = event.target.value;
+                                }}
                                 required
                             />
                         </div>
@@ -135,8 +92,21 @@
                                 name="capacity"
                                 id="capacity"
                                 value={room.capacity}
-                                onchange={(e) =>
-                                    handleChange(room.id, "rooms", e)}
+                                onchange={(event) => {
+                                    let updatedRoom = handleChange(
+                                        room.id,
+                                        "rooms",
+                                        event,
+                                        token,
+                                    );
+
+                                    let index = _.findIndex(rooms(), {
+                                        id: room.id,
+                                    });
+
+                                    rooms()[index].capacity =
+                                        event.target.value;
+                                }}
                                 required
                             />
                         </div>
@@ -145,7 +115,13 @@
                             <button
                                 type="button"
                                 class="btn btn-sm btn-outline-secondary"
-                                onclick={() => handleDelete(room.id, "rooms")}
+                                onclick={() => {
+                                    handleDelete(room.id, "rooms", token);
+                                    _.remove(
+                                        rooms(),
+                                        (obj) => obj.id === room.id,
+                                    );
+                                }}
                             >
                                 X
                             </button>
@@ -157,7 +133,13 @@
                         <button
                             type="button"
                             class="btn btn-sm btn-outline-secondary flex-fill w-100"
-                            onclick={() => handleDelete(place.id, "places")}
+                            onclick={() => {
+                                handleDelete(place.id, "places", token);
+                                _.remove(
+                                    places(),
+                                    (obj) => obj.id === place.id,
+                                );
+                            }}
                         >
                             Delete place
                         </button>

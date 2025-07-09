@@ -1,0 +1,51 @@
+import { config } from "$lib/config";
+import toast from "svelte-5-french-toast";
+import { error } from "@sveltejs/kit";
+
+export const handleDelete = async (id, obj, token) => {
+  try {
+    const res = await fetch(config.apiUrl + obj + "/" + id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token(),
+      },
+    });
+
+    if (!res.ok) {
+      error(res.status, "Could not delete!");
+    }
+
+    toast.success("Deleted successfuly!");
+  } catch (err) {
+    toast.error(err.message);
+  }
+};
+
+export async function handleChange(id, obj, event, token) {
+  let value = event.target.value;
+  if (Number(value)) {
+    value = Number(value);
+  }
+
+  try {
+    const res = await fetch(config.apiUrl + obj + "/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token(),
+      },
+      body: JSON.stringify({
+        [event.target.name]: value,
+      }),
+    });
+
+    if (!res.ok) {
+      error(res.status, "Could not update!");
+    }
+
+    toast.success("Updated successfuly!");
+  } catch (err) {
+    toast.error(err.message);
+  }
+}

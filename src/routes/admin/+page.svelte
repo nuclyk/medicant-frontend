@@ -9,6 +9,7 @@
 
     import { getContext, onMount } from "svelte";
     import { error } from "@sveltejs/kit";
+    import { get } from "svelte/store";
 
     let { data } = $props();
     let showStats = $state(false);
@@ -19,7 +20,9 @@
 
     let users = $state(
         _.orderBy(
-            data.users.filter((u) => u.role != "admin" && u.is_checked_in),
+            getContext("users")().filter(
+                (u) => u.role != "admin" && u.is_checked_in,
+            ),
             ["check_in_date"],
             ["desc"],
         ),
@@ -38,12 +41,13 @@
         ),
     );
 
-    let rooms = $state(getContext("rooms"));
-    let places = $state(data.places);
-    let roles = $state(data.roles);
-    let retreats = $state(data.retreats);
-    let apiUrl = $state(data.apiUrl);
-    let token = $state(data.token);
+    let rooms = $derived(getContext("rooms"));
+    let places = $derived(getContext("places"));
+    let roles = $state(getContext("roles"));
+    let retreats = $state(getContext("retreats"));
+
+    let apiUrl = $state(getContext("apiUrl"));
+    let token = $state(getContext("token"));
 
     let onRetreat = $derived(
         (retreatType) =>
@@ -104,11 +108,11 @@
 
     async function handleCheckout(id) {
         try {
-            const res = await fetch(apiUrl + "users/" + id, {
+            const res = await fetch(apiUrl() + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
                     check_out_date: dayjs().toISOString(),
@@ -143,11 +147,11 @@
             let user = users.find((u) => u.id == id);
             let room = rooms().find((r) => r.id == user.room_id);
 
-            const res = await fetch(apiUrl + "users/" + id, {
+            const res = await fetch(apiUrl() + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
                     room_id: value,
@@ -172,11 +176,11 @@
         }
 
         try {
-            const res = await fetch(apiUrl + "users/" + id, {
+            const res = await fetch(apiUrl() + "users/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
+                    Authorization: "Bearer " + token(),
                 },
                 body: JSON.stringify({
                     [event.target.name]: value,
@@ -197,7 +201,7 @@
     }
 
     function findRetreat(retreat_id) {
-        return retreats.find((retreat) => retreat_id === retreat.id);
+        return retreats().find((retreat) => retreat_id === retreat.id);
     }
 </script>
 
@@ -288,7 +292,7 @@
                         <li
                             class="list-group-item d-flex justify-content-between align-items-center"
                         >
-                            Veg / Non-veg:
+                            Veg / Meat:
                             <span class="badge text-bg-primary rounded-pill">
                                 {veg} / {users.length - veg}
                             </span>
@@ -476,7 +480,7 @@
                                                 user.last_name;
                                         }}
                                     >
-                                        Checkout
+                                        Check out
                                     </button>
                                 </td>
 
@@ -539,7 +543,7 @@
                                                 }}
                                                 bind:value={user.place}
                                             >
-                                                {#each places as place (place.id)}
+                                                {#each places() as place (place.id)}
                                                     <option value={place.id}>
                                                         {place.name}
                                                     </option>
@@ -597,7 +601,7 @@
                                         <option value={user.role} selected
                                             >{user.role}</option
                                         >
-                                        {#each roles.filter((r) => r.name != "admin") as role (role.name)}
+                                        {#each roles().filter((r) => r.name != "admin") as role (role.name)}
                                             <option value={role.name}>
                                                 {role.name}
                                             </option>

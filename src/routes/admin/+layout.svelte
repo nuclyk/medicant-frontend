@@ -1,4 +1,5 @@
 <script>
+    import { config } from "$lib/config.js";
     import { setContext } from "svelte";
     let { children, data } = $props();
 
@@ -10,7 +11,7 @@
     const rooms = $state(data.rooms);
 
     const token = $state(data.token);
-    const apiUrl = $state(data.apiUrl);
+    const apiUrl = $state(config.apiUrl);
 
     setContext("users", () => users);
     setContext("roles", () => roles);
