@@ -460,7 +460,7 @@
 
                                 <td>
                                     {dayjs(user.check_in_date).format(
-                                        "DD MMM HH:mm",
+                                        "DD MMM YY",
                                     )}
                                 </td>
 

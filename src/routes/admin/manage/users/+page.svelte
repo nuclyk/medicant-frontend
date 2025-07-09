@@ -1,7 +1,10 @@
 <script>
+    import { getContext } from "svelte";
+
     let { data } = $props();
 
-    let users = $state(data?.allUsers?.filter((user) => user.role != "admin"));
+    let allUsers = getContext("users");
+    let users = allUsers().filter((u) => u.role !== "admin");
 
     let searchQuery = $state("");
 
