@@ -9,7 +9,7 @@ export async function load({ locals }) {
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {
-  logout: async ({ locals, cookies }) => {
+  logout: async ({ locals, cookies, url }) => {
     cookies.delete("token", { path: "/" });
     locals.user = null;
   },
@@ -39,6 +39,7 @@ export const actions = {
       path: "/",
       maxAge: token.exp - token.iat,
     });
+
     throw redirect(302, "/admin");
   },
 };
