@@ -8,7 +8,7 @@ export const handleDelete = async (id, obj, token) => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + token(),
+        Authorization: "Bearer " + token,
       },
     });
 
@@ -33,7 +33,7 @@ export async function handleChange(id, obj, event, token) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + token(),
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify({
         [event.target.name]: value,

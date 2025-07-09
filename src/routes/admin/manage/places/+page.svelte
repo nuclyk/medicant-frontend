@@ -13,7 +13,7 @@
     let places = getContext("places");
     let rooms = getContext("rooms");
 
-    let token = getContext("token");
+    let token = getContext("token")();
     let apiUrl = getContext("apiUrl");
 
     let placeName = $state("");
