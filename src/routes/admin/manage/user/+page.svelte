@@ -5,6 +5,11 @@
     import { enhance } from "$app/forms";
     import { getContext } from "svelte";
     import { page } from "$app/state";
+    import FloatingInputField from "$lib/components/FloatingInputField.svelte";
+    import SelectInput from "$lib/components/SelectInput.svelte";
+    import CheckoutModal from "$lib/components/CheckoutModal.svelte";
+    import { handleCheckout } from "$lib/api.js";
+    import { config } from "$lib/config.js";
 
     let { data } = $props();
 
@@ -12,12 +17,14 @@
     let allRoles = getContext("roles");
     let allRetreats = getContext("retreats");
     let places = getContext("places");
+    let token = getContext("token");
 
     let user = $state(data.user);
     let roles = $derived(allRoles().filter((r) => r.name != "admin"));
+    let userName = $derived(user.first_name + " " + user.last_name);
 
     let genders = ["Female", "Male"];
-    let diet = ["None", "Vegetarian"];
+    let diet = ["Meat", "Vegetarian"];
 
     let disabled = $derived(dayjs(user?.check_out_date).year() !== 2001);
 
@@ -33,15 +40,19 @@
         role: user?.role,
         retreat_id: user?.retreat_id,
         check_in_date: dayjs(user?.check_in_date).format("YYYY-MM-DD HH:mm"),
-        // DATETIME field in SQLite returns special date not just null
-        check_out_date:
-            dayjs(user?.check_out_date).year() === 2001
-                ? ""
-                : dayjs(user.check_out_date).format("YYYY-MM-DD HH:mm"),
+        check_out_date: dayjs(user?.check_out_date).format("YYYY-MM-DD HH:mm"),
         leave_date: dayjs(user?.leave_date).format("YYYY-MM-DD"),
         place: user?.place,
+        room_id: user?.room_id,
     });
 </script>
+
+<CheckoutModal
+    id={user.id}
+    name={userName}
+    confirm={handleCheckout}
+    token={token()}
+/>
 
 <form
     method="POST"
@@ -60,112 +71,77 @@
         };
     }}
 >
-    <div class="row g-3 mt-3">
+    <div class="row row-cols-2 g-3">
         <div class="col">
-            <div class="form-floating mb-3">
-                <input
-                    class="form-control"
-                    type="text"
-                    name="first_name"
-                    bind:value={formData.first_name}
-                    placeholder="Enter your first name"
-                    required
-                />
-                <label for="first_name">First name</label>
-            </div>
+            <FloatingInputField
+                type="text"
+                id="firstName"
+                name="first_name"
+                bind:value={formData.first_name}
+                placeholder="Enter your first name"
+                label="First name"
+            />
+            <FloatingInputField
+                type="text"
+                id="lastName"
+                name="last_name"
+                bind:value={formData.last_name}
+                placeholder="Enter your last name"
+                label="Last name"
+            />
+            <FloatingInputField
+                type="email"
+                id="email"
+                name="email"
+                bind:value={formData.email}
+                placeholder="Enter your email"
+                label="Email"
+            />
+            <FloatingInputField
+                type="text"
+                id="phone"
+                name="phone"
+                bind:value={formData.phone}
+                placeholder="Enter your phone number"
+                label="Phone"
+            />
 
-            <div class="form-floating mb-3">
-                <input
-                    class="form-control"
-                    type="text"
-                    name="last_name"
-                    bind:value={formData.last_name}
-                    placeholder="Enter your last name"
-                    required
-                />
-                <label for="last_name">Last name</label>
-            </div>
+            <FloatingInputField
+                type="number"
+                id="age"
+                name="age"
+                bind:value={formData.age}
+                placeholder="Enter age"
+                label="Age"
+            />
 
-            <div class="form-floating mb-3">
-                <input
-                    class="form-control"
-                    type="email"
-                    name="email"
-                    bind:value={formData.email}
-                    placeholder="Enter your email"
-                    required
-                />
-                <label for="email">Email</label>
-            </div>
+            <SelectInput
+                id="gender"
+                name="gender"
+                options={genders}
+                bind:value={formData.gender}
+                placeholder="Enter gender"
+                label="Gender"
+            />
 
-            <div class="form-floating mb-3">
-                <input
-                    class="form-control"
-                    type="text"
-                    name="phone"
-                    bind:value={formData.phone}
-                    placeholder="Enter your phone number"
-                    required
-                />
-                <label for="phone">Phone</label>
-            </div>
+            <SelectInput
+                id="nationality"
+                name="nationality"
+                options={countries}
+                property={"name"}
+                bind:value={formData.nationality}
+                placeholder="Enter nationality"
+                label="Nationality"
+            />
 
-            <div class="form-floating mb-3">
-                <input
-                    class="form-control"
-                    type="number"
-                    name="age"
-                    bind:value={formData.age}
-                    placeholder="Enter your age"
-                />
-                <label for="age">Age</label>
-            </div>
-
-            <div class="form-floating mb-3">
-                <select
-                    class="form-select"
-                    aria-label="Gender select"
-                    id="gender"
-                    name="gender"
-                    bind:value={formData.gender}
-                    placeholder="Enter your gender"
-                >
-                    {#each genders as gender, index (index)}
-                        <option value={gender} key={index}>{gender}</option>
-                    {/each}
-                </select>
-                <label class="form-label" for="gender">Gender</label>
-            </div>
-
-            <div class="form-floating mb-3">
-                <select
-                    class="form-select"
-                    aria-label="Nationality select"
-                    id="nationality"
-                    name="nationality"
-                    bind:value={formData.nationality}
-                    placeholder="Enter your nationality"
-                >
-                    {#each countries as country, index (index)}
-                        <option value={country.name} key={index}
-                            >{country.name}</option
-                        >
-                    {/each}
-                </select>
-                <label class="form-label" for="nationality">Nationality</label>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input
-                    class="form-control"
-                    type="text"
-                    name="diet"
-                    bind:value={formData.diet}
-                    placeholder="Enter your diet"
-                    required
-                />
-                <label for="diet">Diet</label>
-            </div>
+            <SelectInput
+                id="diet"
+                name="diet"
+                options={diet}
+                bind:value={formData.diet}
+                placeholder="Enter your diet"
+                label="Diet"
+            />
 
             <div class="form-floating mb-3">
                 <select
@@ -230,7 +206,6 @@
                     name="check_in_date"
                     placeholder=""
                     bind:value={formData.check_in_date}
-                    disabled
                 />
             </div>
 
@@ -256,16 +231,30 @@
                     name="leave_date"
                     placeholder="Leave date"
                     bind:value={formData.leave_date}
-                    {disabled}
                 />
             </div>
 
             <div
                 class="d-flex w-100 justify-content-center align-content-center"
             >
-                <button type="submit" class="btn btn-primary btn-lg mb-3"
-                    >Save</button
+                <button type="submit" class="btn btn-primary mb-3">Save</button>
+            </div>
+
+            <div
+                class="d-flex w-100 justify-content-center align-content-center"
+            >
+                <button
+                    type="button"
+                    class="btn btn-outline-dark"
+                    data-bs-toggle="modal"
+                    data-bs-target="#checkoutModal"
+                    onclick={() => {
+                        userId = user.id;
+                        userName = user.first_name + " " + user.last_name;
+                    }}
                 >
+                    Check out
+                </button>
             </div>
         </div>
     </div>

@@ -2,11 +2,11 @@ import { redirect } from "@sveltejs/kit";
 import { error } from "@sveltejs/kit";
 import { fail } from "@sveltejs/kit";
 import { API } from "$env/static/private";
+import dayjs from "dayjs";
 
 export const actions = {
   default: async ({ request, fetch, cookies, url, params }) => {
     const data = await request.formData();
-    console.log(url, params);
 
     const updateUser = {
       first_name: data.get("first_name"),
@@ -18,7 +18,8 @@ export const actions = {
       nationality: data.get("nationality"),
       role: data.get("role"),
       retreat_id: parseInt(data.get("retreat")),
-      leave_date: data.get("leave_date"),
+      check_in_date: dayjs(data.get("check_in_date")).toISOString(),
+      leave_date: dayjs(data.get("leave_date")).toISOString(),
       diet: data.get("diet"),
       place: parseInt(data.get("place")),
     };

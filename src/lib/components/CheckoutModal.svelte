@@ -1,5 +1,5 @@
 <script>
-    let { id, name, confirm } = $props();
+    let { id, name, confirm, token } = $props();
 </script>
 
 <!-- Modal -->
@@ -38,7 +38,7 @@
                     type="button"
                     class="btn btn-primary"
                     data-bs-dismiss="modal"
-                    onclick={() => confirm(id)}>Confirm</button
+                    onclick={() => confirm(id, token)}>Confirm</button
                 >
             </div>
         </div>
