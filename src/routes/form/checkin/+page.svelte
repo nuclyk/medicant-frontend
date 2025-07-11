@@ -11,6 +11,7 @@
     import Room from "./Room.svelte";
     import Tour from "./Tour.svelte";
     import Books from "./Books.svelte";
+    import { invalidateAll } from "$app/navigation";
 
     let { data, form } = $props();
     let showForm = $state(true);
@@ -45,6 +46,7 @@
                     <div class="card-text">
                         <form
                             method="POST"
+                            action="?/checkin"
                             use:enhance={() => {
                                 return async ({ result }) => {
                                     if (result.type === "failure") {

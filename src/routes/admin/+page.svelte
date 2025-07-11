@@ -325,7 +325,7 @@
     <!-- ------------------------------------------ -->
 
     <div class="row my-3 justify-content-start w-100">
-        <div class="col col-sm-4">
+        <div class="col col-sm-10 col-sm-6 col-md-6">
             <input
                 type="search"
                 name="search"
@@ -336,7 +336,7 @@
             />
         </div>
 
-        <div class="col">
+        <div class="col col-2 col-sm-auto">
             <button
                 class="btn btn-primary"
                 onclick={() => (showStats = !showStats)}>Stats</button
@@ -380,20 +380,18 @@
 
     <div class="row">
         <div class="col">
-            <div class="table-responsive text-nowrap">
+            <div class="table-responsive text-nowrap table-container">
                 <table
-                    class="table table-striped table-hover borderless
+                    class="table table-hover
                 align-middle text-capitalize"
                 >
-                    <thead class="small">
+                    <thead class="small sticky-top">
                         <tr>
-                            <th scope="col">
+                            <th scope="col" style="min-width: 8rem">
                                 {@render th("Name", "first_name", "name")}
                             </th>
 
-                            <th scope="col">Retreat </th>
-
-                            <th scope="col">
+                            <th scope="col" style="width: 100px;">
                                 {@render th(
                                     "Check-in",
                                     "check_in_date",
@@ -411,8 +409,8 @@
                                 )}
                             </th>
 
-                            <th scope="col">
-                                {@render th("Place", "place", "place")}
+                            <th scope="col" style="min-width: 300px;">
+                                {@render th("Place / Room", "place", "place")}
                                 {@render badge(
                                     "After check-in, please select correct room for the participant",
                                 )}
@@ -423,14 +421,15 @@
                             </th>
 
                             <th scope="col"
-                                >To Donate
+                                >TD
 
                                 {@render badge(
                                     "Donation 500 baht per night based on the planned leave date.",
                                 )}
                             </th>
 
-                            <th>Donated</th>
+                            <th style="width: 4rem">Donated</th>
+                            <th scope="col">Retreat</th>
                         </tr>
                     </thead>
 
@@ -454,10 +453,6 @@
                                         {user.first_name}
                                         {user.last_name}
                                     </a>
-                                </td>
-
-                                <td>
-                                    {findRetreat(user.retreat_id).retreat_code}
                                 </td>
 
                                 <td>
@@ -523,11 +518,8 @@
                                 </td>
 
                                 <td>
-                                    <div class="row clearfix">
-                                        <div
-                                            class="col"
-                                            style="min-width: 6rem"
-                                        >
+                                    <div class="row row-cols-2">
+                                        <div class="col">
                                             <select
                                                 class="form-select form-select-sm"
                                                 aria-label="Place select"
@@ -638,6 +630,10 @@
                                         </div>
                                     </div>
                                 </td>
+
+                                <td>
+                                    {findRetreat(user.retreat_id).retreat_code}
+                                </td>
                             </tr>
                         {/each}
                     </tbody>
@@ -646,3 +642,10 @@
         </div>
     </div>
 </div>
+
+<style>
+    .table-container {
+        height: 100vh;
+        overflow-y: auto;
+    }
+</style>

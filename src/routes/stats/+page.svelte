@@ -26,14 +26,14 @@
 
 <div class="container text-center flex-nowrap text-nowrap mt-3">
     <div class="row g-4">
-        {@render col("รวมผู้เข้าร่วม", checked_in)}
+        {@render col("จำนวนผู้ปฏิบัติธรรมทั้งหมด", checked_in)}
         {@render col(
-            "ผู้เข้าร่วม/อาสาสมัคร",
+            "ผู้ปฏิบัติธรรม / อาสาสมัคร",
             checked_in - volunteers + " / " + volunteers,
         )}
         {@render col("ชาย / หญิง", male + " / " + female)}
-        {@render col("มาถึงแล้ววันนี้", arrivedToday)}
-        {@render col("ออกเดินทางวันนี้", leavingToday)}
+        {@render col("เข้าวันนี", arrivedToday)}
+        {@render col("เช็คเอ้าท์ออกวันนี้", leavingToday)}
         {@render col(
             "มังสวิรัติ / เนื้อสัตว์",
             veg + " / " + (checked_in - veg),

@@ -12,7 +12,7 @@ export async function load({ fetch }) {
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {
-  default: async ({ request, fetch }) => {
+  checkin: async ({ request, fetch }) => {
     const formData = await request.formData();
 
     const now = dayjs().toISOString();
@@ -27,8 +27,8 @@ export const actions = {
       diet: formData.get("diet"),
       role: "participant",
       retreat_id: parseInt(formData.get("retreat")),
-      check_in_date: now,
-      leave_date: formData.get("leave_date"),
+      check_in_date: dayjs().toISOString(),
+      leave_date: dayjs(formData.get("leave_date")).toISOString(),
       place: 1,
     };
 
