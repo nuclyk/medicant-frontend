@@ -3,7 +3,7 @@
     const { user } = $props();
 </script>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">Medicant</a>
         <button

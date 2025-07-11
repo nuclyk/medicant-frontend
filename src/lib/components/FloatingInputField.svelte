@@ -6,6 +6,7 @@
         placeholder = "",
         label = "Type in here...",
         value = $bindable(),
+        req,
     } = $props();
 </script>
 
@@ -17,7 +18,7 @@
         {name}
         {placeholder}
         bind:value
-        required
+        required={req}
     />
     <label for={id}>{label}</label>
 </div>

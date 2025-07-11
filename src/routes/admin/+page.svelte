@@ -325,7 +325,7 @@
     <!-- ------------------------------------------ -->
 
     <div class="row my-3 justify-content-start w-100">
-        <div class="col col-sm-4">
+        <div class="col col-sm-10 col-sm-6 col-md-6">
             <input
                 type="search"
                 name="search"
@@ -336,7 +336,7 @@
             />
         </div>
 
-        <div class="col">
+        <div class="col col-2 col-sm-auto">
             <button
                 class="btn btn-primary"
                 onclick={() => (showStats = !showStats)}>Stats</button
@@ -380,12 +380,12 @@
 
     <div class="row">
         <div class="col">
-            <div class="table-responsive text-nowrap text-center">
+            <div class="table-responsive text-nowrap table-container">
                 <table
                     class="table table-hover
                 align-middle text-capitalize"
                 >
-                    <thead class="small">
+                    <thead class="small sticky-top">
                         <tr>
                             <th scope="col" style="min-width: 8rem">
                                 {@render th("Name", "first_name", "name")}
@@ -410,7 +410,7 @@
                             </th>
 
                             <th scope="col" style="min-width: 300px;">
-                                {@render th("Place", "place", "place")}
+                                {@render th("Place / Room", "place", "place")}
                                 {@render badge(
                                     "After check-in, please select correct room for the participant",
                                 )}
@@ -642,3 +642,10 @@
         </div>
     </div>
 </div>
+
+<style>
+    .table-container {
+        height: 100vh;
+        overflow-y: auto;
+    }
+</style>
