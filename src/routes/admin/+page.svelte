@@ -10,6 +10,7 @@
     import { getContext, onMount } from "svelte";
     import { error } from "@sveltejs/kit";
     import { get } from "svelte/store";
+    import { handleChange } from "$lib/api.js";
 
     let { data } = $props();
     let showStats = $state(false);
@@ -171,7 +172,9 @@
     async function handleUserUpdate(id, event) {
         let value = event.target.value;
 
-        if (Number(value)) {
+        if (value === "0") {
+            value = 0;
+        } else if (Number(value)) {
             value = Number(value);
         }
 
@@ -490,12 +493,15 @@
                                             ).format("YYYY-MM-DD")}
                                             id="leaveDate"
                                             onchange={(event) => {
+                                                handleChange(
+                                                    user.id,
+                                                    "users",
+                                                    event,
+                                                    token(),
+                                                );
+
                                                 user.leave_date =
                                                     event.target.value;
-                                                handleUserUpdate(
-                                                    user.id,
-                                                    event,
-                                                );
                                             }}
                                         />
 
@@ -619,9 +625,11 @@
                                                 name="donation"
                                                 value={user.donation}
                                                 onchange={() => {
-                                                    handleUserUpdate(
+                                                    handleChange(
                                                         user.id,
+                                                        "users",
                                                         event,
+                                                        token(),
                                                     );
                                                     user.donation =
                                                         event.target.value;

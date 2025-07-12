@@ -25,8 +25,15 @@ export const handleDelete = async (id, obj, token) => {
 
 export async function handleChange(id, obj, event, token) {
   let value = event.target.value;
-  if (Number(value)) {
+
+  if (value === "0") {
+    value = 0;
+  } else if (Number(value)) {
     value = Number(value);
+  }
+
+  if (dayjs(value).isValid()) {
+    value = dayjs(value).toISOString();
   }
 
   try {
