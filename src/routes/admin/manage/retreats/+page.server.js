@@ -1,5 +1,6 @@
 import { API } from "$env/static/private";
 import { fail } from "@sveltejs/kit";
+import dayjs from "dayjs";
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {
@@ -14,8 +15,8 @@ export const actions = {
       },
       body: JSON.stringify({
         type: "fixed",
-        start_date: data.get("startDate"),
-        end_date: data.get("endDate"),
+        start_date: dayjs(data.get("startDate")).toISOString(),
+        end_date: dayjs(data.get("endDate")).toISOString(),
       }),
     });
 

@@ -58,6 +58,29 @@ export async function handleChange(id, obj, event, token) {
   }
 }
 
+export async function handleUpdate(path, payload, token) {
+  try {
+    const res = await fetch(config.apiUrl + path + "/" + payload.id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      error(res.status, "Could not update!");
+    }
+
+    toast.success("Updated successfuly!");
+
+    return await res.json();
+  } catch (err) {
+    toast.error(err.status + " : " + err.message);
+  }
+}
+
 export async function handleCheckout(id, token) {
   try {
     const res = await fetch(config.apiUrl + "users/" + id, {
