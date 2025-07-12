@@ -146,6 +146,26 @@
 <CheckoutModal id={userId} name={userName} confirm={handleCheckout} />
 
 <div class="container-fluid mt-3">
+    <div class="row my-3 justify-content-start w-100">
+        <div class="col col-sm-10 col-sm-6 col-md-6">
+            <input
+                type="search"
+                name="search"
+                id="search"
+                class="form-control"
+                placeholder="Search by name or email..."
+                bind:value={searchQuery}
+            />
+        </div>
+
+        <div class="col col-2 col-sm-auto">
+            <button
+                class="btn btn-primary"
+                onclick={() => (showStats = !showStats)}>Stats</button
+            >
+        </div>
+    </div>
+
     <div class="row mb-1 mt-1 g-3 vh-25">
         {#if showStats}
             <div class="col">
@@ -262,26 +282,6 @@
     <!-- ------------------------------------------ -->
     <!-- ------------------------------------------ -->
 
-    <div class="row my-3 justify-content-start w-100">
-        <div class="col col-sm-10 col-sm-6 col-md-6">
-            <input
-                type="search"
-                name="search"
-                id="search"
-                class="form-control"
-                placeholder="Search by name or email..."
-                bind:value={searchQuery}
-            />
-        </div>
-
-        <div class="col col-2 col-sm-auto">
-            <button
-                class="btn btn-primary"
-                onclick={() => (showStats = !showStats)}>Stats</button
-            >
-        </div>
-    </div>
-
     {#snippet th(text, sortBy, state)}
         {text}
         <button
@@ -323,7 +323,7 @@
                     class="table table-hover
                 align-middle text-capitalize"
                 >
-                    <thead class="small sticky-top">
+                    <thead class="small sticky-top" style="z-index: -1;">
                         <tr>
                             <th scope="col" style="min-width: 8rem">
                                 {@render th("Name", "first_name", "name")}
