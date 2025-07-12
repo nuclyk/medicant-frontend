@@ -11,6 +11,7 @@
     import { error } from "@sveltejs/kit";
     import { get } from "svelte/store";
     import { handleChange } from "$lib/api.js";
+    import { handleUpdate } from "$lib/api.js";
 
     let { data } = $props();
     let showStats = $state(false);
@@ -19,11 +20,11 @@
     let placeId = $state();
     let searchQuery = $state("");
 
+    let allUsers = getContext("users");
+
     let users = $state(
         _.orderBy(
-            getContext("users")().filter(
-                (u) => u.role != "admin" && u.is_checked_in,
-            ),
+            allUsers().filter((u) => u.role != "admin" && u.is_checked_in),
             ["check_in_date"],
             ["desc"],
         ),
@@ -135,72 +136,6 @@
             console.log(err);
             toast.error(err.status + " : " + err.message);
         }
-    }
-
-    async function handleUserRoomUpdate(id, event) {
-        let value = event.target.value;
-
-        if (Number(value)) {
-            value = Number(value);
-        }
-
-        try {
-            let user = users.find((u) => u.id == id);
-            let room = rooms().find((r) => r.id == user.room_id);
-
-            const res = await fetch(apiUrl() + "users/" + id, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token(),
-                },
-                body: JSON.stringify({
-                    room_id: value,
-                }),
-            });
-
-            if (!res.ok) {
-                error(res.status, "Could not update the user!");
-            }
-
-            toast.success("Updated successfuly!");
-        } catch (err) {
-            toast.error(err.status + " : " + err.message);
-        }
-    }
-
-    async function handleUserUpdate(id, event) {
-        let value = event.target.value;
-
-        if (value === "0") {
-            value = 0;
-        } else if (Number(value)) {
-            value = Number(value);
-        }
-
-        try {
-            const res = await fetch(apiUrl() + "users/" + id, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token(),
-                },
-                body: JSON.stringify({
-                    [event.target.name]: value,
-                }),
-            });
-
-            if (!res.ok) {
-                error(res.status, "Could not update the user!");
-            }
-
-            toast.success("Updated successfuly!");
-        } catch (err) {
-            toast.error(err.status + " : " + err.message);
-        }
-
-        // let index = users.findIndex((u) => u.id === id);
-        // users[index][event.target.name] = event.target.value;
     }
 
     function findRetreat(retreat_id) {
@@ -493,15 +428,25 @@
                                             ).format("YYYY-MM-DD")}
                                             id="leaveDate"
                                             onchange={(event) => {
-                                                handleChange(
-                                                    user.id,
+                                                user.leave_date =
+                                                    event.target.value;
+
+                                                handleUpdate(
                                                     "users",
-                                                    event,
+                                                    {
+                                                        id: user.id,
+                                                        leave_date: dayjs(
+                                                            user.leave_date,
+                                                        ).toISOString(),
+                                                    },
                                                     token(),
                                                 );
 
-                                                user.leave_date =
-                                                    event.target.value;
+                                                let index = users.findIndex(
+                                                    (u) => u.id === user.id,
+                                                );
+
+                                                filteredUsers[index] = user;
                                             }}
                                         />
 
@@ -531,13 +476,27 @@
                                                 aria-label="Place select"
                                                 name="place"
                                                 onchange={(event) => {
-                                                    handleUserUpdate(
-                                                        user.id,
-                                                        event,
-                                                    );
                                                     user.place = Number(
                                                         event.target.value,
                                                     );
+                                                    user.room_id = null;
+
+                                                    handleUpdate(
+                                                        "users",
+                                                        {
+                                                            id: user.id,
+                                                            place: user.place,
+                                                            room_id:
+                                                                user.room_id,
+                                                        },
+                                                        token(),
+                                                    );
+
+                                                    let index = users.findIndex(
+                                                        (u) => u.id === user.id,
+                                                    );
+
+                                                    filteredUsers[index] = user;
                                                 }}
                                                 bind:value={user.place}
                                             >
@@ -555,14 +514,25 @@
                                                 aria-label="Place select room"
                                                 name="room_id"
                                                 onchange={(event) => {
-                                                    handleUserRoomUpdate(
-                                                        user.id,
-                                                        event,
-                                                    );
-
                                                     user.room_id = Number(
                                                         event.target.value,
                                                     );
+
+                                                    handleUpdate(
+                                                        "users",
+                                                        {
+                                                            id: user.id,
+                                                            room_id:
+                                                                user.room_id,
+                                                        },
+                                                        token(),
+                                                    );
+
+                                                    let index = users.findIndex(
+                                                        (u) => u.id === user.id,
+                                                    );
+
+                                                    filteredUsers[index] = user;
                                                 }}
                                                 bind:value={user.room_id}
                                             >
@@ -593,7 +563,21 @@
                                         name="role"
                                         onchange={(event) => {
                                             user.role = event.target.value;
-                                            handleUserUpdate(user.id, event);
+
+                                            handleUpdate(
+                                                "users",
+                                                {
+                                                    id: user.id,
+                                                    role: user.role,
+                                                },
+                                                token(),
+                                            );
+
+                                            let index = users.findIndex(
+                                                (u) => u.id === user.id,
+                                            );
+
+                                            filteredUsers[index] = user;
                                         }}
                                     >
                                         <option value={user.role} selected
@@ -608,10 +592,12 @@
                                 </td>
 
                                 <td class="text-center">
-                                    {dayjs(user.leave_date).diff(
-                                        user.check_in_date,
-                                        "day",
-                                    ) * 500}
+                                    {(1 +
+                                        dayjs(user.leave_date).diff(
+                                            user.check_in_date,
+                                            "day",
+                                        )) *
+                                        500}
                                 </td>
 
                                 <td>
@@ -625,14 +611,25 @@
                                                 name="donation"
                                                 value={user.donation}
                                                 onchange={() => {
-                                                    handleChange(
-                                                        user.id,
+                                                    user.donation = Number(
+                                                        event.target.value,
+                                                    );
+
+                                                    handleUpdate(
                                                         "users",
-                                                        event,
+                                                        {
+                                                            id: user.id,
+                                                            donation:
+                                                                user.donation,
+                                                        },
                                                         token(),
                                                     );
-                                                    user.donation =
-                                                        event.target.value;
+
+                                                    let index = users.findIndex(
+                                                        (u) => u.id === user.id,
+                                                    );
+
+                                                    filteredUsers[index] = user;
                                                 }}
                                             />
                                         </div>

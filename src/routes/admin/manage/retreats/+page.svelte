@@ -1,13 +1,15 @@
 <script>
-    import { error } from "@sveltejs/kit";
+    import ConfirmDeleteModal from "$lib/components/ConfirmDeleteModal.svelte";
+    import _ from "lodash";
     import dayjs from "dayjs";
     import toast from "svelte-5-french-toast";
+    import { error } from "@sveltejs/kit";
     import { enhance } from "$app/forms";
     import { getContext } from "svelte";
-    import ConfirmDeleteModal from "$lib/components/ConfirmDeleteModal.svelte";
+    import { handleUpdate } from "$lib/api";
 
     let allRetreats = getContext("retreats");
-    let token = getContext("token");
+    let token = getContext("token")();
     let apiUrl = getContext("apiUrl");
 
     let id = $state();
@@ -19,7 +21,7 @@
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + token(),
+                    Authorization: "Bearer " + token,
                 },
             });
 
@@ -32,33 +34,7 @@
 
             toast.success("Retreat deleted successfuly!");
         } catch (err) {
-            toast.error(err.body.message);
-        }
-    }
-
-    async function handleChange(id, event) {
-        try {
-            const res = await fetch(apiUrl() + "retreats/" + id, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token(),
-                },
-                body: JSON.stringify({
-                    [event.target.name]: event.target.value,
-                }),
-            });
-
-            if (!res.ok) {
-                error(res.status, "Failed to update the retreat");
-            }
-
-            let index = allRetreats().findIndex((r) => r.id === id);
-            allRetreats()[index] = await res.json();
-
-            toast.success("Retreat updated successfuly!");
-        } catch (err) {
-            toast.error(err.status + " : " + err.body.message);
+            toast.error(err.message);
         }
     }
 </script>
@@ -133,7 +109,24 @@
                     name="start_date"
                     value={dayjs(retreat.start_date).format("YYYY-MM-DD")}
                     onchange={(event) => {
-                        handleChange(retreat.id, event);
+                        retreat.start_date = event.target.value;
+
+                        handleUpdate(
+                            "retreats",
+                            {
+                                id: retreat.id,
+                                start_date: dayjs(
+                                    retreat.start_date,
+                                ).toISOString(),
+                            },
+                            token,
+                        );
+
+                        let index = _.findIndex(allRetreats(), {
+                            id: retreat.id,
+                        });
+
+                        allRetreats()[index].start_date = event.target.value;
                     }}
                     required
                 />
@@ -146,8 +139,22 @@
                     name="end_date"
                     value={dayjs(retreat.end_date).format("YYYY-MM-DD")}
                     onchange={(event) => {
-                        retreat.end_date = "event.target.value";
-                        handleChange(retreat.id, event);
+                        retreat.end_date = event.target.value;
+
+                        handleUpdate(
+                            "retreats",
+                            {
+                                id: retreat.id,
+                                end_date: dayjs(retreat.end_date).toISOString(),
+                            },
+                            token,
+                        );
+
+                        let index = _.findIndex(allRetreats(), {
+                            id: retreat.id,
+                        });
+
+                        allRetreats()[index].end_date = event.target.value;
                     }}
                     required
                 />
