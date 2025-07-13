@@ -10,8 +10,10 @@
                 ? 'active'
                 : ''}"
             aria-current="page"
-            href="/admin/manage/users">Users</a
-        >
+            href="/admin/manage/users"
+            data-sveltekit-preload-data="off"
+            >Users
+        </a>
     </li>
     <li class="nav-item">
         <a

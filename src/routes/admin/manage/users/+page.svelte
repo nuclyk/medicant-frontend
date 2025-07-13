@@ -3,8 +3,7 @@
 
     let { data } = $props();
 
-    let allUsers = getContext("users");
-    let users = allUsers().filter((u) => u.role !== "admin");
+    let users = $state(data?.users?.filter((u) => u.role !== "admin"));
 
     let searchQuery = $state("");
 

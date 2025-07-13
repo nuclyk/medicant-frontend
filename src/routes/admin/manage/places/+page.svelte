@@ -7,7 +7,7 @@
     import FloatingInputField from "$lib/components/FloatingInputField.svelte";
 
     import { getContext } from "svelte";
-    import { handleDelete, handleChange } from "$lib/api.js";
+    import { handleDelete, handleUpdate } from "$lib/api.js";
 
     let users = getContext("users");
     let places = getContext("places");
@@ -44,7 +44,11 @@
                             id="name"
                             value={place.name}
                             onchange={(event) => {
-                                handleChange(place.id, "places", event, token);
+                                handleUpdate(
+                                    "places",
+                                    { id: place.id, name: place.name },
+                                    token,
+                                );
 
                                 let index = _.findIndex(places(), {
                                     id: place.id,
@@ -68,10 +72,11 @@
                                 id="number"
                                 value={room.number}
                                 onchange={(event) => {
-                                    handleChange(
-                                        room.id,
+                                    room.number = Number(event.target.value);
+
+                                    handleUpdate(
                                         "rooms",
-                                        event,
+                                        { id: room.id, number: room.number },
                                         token,
                                     );
 
@@ -93,10 +98,14 @@
                                 id="capacity"
                                 value={room.capacity}
                                 onchange={(event) => {
-                                    handleChange(
-                                        room.id,
+                                    room.capacity = Number(event.target.value);
+
+                                    handleUpdate(
                                         "rooms",
-                                        event,
+                                        {
+                                            id: room.id,
+                                            capacity: room.capacity,
+                                        },
                                         token,
                                     );
 

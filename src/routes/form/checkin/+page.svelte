@@ -3,6 +3,7 @@
     import SelectInput from "$lib/components/SelectInput.svelte";
     import InputGroup from "$lib/components/InputGroup.svelte";
 
+    import dayjs from "dayjs";
     import { countries } from "$lib/countries.js";
     import { enhance } from "$app/forms";
     import toast from "svelte-5-french-toast";
@@ -153,9 +154,12 @@
                                     required
                                 >
                                     <option value="">Select a retreat</option>
-                                    {#each data.retreats as retreat (retreat.id)}
+                                    <option value="0">flexible</option>
+                                    {#each data.retreats.filter((r) => r.id != 0) as retreat (retreat.id)}
                                         <option value={retreat.id}
-                                            >{retreat.retreat_code}
+                                            >fixed-{dayjs(
+                                                retreat.start_date,
+                                            ).format("MM-DD")}
                                         </option>
                                     {/each}
                                 </select>
