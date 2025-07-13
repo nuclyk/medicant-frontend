@@ -18,7 +18,7 @@
         {name}
         {placeholder}
         bind:value
-        required={req}
+        required
     />
     <label for={id}>{label}</label>
 </div>
