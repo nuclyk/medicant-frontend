@@ -153,7 +153,7 @@
 <CheckoutModal id={userId} name={userName} confirm={handleCheckout} />
 
 <div class="container-fluid mt-3">
-    <button class="btn" onclick={refreshUsers}>Refresh</button>
+    <!-- <button class="btn" onclick={refreshUsers}>Refresh</button> -->
 
     <div class="row my-3 justify-content-start w-100">
         <div class="col col-sm-10 col-sm-6 col-md-6">
