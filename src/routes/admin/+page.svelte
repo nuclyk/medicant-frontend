@@ -10,21 +10,24 @@
     import { getContext, onMount } from "svelte";
     import { error } from "@sveltejs/kit";
     import { get } from "svelte/store";
-    import { handleChange } from "$lib/api.js";
     import { handleUpdate } from "$lib/api.js";
+    import { invalidate, invalidateAll } from "$app/navigation";
+    import { setContext } from "svelte";
 
     let { data } = $props();
+
+    const allUsers = $state(data.users);
+    setContext("users", () => users);
+
     let showStats = $state(false);
     let userId = $state();
     let userName = $state();
     let placeId = $state();
     let searchQuery = $state("");
 
-    let allUsers = getContext("users");
-
     let users = $state(
         _.orderBy(
-            allUsers().filter((u) => u.role != "admin" && u.is_checked_in),
+            allUsers?.filter((u) => u.role != "admin" && u.is_checked_in),
             ["check_in_date"],
             ["desc"],
         ),
@@ -141,11 +144,17 @@
     function findRetreat(retreat_id) {
         return retreats().find((retreat) => retreat_id === retreat.id);
     }
+
+    async function refreshUsers() {
+        await invalidate("data:users");
+    }
 </script>
 
 <CheckoutModal id={userId} name={userName} confirm={handleCheckout} />
 
 <div class="container-fluid mt-3">
+    <button class="btn" onclick={refreshUsers}>Refresh</button>
+
     <div class="row my-3 justify-content-start w-100">
         <div class="col col-sm-10 col-sm-6 col-md-6">
             <input
@@ -165,7 +174,6 @@
             >
         </div>
     </div>
-
     <div class="row mb-1 mt-1 g-3 vh-25">
         {#if showStats}
             <div class="col">

@@ -58,17 +58,28 @@
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
-                            For Participants
+                            Participants
                         </span>
                         <ul class="dropdown-menu">
                             <li data-bs-dismiss="offcanvas">
-                                <a class="dropdown-item" href="/form/checkin"
-                                    >Check-in Form</a
+                                <a
+                                    class="dropdown-item"
+                                    href="/form/checkin"
+                                    target="_blank">Checkin form</a
                                 >
                             </li>
                             <li data-bs-dismiss="offcanvas">
-                                <a class="dropdown-item" href="/form/checkout"
-                                    >Check-out Form</a
+                                <a
+                                    class="dropdown-item"
+                                    href="/form/checkout"
+                                    target="_blank">Checkout form</a
+                                >
+                            </li>
+                            <li data-bs-dismiss="offcanvas">
+                                <a
+                                    class="dropdown-item"
+                                    href="https://docs.google.com/forms/d/13bFgq_tOMwPFlX2VXiOH461XZrEBO84In_53hvDI_ug"
+                                    target="_blank">Feedback form</a
                                 >
                             </li>
                             <li>
@@ -90,7 +101,7 @@
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
-                            For Volunteers
+                            Volunteers
                         </span>
                         <ul class="dropdown-menu">
                             <li data-bs-dismiss="offcanvas">

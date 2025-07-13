@@ -7,37 +7,67 @@
     let showForm = $state(true);
 </script>
 
-<div class="row row-cols-1 g-3 mt-2">
-    <div class="col">
-        <h3>Check-out</h3>
-    </div>
-
+<div class="container text-center">
     {#if showForm}
-        <div class="col">
-            <form
-                method="POST"
-                action="?/checkout"
-                transition:fade
-                use:enhance={() => {
-                    showForm = false;
-                }}
-            >
-                <FloatingInputField
-                    id="email"
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    label="Email"
-                />
-                <button type="submit" class="btn btn-primary btn-lg mt-2"
-                    >Check-out</button
+        <div class="row mx-auto justify-content-center">
+            <div class="col">
+                <h3>Checkout Form</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                Please enter the same details that you have used for checkin.
+            </div>
+        </div>
+
+        <div class="row mx-auto justify-content-center p-4">
+            <div class="col-12 col-sm-6 col-lg-5 col-xl-4">
+                <form
+                    method="POST"
+                    action="?/checkout"
+                    use:enhance={() => {
+                        showForm = false;
+                    }}
                 >
-            </form>
+                    <FloatingInputField
+                        id="firstNamej"
+                        type="text"
+                        name="first_name"
+                        placeholder="Enter your first name"
+                        label="First name"
+                    />
+
+                    <FloatingInputField
+                        id="email"
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        label="Email"
+                    />
+                    <button type="submit" class="btn btn-primary btn-lg mt-2"
+                        >Check out</button
+                    >
+                </form>
+            </div>
         </div>
     {:else}
-        <div class="col">
-            <div class="alert alert-success" role="alert">
-                You have been checked-out. See you next time! :)
+        <div class="row mx-auto justify-content-center p-4">
+            <div class="col-12 col-sm-6 col-lg-5 col-xl-4">
+                <div class="alert alert-success" role="alert">
+                    <p>
+                        You have been checked-out. If you haven't done so
+                        already, please help us make the retreat better and
+                        share your feedback through
+
+                        <a
+                            href="https://docs.google.com/forms/d/13bFgq_tOMwPFlX2VXiOH461XZrEBO84In_53hvDI_ug"
+                        >
+                            this form.
+                        </a>
+                    </p>
+
+                    <p>See you next time! :)</p>
+                </div>
             </div>
         </div>
     {/if}

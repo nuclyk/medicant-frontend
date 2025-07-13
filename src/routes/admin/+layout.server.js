@@ -2,14 +2,6 @@ import { API } from "$env/static/private";
 
 /** @type {import('./$types').LayoutServerLoad} */
 export async function load({ locals, fetch, cookies }) {
-  const users = await fetch(API + "users", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + cookies.get("token"),
-    },
-  });
-
   const retreats = await fetch(API + "retreats", {
     method: "GET",
     headers: {
@@ -47,7 +39,6 @@ export async function load({ locals, fetch, cookies }) {
       role: locals.user.role,
     },
     token: cookies.get("token"),
-    users: await users.json(),
     retreats: await retreats.json(),
     roles: await roles.json(),
     places: await places.json(),
