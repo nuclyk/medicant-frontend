@@ -6,7 +6,6 @@
         placeholder = "",
         label = "Type in here...",
         value = $bindable(),
-        req,
     } = $props();
 </script>
 
