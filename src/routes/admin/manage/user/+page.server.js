@@ -16,7 +16,7 @@ export const actions = {
       gender: data.get("gender"),
       nationality: data.get("nationality"),
       role: data.get("role"),
-      retreat_id: parseInt(data.get("retreat")),
+      retreat_id: parseInt(data.get("retreat_id")),
       leave_date: dayjs(data.get("leave_date")).toISOString(),
       diet: data.get("diet"),
       place: parseInt(data.get("place")),

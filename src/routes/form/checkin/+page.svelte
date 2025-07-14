@@ -27,7 +27,7 @@
         phone: form?.formData?.phone || "",
         gender: form?.formData?.gender || "",
         nationality: form?.formData?.nationality || "",
-        diet: form?.formData?.diet || "None",
+        diet: form?.formData?.diet || "",
         retreat_id: form?.formData?.retreat_id || (() => selectedRetreatId),
         leave_date: form?.formData?.leave_date || "",
     });
@@ -43,7 +43,6 @@
         <div class="col-lg-8 col-xl-8 col-xxl-6 mx-auto">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Please fill out the form</h5>
                     <div class="card-text">
                         <form
                             method="POST"
@@ -99,6 +98,12 @@
                                 </div>
                             </div>
 
+                            <p class="small">
+                                Please provide a valid email. It will be used
+                                for checkout. We don't use your email for any
+                                marketing purposes :)
+                            </p>
+
                             <FloatingInputField
                                 id="email"
                                 type="email"
@@ -137,7 +142,7 @@
                             <SelectInput
                                 id="diet"
                                 name="diet"
-                                options={["None", "Vegetarian"]}
+                                options={["Meat", "Vegetarian"]}
                                 label="Diet"
                                 bind:value={formData.diet}
                             />
@@ -153,11 +158,10 @@
                                             event.target.value)}
                                     required
                                 >
-                                    <option value="">Select a retreat</option>
                                     <option value="0">flexible</option>
                                     {#each data.retreats.filter((r) => r.id != 0) as retreat (retreat.id)}
-                                        <option value={retreat.id}
-                                            >fixed-{dayjs(
+                                        <option value={retreat.id}>
+                                            fixed-{dayjs(
                                                 retreat.start_date,
                                             ).format("MM-DD")}
                                         </option>

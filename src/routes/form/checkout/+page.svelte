@@ -3,6 +3,7 @@
 
     import { fade } from "svelte/transition";
     import { enhance } from "$app/forms";
+    import toast from "svelte-5-french-toast";
 
     let showForm = $state(true);
 </script>
@@ -26,17 +27,22 @@
                     method="POST"
                     action="?/checkout"
                     use:enhance={() => {
-                        showForm = false;
+                        return ({ result }) => {
+                            console.log(result);
+                            if (result.type === "failure") {
+                                toast.error(
+                                    result.status + " : " + result?.data?.error,
+                                );
+                                showForm = true;
+                            }
+
+                            if (result.type === "success") {
+                                toast.success("Check-in form submitted!");
+                                showForm = false;
+                            }
+                        };
                     }}
                 >
-                    <FloatingInputField
-                        id="firstNamej"
-                        type="text"
-                        name="first_name"
-                        placeholder="Enter your first name"
-                        label="First name"
-                    />
-
                     <FloatingInputField
                         id="email"
                         type="email"
@@ -57,13 +63,14 @@
                     <p>
                         You have been checked-out. If you haven't done so
                         already, please help us make the retreat better and
-                        share your feedback through
+                        share your
 
                         <a
                             href="https://docs.google.com/forms/d/13bFgq_tOMwPFlX2VXiOH461XZrEBO84In_53hvDI_ug"
+                            target="_blank"
                         >
-                            this form.
-                        </a>
+                            FEEDBACK
+                        </a>.
                     </p>
 
                     <p>See you next time! :)</p>

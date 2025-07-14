@@ -10,7 +10,7 @@
         aria-label={"Select " + name}
         bind:value
     >
-        <option value="None">-- Please select --</option>
+        <option value="">-- Please select --</option>
         {#each options as option, index (index)}
             {#if property}
                 <option value={option[property]}>{option[property]}</option>
