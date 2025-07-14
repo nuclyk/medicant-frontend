@@ -32,6 +32,18 @@ export const actions = {
       place: 1,
     };
 
+    if (data.email === "") {
+      return fail(400, { error: "Please provide email address" });
+    }
+
+    if (data.gender === "") {
+      return fail(400, { error: "Please choose your gender" });
+    }
+
+    if (data.diet === "") {
+      return fail(400, { error: "Please choose your diet" });
+    }
+
     // Check if the participant is already in db
     const userExists = await fetch(API + "users/exists", {
       method: "POST",
@@ -43,17 +55,24 @@ export const actions = {
 
     // If the participant is already in db, just update the record
     if (userExists.ok) {
-      // With this flag, the backend will reset check out date
-      data.reset = true;
-
       const user = await userExists.json();
-      const updateUser = await fetch(API + "users/" + user.userID, {
+
+      const updateUser = await fetch(API + "users/" + user.id, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + user.token,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          phone: formData.get("phone"),
+          gender: formData.get("gender"),
+          diet: formData.get("diet"),
+          retreat_id: parseInt(formData.get("retreat")),
+          check_in_date: dayjs().toISOString(),
+          leave_date: dayjs(formData.get("leave_date")).toISOString(),
+          // reset flag will reset check_out_date, is_checked_in and donation
+          reset: true,
+        }),
       });
 
       if (!updateUser.ok) {

@@ -10,23 +10,17 @@
     import { page } from "$app/state";
     import { handleCheckout } from "$lib/api.js";
     import { config } from "$lib/config.js";
-    import { invalidateAll } from "$app/navigation";
 
     let { data } = $props();
-
-    let allUsers = getContext("users");
     let allRoles = getContext("roles");
     let allRetreats = getContext("retreats");
     let places = getContext("places");
     let token = getContext("token");
-
     let user = $state(data.user);
     let roles = $derived(allRoles().filter((r) => r.name != "admin"));
     let userName = $derived(user.first_name + " " + user.last_name);
-
     let genders = ["Female", "Male"];
     let diet = ["Meat", "Vegetarian"];
-
     let disabled = $derived(user.is_checked_in);
 
     let formData = $state({
@@ -46,6 +40,8 @@
         place: user?.place,
         room_id: user?.room_id,
     });
+
+    $inspect(formData, user);
 </script>
 
 <form
@@ -56,13 +52,7 @@
             if (result.type !== "success") {
                 toast.error(result.status + " : " + result.data.error);
             } else {
-                let index = allUsers().findIndex(
-                    (u) => u.id === result.data.id,
-                );
-
-                allUsers()[index] = result.data;
                 toast.success("User updated successfuly!");
-                location.reload();
             }
         };
     }}
@@ -217,15 +207,21 @@
                 <select
                     class="form-select"
                     aria-label="Retreat select"
-                    id="retreat"
-                    name="retreat"
+                    id="retreat_id"
+                    name="retreat_id"
                     bind:value={formData.retreat_id}
-                    placeholder="Enter your role"
+                    placeholder="Choose retreat"
                 >
                     {#each allRetreats() as retreat (retreat.id)}
-                        <option value={retreat.id} key={retreat.id}
-                            >{retreat.retreat_code}</option
-                        >
+                        <option value={retreat.id} key={retreat.id}>
+                            {#if retreat.id !== 0}
+                                fixed-{dayjs(retreat.start_date).format(
+                                    "MM-DD",
+                                )}
+                            {:else}
+                                flexible
+                            {/if}
+                        </option>
                     {/each}
                 </select>
                 <label class="form-label" for="retreat">Retreat</label>
@@ -255,48 +251,39 @@
 
     <div class="row">
         <div class="col">
-            <div class="input-group mb-3">
-                <span class="input-group-text">Check-in date</span>
-                <input
-                    class="form-control"
-                    type="datetime-local"
-                    id="check_in_date"
-                    name="check_in_date"
-                    placeholder=""
-                    bind:value={formData.check_in_date}
-                    disabled
-                />
-            </div>
+            <FloatingInputField
+                type="datetime-local"
+                id="check_in_date"
+                name="check_in_date"
+                placeholder="Checkin date"
+                label="Checkin date"
+                bind:value={formData.check_in_date}
+                disabled={true}
+            />
         </div>
 
         <div class="col">
-            <div class="input-group mb-3">
-                <span class="input-group-text">Check-out date</span>
-                <input
-                    class="form-control"
-                    type="datetime-local"
-                    id="check_out_date"
-                    name="check_out_date"
-                    placeholder=""
-                    bind:value={formData.check_out_date}
-                    disabled
-                />
-            </div>
+            <FloatingInputField
+                type="datetime-local"
+                id="check_out_date"
+                name="check_out_date"
+                placeholder="Checkout date"
+                label="Checkout date"
+                bind:value={formData.check_out_date}
+                disabled={true}
+            />
         </div>
 
         <div class="col">
-            <div class="input-group mb-3">
-                <span class="input-group-text">Planned leave date</span>
-                <input
-                    class="form-control"
-                    type="date"
-                    id="leave_date"
-                    name="leave_date"
-                    placeholder="Leave date"
-                    bind:value={formData.leave_date}
-                    readonly={!user.is_checked_in}
-                />
-            </div>
+            <FloatingInputField
+                type="date"
+                id="leave_date"
+                name="leave_date"
+                placeholder="Leave date"
+                label="Planned leave date"
+                bind:value={formData.leave_date}
+                ro={!user.is_checked_in}
+            />
         </div>
     </div>
 
@@ -307,13 +294,15 @@
                 <button
                     type="submit"
                     class="btn btn-outline-danger mb-3"
-                    formaction="/form/checkout?/checkout">Check-out</button
+                    formaction="/form/checkout?/checkout"
+                    onclick={() => location.reload()}>Check-out</button
                 >
             {:else}
                 <button
                     type="submit"
                     class="btn btn-outline-success mb-3"
-                    formaction="/form/checkin?/checkin">Check-in</button
+                    formaction="/form/checkin?/checkin"
+                    onclick={() => location.reload()}>Check-in</button
                 >
             {/if}
         </div>

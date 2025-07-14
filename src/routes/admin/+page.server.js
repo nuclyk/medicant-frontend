@@ -12,7 +12,7 @@ export async function load({ locals, depends, cookies, fetch }) {
 
   depends("data:users");
 
-  const users = await fetch(API + "users", {
+  const users = await fetch(API + "users/checkedin", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
