@@ -39,9 +39,8 @@
         leave_date: dayjs(user?.leave_date).format("YYYY-MM-DD"),
         place: user?.place,
         room_id: user?.room_id,
+        is_checked_in: user?.is_checked_in,
     });
-
-    $inspect(formData, user);
 </script>
 
 <form
