@@ -10,7 +10,7 @@
                 ? 'active'
                 : ''}"
             aria-current="page"
-            href="/admin/manage/users"
+            href="/admin/manage/users?page=0"
             data-sveltekit-preload-data="off"
             >Users
         </a>

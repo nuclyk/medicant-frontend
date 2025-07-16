@@ -40,8 +40,9 @@
                             <a class="nav-link" href="/admin">Dashboard</a>
                         </li>
                         <li class="nav-item" data-bs-dismiss="offcanvas">
-                            <a class="nav-link" href="/admin/manage/users"
-                                >Manage</a
+                            <a
+                                class="nav-link"
+                                href="/admin/manage/users?page=0">Manage</a
                             >
                         </li>
                         {#if user}

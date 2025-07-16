@@ -3,7 +3,6 @@ import { error } from "@sveltejs/kit";
 /** @type {import('./$types').PageLoad} */
 export async function load({ parent, url, params, fetch }) {
   const p = await parent();
-  console.log(p);
 
   if (!p.user) redirect(307, "/login");
 

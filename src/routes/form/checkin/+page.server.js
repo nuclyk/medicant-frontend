@@ -30,6 +30,7 @@ export const actions = {
       check_in_date: dayjs().toISOString(),
       leave_date: dayjs(formData.get("leave_date")).toISOString(),
       place: 1,
+      room_id: 1,
     };
 
     if (data.email === "") {

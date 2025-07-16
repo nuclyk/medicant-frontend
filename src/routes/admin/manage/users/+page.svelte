@@ -2,10 +2,12 @@
     import { getContext } from "svelte";
     import dayjs from "dayjs";
     import _ from "lodash";
+    import { invalidate } from "$app/navigation";
 
     let { data } = $props();
 
-    let users = $state(data?.users?.filter((u) => u.role !== "admin"));
+    let users = $derived(data?.users?.filter((u) => u.role !== "admin"));
+    let { participants_count } = data.stats;
 
     let searchQuery = $state("");
 
@@ -21,11 +23,48 @@
                     .includes(searchQuery.toLowerCase()),
         ),
     );
+
+    let pages = $derived(Math.floor(participants_count / 50));
+    let currentPage = $derived(data.page);
+    let prevPage = $derived(currentPage > 0 ? currentPage - 1 : currentPage);
+    let nextPage = $derived(currentPage < pages ? currentPage + 1 : pages);
 </script>
 
 <div class="container-fluid">
-    <div class="row my-3 justify-content-start">
-        <div class="col col-sm-4">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li class="page-item {!currentPage ? 'disabled' : ''}">
+                        <a href={"?page=" + prevPage} class="page-link"
+                            >Previous</a
+                        >
+                    </li>
+                    {#each Array.from({ length: pages + 1 }) as _, index}
+                        <li
+                            class="page-item {index == currentPage
+                                ? 'active'
+                                : ''}"
+                        >
+                            <a class="page-link" href="?page={index}">{index}</a
+                            >
+                        </li>
+                    {/each}
+
+                    <li
+                        class="page-item {currentPage == pages
+                            ? 'disabled'
+                            : ''}"
+                    >
+                        <a class="page-link" href={"?page=" + nextPage}>Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row my-3 justify-content-center mx-auto mx-auto">
+        <div class="col col-6">
             <input
                 type="search"
                 name="search"
@@ -97,19 +136,4 @@
             </div>
         {/each}
     </div>
-
-    <!-- <nav -->
-    <!--     aria-label="Page navigation" -->
-    <!--     class="d-flex mt-3 w-100 justify-content-center" -->
-    <!-- > -->
-    <!--     <ul class="pagination"> -->
-    <!--         <li class="page-item"> -->
-    <!--             <a class="page-link" href="/">Previous</a> -->
-    <!--         </li> -->
-    <!--         <li class="page-item"><a class="page-link" href="/">1</a></li> -->
-    <!--         <li class="page-item"><a class="page-link" href="/">2</a></li> -->
-    <!--         <li class="page-item"><a class="page-link" href="/">3</a></li> -->
-    <!--         <li class="page-item"><a class="page-link" href="/">Next</a></li> -->
-    <!--     </ul> -->
-    <!-- </nav> -->
 </div>
